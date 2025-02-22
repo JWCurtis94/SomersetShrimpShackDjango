@@ -1,0 +1,79 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'store/css/admin_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <!-- Sidebar Navigation -->
+    <div class="admin-sidebar">
+        <h2 class="admin-logo">
+            <i class="fas fa-tools"></i>
+            Admin Panel
+        </h2>
+        <div class="admin-nav">
+            <a href="{% url 'store:dashboard' %}" class="admin-nav-link active">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="{% url 'store:stock_management' %}" class="admin-nav-link">
+                <i class="fas fa-box"></i>
+                Manage Products
+            </a>
+            <a href="{% url 'store:order_history' %}" class="admin-nav-link">
+                <i class="fas fa-list"></i>
+                View Orders
+            </a>
+            <a href="{% url 'account_logout' %}" class="admin-nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="admin-main">
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <i class="fas fa-chart-line"></i>
+                Dashboard Overview
+            </h1>
+        </div>
+
+        <div class="admin-grid">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div class="admin-card-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <h2 class="admin-card-title">Total Products</h2>
+                </div>
+                <p class="admin-card-value">{{ total_products }}</p>
+            </div>
+
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div class="admin-card-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <h2 class="admin-card-title">Total Orders</h2>
+                </div>
+                <p class="admin-card-value">{{ total_orders }}</p>
+            </div>
+
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div class="admin-card-icon">
+                        <i class="fas fa-pound-sign"></i>
+                    </div>
+                    <h2 class="admin-card-title">Total Revenue</h2>
+                </div>
+                <p class="admin-card-value">£{{ total_revenue|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

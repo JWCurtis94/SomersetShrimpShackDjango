@@ -1,0 +1,27 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="message-box success">
+        <i class="fas fa-check-circle fa-3x"></i>
+        <h1>Payment Successful!</h1>
+        <p>Thank you for your order. Your aquarium items will be carefully packed and shipped soon! 🚚</p>
+        <div class="order-confirmation">
+            <p>Order confirmation has been sent to your email.</p>
+            <p>Order ID: #{{ order.id }}</p>
+        </div>
+        <div class="success-actions">
+            <a href="{% url 'store:order_history' %}" class="btn btn-secondary">
+                <i class="fas fa-list"></i>
+                View Order History
+            </a>
+            <a href="{% url 'store:product_list' %}" class="btn btn-primary">
+                <i class="fas fa-store"></i>
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

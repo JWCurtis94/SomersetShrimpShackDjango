@@ -1,0 +1,17 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Payment Canceled{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="message-box error">
+        <i class="fas fa-times-circle"></i>
+        <h1>Payment Canceled</h1>
+        <p>Your payment was not completed. If this was a mistake, please try again.</p>
+        <a href="{% url 'store:product_list' %}" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i>
+            Return to Store
+        </a>
+    </div>
+</div>
+{% endblock %}

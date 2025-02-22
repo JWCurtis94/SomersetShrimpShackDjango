@@ -1,0 +1,83 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">
+        <i class="fas fa-shopping-cart"></i>
+        Your Shopping Cart
+    </h1>
+
+    {% if cart.get_items %}
+        <div class="cart-container">
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart.get_items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>
+                            <form method="POST" action="{% url 'store:update_cart' item.id %}" class="quantity-form">
+                                {% csrf_token %}
+                                <div class="quantity-input">
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                                    <button type="submit" class="btn btn-small">
+                                        <i class="fas fa-sync-alt"></i>
+                                        Update
+                                    </button>
+                                </div>
+                            </form>
+                        </td>
+                        <td>£{{ item.price }}</td>
+                        <td>£{{ item.quantity|floatformat:2|add:item.price }}</td>
+                        <td>
+                            <a href="{% url 'store:remove_from_cart' item.id %}" class="btn btn-danger btn-small">
+                                <i class="fas fa-trash"></i>
+                                Remove
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="cart-summary">
+                <p class="total-price">Total: <span>£{{ cart.get_total_price|floatformat:2 }}</span></p>
+            </div>
+
+            <div class="cart-actions">
+                <a href="{% url 'store:clear_cart' %}" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i>
+                    Clear Cart
+                </a>
+                <a href="{% url 'store:order_summary' %}" class="btn btn-secondary">
+                    <i class="fas fa-clipboard-list"></i>
+                    Review Order
+                </a>
+                <a href="{% url 'store:checkout_cart' %}" class="btn btn-primary">
+                    <i class="fas fa-credit-card"></i>
+                    Checkout Now
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-cart">
+            <i class="fas fa-shopping-cart fa-3x"></i>
+            <p>Your cart is empty</p>
+            <a href="{% url 'store:product_list' %}" class="btn btn-primary">
+                <i class="fas fa-store"></i>
+                Continue Shopping
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

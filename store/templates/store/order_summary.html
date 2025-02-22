@@ -1,0 +1,74 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Order Summary{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">
+        <i class="fas fa-clipboard-list"></i>
+        Order Summary
+    </h1>
+
+    {% if cart.get_items %}
+        <div class="summary-container">
+            <div class="order-details">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart.get_items %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>£{{ item.price }}</td>
+                            <td>£{{ item.quantity|floatformat:2|add:item.price }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="summary-total">
+                    <p class="total-line">
+                        <span>Subtotal:</span>
+                        <span>£{{ cart.get_total_price|floatformat:2 }}</span>
+                    </p>
+                    <p class="total-line">
+                        <span>Shipping:</span>
+                        <span>Free</span>
+                    </p>
+                    <p class="total-line grand-total">
+                        <span>Total:</span>
+                        <span>£{{ cart.get_total_price|floatformat:2 }}</span>
+                    </p>
+                </div>
+
+                <div class="summary-actions">
+                    <a href="{% url 'store:cart_view' %}" class="btn btn-secondary">
+                        <i class="fas fa-edit"></i>
+                        Edit Cart
+                    </a>
+                    <a href="{% url 'store:checkout_cart' %}" class="btn btn-primary">
+                        <i class="fas fa-lock"></i>
+                        Secure Checkout
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-shopping-cart fa-3x"></i>
+            <p>Your cart is empty.</p>
+            <a href="{% url 'store:product_list' %}" class="btn btn-primary">
+                <i class="fas fa-store"></i>
+                Continue Shopping
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

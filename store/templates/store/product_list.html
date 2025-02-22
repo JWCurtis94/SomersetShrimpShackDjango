@@ -1,0 +1,111 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Available Products - Aquarium Store{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Filter Section -->
+    <div class="filters">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search products...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        
+        <div class="filter-section">
+            <h3>Price Range</h3>
+            <div class="price-filter">
+                <input type="range" id="price-range" min="0" max="50" step="1" value="50">
+                <span id="price-value">£50</span>
+            </div>
+        </div>
+        
+        <div class="filter-section">
+            <h3>Categories</h3>
+            <div class="category-filters">
+                {% for category, _ in categorized_products.items %}
+                <label class="category-label">
+                    <input type="checkbox" class="category-filter" value="{{ category|lower }}">
+                    {{ category }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    {% for category, products in categorized_products.items %}
+        {% if products %}
+            <section class="category-section">
+                <h2 class="category-title">{{ category }}</h2>
+                <div class="product-grid">
+                    {% for product in products %}
+                        <article class="product-card" data-category="{{ product.category }}">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" 
+                                     alt="{{ product.name }}"
+                                     class="product-image"
+                                     loading="lazy">
+                            {% else %}
+                                <div class="product-image-placeholder">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="product-info">
+                                <h3 class="product-title">{{ product.name }}</h3>
+                                {% if product.description %}
+                                    <p class="product-description">{{ product.description|truncatewords:20 }}</p>
+                                {% endif %}
+                                <div class="product-price" data-price="{{ product.price }}">
+                                    <span class="price-label">Price:</span>
+                                    <span class="price-value">£{{ product.price }}</span>
+                                </div>
+                                
+                                {% if product.stock > 0 %}
+                                    <div class="product-stock in-stock">
+                                        <i class="fas fa-check-circle"></i>
+                                        In Stock ({{ product.stock }} available)
+                                    </div>
+                                    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">
+                                        <i class="fas fa-cart-plus"></i>
+                                        Add to Cart
+                                    </a>
+                                {% else %}
+                                    <div class="product-stock out-of-stock">
+                                        <i class="fas fa-times-circle"></i>
+                                        Out of Stock
+                                    </div>
+                                    <button class="btn btn-disabled" disabled>
+                                        <i class="fas fa-cart-plus"></i>
+                                        Out of Stock
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    {% endfor %}
+
+    {% if not categorized_products %}
+        <div class="no-products">
+            <i class="fas fa-box-open"></i>
+            <p>No products available at the moment.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize price range on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const priceRange = document.querySelector('#price-range');
+        const priceValue = document.querySelector('#price-value');
+        if (priceRange && priceValue) {
+            priceValue.textContent = `£${priceRange.value}`;
+        }
+    });
+</script>
+{% endblock %}

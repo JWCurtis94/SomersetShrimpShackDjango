@@ -1,0 +1,155 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Stock Management{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'store/css/admin_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <!-- Sidebar Navigation -->
+    <div class="admin-sidebar">
+        <h2 class="admin-logo">
+            <i class="fas fa-tools"></i>
+            Admin Panel
+        </h2>
+        <div class="admin-nav">
+            <a href="{% url 'store:dashboard' %}" class="admin-nav-link">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </a>
+            <a href="{% url 'store:stock_management' %}" class="admin-nav-link active">
+                <i class="fas fa-box"></i>
+                Manage Products
+            </a>
+            <a href="{% url 'store:order_history' %}" class="admin-nav-link">
+                <i class="fas fa-list"></i>
+                View Orders
+            </a>
+            <a href="{% url 'account_logout' %}" class="admin-nav-link">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="admin-main">
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <i class="fas fa-box"></i>
+                Stock Management
+            </h1>
+            <div class="admin-actions">
+                <a href="{% url 'store:add_product' %}" class="admin-btn admin-btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Add New Product
+                </a>
+            </div>
+        </div>
+
+        {% if products %}
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Stock</th>
+                            <th>Price</th>
+                            <th>Available</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>
+                                <form method="POST" action="{% url 'store:update_stock' product.id %}" class="stock-form">
+                                    {% csrf_token %}
+                                    <div class="stock-input-group">
+                                        <input type="number" name="stock" value="{{ product.stock }}" min="0" class="admin-form-control">
+                                        <button type="submit" class="admin-btn admin-btn-primary btn-small">
+                                            <i class="fas fa-sync-alt"></i>
+                                            Update
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                            <td>£{{ product.price }}</td>
+                            <td>
+                                {% if product.available %}
+                                    <span class="status-badge success">
+                                        <i class="fas fa-check-circle"></i>
+                                        In Stock
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge danger">
+                                        <i class="fas fa-times-circle"></i>
+                                        Out of Stock
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'store:edit_product' product.id %}" class="admin-btn admin-btn-secondary btn-small">
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+                                    </a>
+                                    <button onclick="deleteProduct({{ product.id }})" class="admin-btn admin-btn-danger btn-small">
+                                        <i class="fas fa-trash"></i>
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-box-open fa-3x"></i>
+                <h2>No Products Found</h2>
+                <p>Add your first product to get started.</p>
+                <a href="{% url 'store:add_product' %}" class="admin-btn admin-btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Add New Product
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Confirm stock updates
+    document.querySelectorAll('.stock-form').forEach(form => {
+        form.addEventListener('submit', (e) => {
+            if (!confirm('Are you sure you want to update the stock?')) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Delete product function
+    function deleteProduct(productId) {
+        if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+            fetch(`/store/products/${productId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert('Error deleting product');
+                }
+            });
+        }
+    }
+</script>
+{% endblock %}
