@@ -1,0 +1,1 @@
+web: gunicorn somersetshrimpshack.wsgi --log-file -
