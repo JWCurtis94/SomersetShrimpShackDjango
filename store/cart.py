@@ -1,4 +1,12 @@
+from decimal import Decimal
+from django.conf import settings
+from .models import Product
+
 class Cart:
+    """
+    Shopping cart implementation that stores cart data in the user's session.
+    Provides methods to add, update, remove items and calculate totals.
+    """
     def __init__(self, request):
         """Initialize the cart using Django's session"""
         self.session = request.session
@@ -9,37 +17,85 @@ class Cart:
 
         self.cart = cart
 
-    def add(self, product, quantity=1):
-        """Add a product to the cart"""
-        product_id = str(product.id)  # Convert to string (session keys must be strings)
-
-        if product_id in self.cart:
-            self.cart[product_id]["quantity"] += quantity
-        else:
-            self.cart[product_id] = {
-                "id": product.id,  # Store product ID
-                "name": product.name,
-                "price": str(product.price),
-                "quantity": quantity
+    def add(self, product, quantity=1, override_quantity=False, size=None):
+        """
+        Add a product to the cart or update its quantity.
+        
+        Args:
+            product: Product object to add
+            quantity: Number of items to add
+            override_quantity: If True, replace the current quantity instead of adding
+            size: Optional product size variant
+        """
+        product_id = str(product.id)
+        
+        # Create a unique identifier for product+size combinations
+        cart_key = product_id
+        if size:
+            cart_key = f"{product_id}_{size}"
+            
+        # Add new item to cart if not already present
+        if cart_key not in self.cart:
+            self.cart[cart_key] = {
+                'id': product_id,
+                'name': product.name,
+                'price': str(product.price),
+                'quantity': 0,
+                'size': size
             }
-
+        
+        # Update quantity based on override flag
+        if override_quantity:
+            self.cart[cart_key]['quantity'] = quantity
+        else:
+            self.cart[cart_key]['quantity'] += quantity
+            
         self.save()
 
-    def update(self, product_id, quantity):
-        """Update the quantity of a product in the cart"""
+    def update(self, product_id, quantity, size=None):
+        """
+        Update the quantity of a product in the cart
+        
+        Args:
+            product_id: ID of the product to update
+            quantity: New quantity value
+            size: Optional product size to identify the specific cart item
+        """
         product_id = str(product_id)  # Ensure ID is a string
-
-        if product_id in self.cart:
-            self.cart[product_id]["quantity"] = quantity  # Update quantity
+        
+        # Create the cart key based on product ID and optional size
+        cart_key = product_id
+        if size:
+            cart_key = f"{product_id}_{size}"
+            
+        # Update the item if it exists
+        if cart_key in self.cart and int(quantity) > 0:
+            self.cart[cart_key]["quantity"] = int(quantity)
             self.save()
+            return True
+        return False
 
-    def remove(self, product):
-        """Remove a product from the cart"""
+    def remove(self, product, size=None):
+        """
+        Remove a product from the cart
+        
+        Args:
+            product: Product object to remove
+            size: Optional product size to identify specific item to remove
+        """
         product_id = str(product.id)
+        
+        # Create the cart key based on product ID and optional size
+        cart_key = product_id
+        if size:
+            cart_key = f"{product_id}_{size}"
 
-        if product_id in self.cart:
-            del self.cart[product_id]
+        # Remove the item if it exists
+        if cart_key in self.cart:
+            del self.cart[cart_key]
             self.save()
+            return True
+        return False
 
     def save(self):
         """Save the cart in the session"""
@@ -57,4 +113,57 @@ class Cart:
 
     def get_total_price(self):
         """Calculate the total cost of all items in the cart"""
-        return sum(float(item["price"]) * item["quantity"] for item in self.cart.values())
+        return sum(Decimal(item["price"]) * item["quantity"] for item in self.cart.values())
+    
+    def get_item_count(self):
+        """Get total number of items in cart"""
+        return sum(item["quantity"] for item in self.cart.values())
+        
+    def get_cart_items(self):
+        """
+        Return cart items as CartItem objects with full product information
+        """
+        cart_items = []
+        for item in self.cart.values():
+            try:
+                product = Product.objects.get(id=item['id'])
+                cart_items.append(CartItem(
+                    product=product,
+                    quantity=item['quantity'],
+                    size=item.get('size')
+                ))
+            except Product.DoesNotExist:
+                # Handle case where product no longer exists
+                pass
+        
+        return cart_items
+        
+    def __iter__(self):
+        """
+        Make Cart class iterable to loop through items
+        """
+        for item in self.cart.values():
+            yield item
+            
+    def __len__(self):
+        """
+        Return the total number of items in the cart
+        """
+        return self.get_item_count()
+
+
+class CartItem:
+    """
+    Class representing an item in the shopping cart
+    Provides convenient access to product details and calculations
+    """
+    def __init__(self, product, quantity, size=None):
+        self.product = product
+        self.quantity = quantity
+        self.size = size
+        self.price = product.price
+        self.total_price = product.price * quantity
+    
+    def __str__(self):
+        size_text = f" ({self.size})" if self.size else ""
+        return f"{self.quantity} x {self.product.name}{size_text}"

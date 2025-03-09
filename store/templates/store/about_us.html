@@ -1,0 +1,154 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}About Somerset Shrimp Shack - Our Story{% endblock %}
+
+{% block content %}
+<section class="about-page">
+    <div class="container">
+        <!-- Breadcrumb navigation -->
+        <div class="product-breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'store:product_list' %}" class="breadcrumb-link">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <span class="breadcrumb-current">About Us</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="about-container">
+            <div class="about-header">
+                <h1 class="about-title">About Somerset Shrimp Shack</h1>
+                <div class="about-subtitle">Bringing Aquatic Beauty to Your Home</div>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-image-container">
+                    <img src="{% static 'store/images/about-us-hero.jpg' %}" alt="Somerset Shrimp Shack founder with shrimp tank" class="about-hero-image">
+                </div>
+                
+                <div class="about-story">
+                    <h2>Our Story</h2>
+                    <p>
+                        Somerset Shrimp Shack began in 2018 with a simple passion: to share the stunning 
+                        beauty of freshwater shrimp with fellow hobbyists across the UK. What started as 
+                        a small personal collection quickly grew into something much bigger.
+                    </p>
+                    <p>
+                        Founded by marine biologist and aquarium enthusiast James Somerset, our business 
+                        is dedicated to providing healthy, vibrant shrimp and plants from ethically managed 
+                        breeding programs. We believe that aquarium keeping should be sustainable, educational, 
+                        and bring joy to hobbyists of all experience levels.
+                    </p>
+                </div>
+                
+                <div class="about-mission">
+                    <h2>Our Mission</h2>
+                    <p>
+                        At Somerset Shrimp Shack, our mission is threefold:
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Quality</strong> - We provide only the healthiest shrimp and plants, 
+                            carefully selected and maintained in our state-of-the-art breeding facility.
+                        </li>
+                        <li>
+                            <strong>Education</strong> - We share knowledge with our community through 
+                            comprehensive care guides, responsive customer service, and regular workshops.
+                        </li>
+                        <li>
+                            <strong>Sustainability</strong> - We're committed to ethical breeding practices 
+                            that support conservation efforts and reduce impact on wild populations.
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="about-facility">
+                    <h2>Our Facility</h2>
+                    <div class="facility-images">
+                        <img src="{% static 'store/images/facility-1.jpg' %}" alt="Somerset Shrimp Shack breeding tanks" class="facility-image">
+                        <img src="{% static 'store/images/facility-2.jpg' %}" alt="Somerset Shrimp Shack plant nursery" class="facility-image">
+                    </div>
+                    <p>
+                        Located in the heart of Somerset, our breeding facility features over 100 carefully 
+                        maintained tanks dedicated to different shrimp varieties and aquatic plants. Our 
+                        water parameters are monitored daily, and we use advanced filtration systems to 
+                        ensure optimal conditions for all our livestock.
+                    </p>
+                    <p>
+                        We continuously invest in research and development to improve our breeding techniques 
+                        and develop new color varieties while maintaining genetic diversity and the health of 
+                        our breeding colonies.
+                    </p>
+                </div>
+                
+                <div class="about-team">
+                    <h2>Meet Our Team</h2>
+                    <div class="team-members">
+                        <div class="team-member">
+                            <img src="{% static 'store/images/team-james.jpg' %}" alt="James Somerset" class="team-member-image">
+                            <h3>James Somerset</h3>
+                            <div class="team-member-role">Founder & Lead Breeder</div>
+                            <p>Marine biologist with over 15 years of experience in aquarium keeping and shrimp breeding.</p>
+                        </div>
+                        
+                        <div class="team-member">
+                            <img src="{% static 'store/images/team-sarah.jpg' %}" alt="Sarah Wilson" class="team-member-image">
+                            <h3>Sarah Wilson</h3>
+                            <div class="team-member-role">Aquatic Plant Specialist</div>
+                            <p>Botanist specializing in aquatic plants and creating optimal environments for shrimp habitats.</p>
+                        </div>
+                        
+                        <div class="team-member">
+                            <img src="{% static 'store/images/team-mike.jpg' %}" alt="Mike Peterson" class="team-member-image">
+                            <h3>Mike Peterson</h3>
+                            <div class="team-member-role">Customer Care Manager</div>
+                            <p>Passionate aquarist dedicated to helping customers succeed with their shrimp keeping journey.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-values">
+                    <h2>Our Values</h2>
+                    <div class="values-grid">
+                        <div class="value-item">
+                            <i class="fas fa-leaf value-icon"></i>
+                            <h3>Sustainability</h3>
+                            <p>We're committed to environmentally responsible breeding practices.</p>
+                        </div>
+                        
+                        <div class="value-item">
+                            <i class="fas fa-heart value-icon"></i>
+                            <h3>Passion</h3>
+                            <p>We genuinely love what we do and share that enthusiasm with our customers.</p>
+                        </div>
+                        
+                        <div class="value-item">
+                            <i class="fas fa-star value-icon"></i>
+                            <h3>Quality</h3>
+                            <p>We never compromise on the health and quality of our livestock.</p>
+                        </div>
+                        
+                        <div class="value-item">
+                            <i class="fas fa-users value-icon"></i>
+                            <h3>Community</h3>
+                            <p>We foster a supportive community of shrimp enthusiasts across the UK.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-contact">
+                    <h2>Get In Touch</h2>
+                    <p>
+                        Have questions about our shrimp, plants, or care practices? We'd love to hear from you! 
+                        Our team is always available to help with your aquarium needs.
+                    </p>
+                    <a href="{% url 'store:contact' %}" class="btn btn-primary">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

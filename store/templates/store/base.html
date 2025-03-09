@@ -4,10 +4,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Aquarium Store{% endblock %}</title>
+    <meta name="description" content="Somerset Shrimp Shack - Your trusted source for premium aquarium shrimp, plants, and supplies">
+    <title>{% block title %}Somerset Shrimp Shack{% endblock %}</title>
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{% static 'store/images/favicon.png' %}">
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/favicons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/favicons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/favicons/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'assets/favicons/site.webmanifest' %}">
+    <link rel="mask-icon" href="{% static 'assets/favicons/safari-pinned-tab.svg' %}" color="#5bbad5">
+    <link rel="shortcut icon" href="{% static 'assets/favicons/favicon.ico' %}">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="{% static 'assets/favicons/browserconfig.xml' %}">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -15,131 +29,282 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="navbar-brand">
-            <a href="{% url 'store:product_list' %}" class="logo">
-                <i class="fas fa-fish"></i>
-                <span>Aquarium Store</span>
-            </a>
-        </div>
-        
-        <div class="navbar-menu">
-            <div class="navbar-categories">
-                <button class="category-btn">
-                    <i class="fas fa-list"></i>
-                    Categories
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <nav class="navbar" aria-label="Main navigation">
+                <div class="navbar-brand">
+                    <a href="{% url 'store:product_list' %}" class="navbar-logo-link">
+                        <img src="{% static 'assets\images\Logo.jpg' %}" alt="Somerset Shrimp Shack" class="navbar-logo">
+                    </a>
+                </div>
+                
+                <button class="navbar-toggler" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
                 </button>
-                <div class="category-dropdown">
-                    <a href="{% url 'store:product_list' %}?category=neocaridina">Neocaridina Shrimp</a>
-                    <a href="{% url 'store:product_list' %}?category=caridina">Caridina Shrimp</a>
-                    <a href="{% url 'store:product_list' %}?category=floating_plants">Floating Plants</a>
-                    <a href="{% url 'store:product_list' %}?category=stem_plants">Stem Plants</a>
-                    <a href="{% url 'store:product_list' %}?category=rosette_plants">Rosette Plants</a>
-                    <a href="{% url 'store:product_list' %}?category=botanicals">Botanicals</a>
-                    <a href="{% url 'store:product_list' %}?category=food">Food</a>
-                    <a href="{% url 'store:product_list' %}?category=merchandise">Merchandise</a>
+                
+                <div class="navbar-collapse">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a href="{% url 'store:product_list' %}" class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Home</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link" aria-haspopup="true">Shop</a>
+                            <div class="dropdown-menu">
+                                <a href="{% url 'store:product_list' %}?category=neocaridina" class="dropdown-item">
+                                    <i class="fas fa-water"></i> Neocaridina Shrimp
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=caridina" class="dropdown-item">
+                                    <i class="fas fa-water"></i> Caridina Shrimp
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=floating_plants" class="dropdown-item">
+                                    <i class="fas fa-leaf"></i> Floating Plants
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=stem_plants" class="dropdown-item">
+                                    <i class="fas fa-seedling"></i> Stem Plants
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=rosette_plants" class="dropdown-item">
+                                    <i class="fas fa-fan"></i> Rosette Plants
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=botanicals" class="dropdown-item">
+                                    <i class="fas fa-tree"></i> Botanicals
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=food" class="dropdown-item">
+                                    <i class="fas fa-drumstick-bite"></i> Food
+                                </a>
+                                <a href="{% url 'store:product_list' %}?category=merchandise" class="dropdown-item">
+                                    <i class="fas fa-tshirt"></i> Merchandise
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'store:about_us' %}">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'store:care_guides' %}">Care Guides</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'store:contact' %}">Contact</a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
-            
-            <a href="{% url 'store:cart_view' %}" class="nav-link cart-link">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Cart</span>
-                {% if cart.get_total_items %}
-                    <span class="cart-count">{{ cart.get_total_items }}</span>
-                {% endif %}
-            </a>
-            
-            {% if user.is_authenticated %}
-                <div class="user-menu">
-                    <button class="user-menu-btn">
-                        <i class="fas fa-user-circle"></i>
-                        <span>{{ user.username }}</span>
-                    </button>
-                    <div class="user-dropdown">
-                        <a href="{% url 'store:order_history' %}">
-                            <i class="fas fa-history"></i>
-                            Order History
-                        </a>
-                        {% if user.is_staff %}
-                            <a href="{% url 'store:dashboard' %}" class="admin-link">
-                                <i class="fas fa-tools"></i>
-                                Admin Dashboard
-                            </a>
+                
+                <div class="navbar-right">
+                    <a href="{% url 'store:cart_view' %}" class="nav-icon" aria-label="Shopping Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        {% if cart and cart.get_total_items %}
+                            <span class="badge">{{ cart.get_total_items }}</span>
                         {% endif %}
-                        <a href="{% url 'account_logout' %}">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Logout
-                        </a>
-                    </div>
+                    </a>
+                    
+                    {% if user.is_authenticated %}
+                        <div class="dropdown">
+                            <a href="#" class="nav-icon" aria-haspopup="true">
+                                <i class="fas fa-user-circle"></i>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="{% url 'store:order_history' %}" class="dropdown-item">
+                                    <i class="fas fa-history"></i> Order History
+                                </a>
+                                {% if user.is_staff %}
+                                    <a href="{% url 'store:dashboard' %}" class="dropdown-item">
+                                        <i class="fas fa-tools"></i> Admin Dashboard
+                                    </a>
+                                {% endif %}
+                                <a href="{% url 'account_logout' %}" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="dropdown">
+                            <a href="#" class="nav-icon" aria-haspopup="true">
+                                <i class="fas fa-user"></i>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="{% url 'account_login' %}" class="dropdown-item">
+                                    <i class="fas fa-sign-in-alt"></i> Login
+                                </a>
+                                <a href="{% url 'account_signup' %}" class="dropdown-item">
+                                    <i class="fas fa-user-plus"></i> Sign Up
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
-            {% else %}
-                <a href="{% url 'account_login' %}" class="nav-link">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Login</span>
-                </a>
-                <a href="{% url 'account_signup' %}" class="nav-link signup-btn">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Sign Up</span>
-                </a>
-            {% endif %}
+            </nav>
         </div>
-        
-        <button class="mobile-menu-btn">
-            <i class="fas fa-bars"></i>
-        </button>
-    </nav>
+    </header>
 
     <!-- Messages -->
     {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="message {{ message.tags }}">
-                    {{ message }}
-                    <button class="close-message">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            {% endfor %}
+        <div class="messages-container">
+            <div class="container">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }} fade-in">
+                        <div class="message-content">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %}"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button type="button" class="message-close" aria-label="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     {% endif %}
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main>
         {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>About Us</h3>
-                <p>Your trusted source for aquarium supplies and livestock.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <a href="{% url 'store:product_list' %}">Shop</a>
-                <a href="{% url 'store:cart_view' %}">Cart</a>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'store:order_history' %}">Order History</a>
-                {% endif %}
-            </div>
-            <div class="footer-section">
-                <h3>Connect With Us</h3>
-                <div class="social-links">
-                    <a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
-                    <a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
-                    <a href="#" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+        <div class="footer-waves"></div>
+        <div class="footer-bubbles"></div>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <img src="{% static 'assets\images\Logo_transparent.png' %}" alt="Somerset Shrimp Shack" class="footer-logo">
+                        <p class="footer-tagline">Premium aquatic livestock, plants and supplies for passionate aquarists.</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link" aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="footer-heading">Quick Links</h3>
+                        <ul class="footer-links">
+                            <li class="footer-link-item">
+                                <a href="{% url 'store:product_list' %}" class="footer-link">Home</a>
+                            </li>
+                            <li class="footer-link-item">
+                                <a href="#" class="footer-link">About Us</a>
+                            </li>
+                            <li class="footer-link-item">
+                                <a href="#" class="footer-link">Care Guides</a>
+                            </li>
+                            <li class="footer-link-item">
+                                <a href="#" class="footer-link">Contact</a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="footer-heading">Shop</h3>
+                        <ul class="footer-links">
+                            <li class="footer-link-item">
+                                <a href="{% url 'store:product_list' %}?category=neocaridina" class="footer-link">Neocaridina Shrimp</a>
+                            </li>
+                            <li class="footer-link-item">
+                                <a href="{% url 'store:product_list' %}?category=caridina" class="footer-link">Caridina Shrimp</a>
+                            </li>
+                            <li class="footer-link-item">
+                                <a href="{% url 'store:product_list' %}?category=floating_plants" class="footer-link">Aquatic Plants</a>
+                            </li>
+                            <li class="footer-link-item">
+                                <a href="{% url 'store:product_list' %}?category=merchandise" class="footer-link">Merchandise</a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="footer-heading">Contact Us</h3>
+                        <ul class="contact-info">
+                            <li class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>123 Aquarium Road, Somerset, UK</span>
+                            </li>
+                            <li class="contact-item">
+                                <i class="fas fa-phone-alt"></i>
+                                <span>+44 123 456 7890</span>
+                            </li>
+                            <li class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>info@somersetshrimp.com</span>
+                            </li>
+                        </ul>
+                        
+                        <h3 class="footer-heading">Newsletter</h3>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="Your email address" class="newsletter-input" required>
+                            <button type="submit" class="newsletter-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p class="copyright">&copy; 2025 Somerset Shrimp Shack. All rights reserved.</p>
                 </div>
             </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; {% now "Y" %} Aquarium Store. All rights reserved.</p>
         </div>
     </footer>
 
     <!-- JavaScript -->
-    <script src="{% static 'store/js/main.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navbar scroll effect
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    header.classList.add('header-scrolled');
+                } else {
+                    header.classList.remove('header-scrolled');
+                }
+            });
+            
+            // Mobile menu toggle
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            
+            if (navbarToggler) {
+                navbarToggler.addEventListener('click', function() {
+                    navbarCollapse.classList.toggle('show');
+                    const expanded = navbarCollapse.classList.contains('show');
+                    navbarToggler.setAttribute('aria-expanded', expanded);
+                });
+            }
+            
+            // Message close button
+            const messageCloseButtons = document.querySelectorAll('.message-close');
+            messageCloseButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const message = this.closest('.message');
+                    message.style.opacity = '0';
+                    setTimeout(() => {
+                        message.remove();
+                    }, 300);
+                });
+            });
+
+            // Auto-hide messages after 5 seconds
+            setTimeout(() => {
+                const messages = document.querySelectorAll('.message');
+                messages.forEach(message => {
+                    message.style.opacity = '0';
+                    setTimeout(() => {
+                        message.remove();
+                    }, 300);
+                });
+            }, 5000);
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
