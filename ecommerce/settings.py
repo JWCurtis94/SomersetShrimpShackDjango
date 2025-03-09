@@ -11,7 +11,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'default-secret-key-for-dev')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
@@ -22,6 +22,10 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').sp
 # Add Heroku domain to allowed hosts
 if 'HEROKU_APP_NAME' in os.environ:
     ALLOWED_HOSTS.append(f"{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com")
+else:
+    # If HEROKU_APP_NAME is not set but we're on Heroku, allow all hosts
+    ALLOWED_HOSTS.append('somersetshrimpshack.herokuapp.com')
+    ALLOWED_HOSTS.append('.herokuapp.com')
 
 # Support Heroku's proxying setup
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -36,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',  # Fixed missing comma
+    'django.contrib.sites',
     'store',
     'allauth',
     'allauth.account',
@@ -56,31 +60,22 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
-# Database configuration
-# Uses DATABASE_URL if available (Heroku), falls back to local PostgreSQL settings
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME', 'your_db_name'),
-            'USER': os.environ.get('DB_USER', 'postgres'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', 'Cavaliers16!'),
-            'HOST': os.environ.get('DB_HOST', 'localhost'),
-            'PORT': os.environ.get('DB_PORT', '5432'),
-        }
-    }
+# Database configuration - simplified to always use dj_database_url
+# This will use DATABASE_URL from environment (provided by Heroku PostgreSQL add-on)
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL', 'postgres://postgres:Cavaliers16!@localhost:5432/your_db_name'),
+        conn_max_age=600,
+        ssl_require=True if not DEBUG else False,
+    )
+}
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'store', 'templates'),
-            os.path.join(BASE_DIR, 'templates'),  # Add this line
+            os.path.join(BASE_DIR, 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -97,7 +92,7 @@ TEMPLATES = [
 ROOT_URLCONF = 'ecommerce.urls'
 
 # Security Settings
-SECURE_SSL_REDIRECT = not DEBUG
+SECURE_SSL_REDIRECT = not DEBUG and os.environ.get('DISABLE_SECURE_SSL_REDIRECT', 'False') != 'True'
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
 SECURE_BROWSER_XSS_FILTER = True
