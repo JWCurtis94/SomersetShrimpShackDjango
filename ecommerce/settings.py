@@ -63,7 +63,9 @@ MIDDLEWARE = [
 # Database configuration - simplified to always use dj_database_url
 # This will use DATABASE_URL from environment (provided by Heroku PostgreSQL add-on)
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL')
+    )
 }
 
 TEMPLATES = [
