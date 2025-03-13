@@ -19,13 +19,10 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 # Allow all App Engine URLs and local development
 ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# Add Heroku domain to allowed hosts
-if 'HEROKU_APP_NAME' in os.environ:
-    ALLOWED_HOSTS.append(f"{os.environ.get('HEROKU_APP_NAME')}.herokuapp.com")
-else:
-    # If HEROKU_APP_NAME is not set but we're on Heroku, allow all hosts
-    ALLOWED_HOSTS.append('somersetshrimpshack.herokuapp.com')
-    ALLOWED_HOSTS.append('.herokuapp.com')
+# Add Heroku domains to allowed hosts
+ALLOWED_HOSTS.append('somersetshrimpshack.herokuapp.com')
+ALLOWED_HOSTS.append('somersetshrimpshack-3980677a164f.herokuapp.com')
+ALLOWED_HOSTS.append('.herokuapp.com')
 
 # Support Heroku's proxying setup
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -60,19 +57,42 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
-# Database configuration
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-# Override database configuration for Heroku
+# Database configuration - explicitly using DATABASE_URL for Heroku or SQLite for local dev
 if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
-    # Ensure connections are closed properly
-    DATABASES['default']['CONN_MAX_AGE'] = 500
+    # Get the actual DATABASE_URL environment variable
+    db_from_env = os.environ.get('DATABASE_URL')
+    
+    # Parse the URL and configure the database
+    if db_from_env and not db_from_env.startswith('postgres://your_heroku'):
+        # Only use the DATABASE_URL if it's not a placeholder
+        DATABASES = {
+            'default': dj_database_url.config(default=db_from_env, conn_max_age=600, ssl_require=True)
+        }
+    else:
+        # If DATABASE_URL is a placeholder, use the DATABASE config var instead
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.environ.get('HEROKU_POSTGRESQL_ONYX_URL', 'db'),
+                'USER': os.environ.get('HEROKU_POSTGRESQL_ONYX_USER', 'postgres'),
+                'PASSWORD': os.environ.get('HEROKU_POSTGRESQL_ONYX_PASSWORD', ''),
+                'HOST': os.environ.get('HEROKU_POSTGRESQL_ONYX_HOST', 'localhost'),
+                'PORT': os.environ.get('HEROKU_POSTGRESQL_ONYX_PORT', '5432'),
+            }
+        }
+else:
+    # For local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+
+# Debug print for database connection (temporary)
+print(f"Database config: ENGINE={DATABASES['default'].get('ENGINE')}, HOST={DATABASES['default'].get('HOST', 'localhost')}")
+
+ROOT_URLCONF = 'ecommerce.urls'
 
 TEMPLATES = [
     {
@@ -93,7 +113,7 @@ TEMPLATES = [
     },
 ]
 
-ROOT_URLCONF = 'ecommerce.urls'
+WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
 # Security Settings
 SECURE_SSL_REDIRECT = not DEBUG and os.environ.get('DISABLE_SECURE_SSL_REDIRECT', 'False') != 'True'
