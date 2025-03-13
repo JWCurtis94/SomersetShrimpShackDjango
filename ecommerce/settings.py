@@ -88,6 +88,13 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
+    
+    if 'DATABASE_URL' in os.environ:
+        db_url = os.environ.get('DATABASE_URL')
+        if db_url and 'postgres:' in db_url:
+            # Print for debugging
+            print(f"Using DATABASE_URL: {db_url[:15]}...")
+            DATABASES['default'] = dj_database_url.config(ssl_require=True)
 
 # Debug print for database connection (temporary)
 print(f"Database config: ENGINE={DATABASES['default'].get('ENGINE')}, HOST={DATABASES['default'].get('HOST', 'localhost')}")
@@ -154,7 +161,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Whitenoise settings
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
