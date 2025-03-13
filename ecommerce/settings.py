@@ -61,8 +61,6 @@ MIDDLEWARE = [
 ]
 
 # Database configuration
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -70,9 +68,11 @@ DATABASES = {
     }
 }
 
-# Configure for Heroku Postgres
+# Override database configuration for Heroku
 if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+    DATABASES['default'] = dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    # Ensure connections are closed properly
+    DATABASES['default']['CONN_MAX_AGE'] = 500
 
 TEMPLATES = [
     {
