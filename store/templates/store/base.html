@@ -268,11 +268,11 @@
                     header.classList.remove('header-scrolled');
                 }
             });
-            
+    
             // Mobile menu toggle
             const navbarToggler = document.querySelector('.navbar-toggler');
             const navbarCollapse = document.querySelector('.navbar-collapse');
-            
+    
             if (navbarToggler) {
                 navbarToggler.addEventListener('click', function() {
                     navbarCollapse.classList.toggle('show');
@@ -280,7 +280,15 @@
                     navbarToggler.setAttribute('aria-expanded', expanded);
                 });
             }
-            
+    
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!navbarToggler.contains(event.target) && !navbarCollapse.contains(event.target)) {
+                    navbarCollapse.classList.remove('show');
+                    navbarToggler.setAttribute('aria-expanded', 'false');
+                }
+            });
+    
             // Message close button
             const messageCloseButtons = document.querySelectorAll('.message-close');
             messageCloseButtons.forEach(button => {
@@ -292,7 +300,7 @@
                     }, 300);
                 });
             });
-
+    
             // Auto-hide messages after 5 seconds
             setTimeout(() => {
                 const messages = document.querySelectorAll('.message');
