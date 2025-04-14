@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'default-secret-key-for-dev')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # Set to True for debugging
+DEBUG = False  # Set to True for debugging
 
 # Allow all App Engine URLs and local development
 ALLOWED_HOSTS = ['*']  # Allow all hosts temporarily for debugging
