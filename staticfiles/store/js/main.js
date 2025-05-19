@@ -1,214 +1,226 @@
+/**
+ * Somerset Shrimp Shack - Main Frontend JavaScript
+ * Handles all frontend user interactions including navigation, filtering,
+ * and product display functionality
+ */
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navbarMenu = document.querySelector('.navbar-menu');
-    const categoryBtn = document.querySelector('.category-btn');
-    const categoryDropdown = document.querySelector('.category-dropdown');
-    const userMenuBtn = document.querySelector('.user-menu-btn');
-    const userDropdown = document.querySelector('.user-dropdown');
-    const closeMessageBtns = document.querySelectorAll('.close-message');
-    const searchInput = document.querySelector('.search-input');
-    const productCards = document.querySelectorAll('.product-card');
-    const priceRange = document.querySelector('#price-range');
-    const priceValue = document.querySelector('#price-value');
-    const categoryFilters = document.querySelectorAll('.category-filter');
-    const adminSidebarToggle = document.querySelector('.admin-sidebar-toggle');
-    const adminSidebar = document.querySelector('.admin-sidebar');
-    const imageInput = document.querySelector('input[type="file"]');
-    const imagePreview = document.querySelector('.admin-product-image');
+    const elements = {
+        // Navigation elements
+        mobileMenuBtn: document.querySelector('.mobile-menu-btn'),
+        navbarMenu: document.querySelector('.navbar-menu'),
+        navbar: document.querySelector('.navbar'),
+        categoryBtn: document.querySelector('.category-btn'),
+        categoryDropdown: document.querySelector('.category-dropdown'),
+        userMenuBtn: document.querySelector('.user-menu-btn'),
+        userDropdown: document.querySelector('.user-dropdown'),
+        
+        // Product elements
+        productCards: document.querySelectorAll('.product-card'),
+        searchInput: document.querySelector('.search-input'),
+        priceRange: document.querySelector('#price-range'),
+        priceValue: document.querySelector('#price-value'),
+        categoryFilters: document.querySelectorAll('.category-filter'),
+        categorySections: document.querySelectorAll('.category-section'),
+        
+        // UI elements
+        closeMessageBtns: document.querySelectorAll('.close-message'),
+        quantityInputs: document.querySelectorAll('input[type="number"]'),
+        forms: document.querySelectorAll('form')
+    };
     
-    // --- Mobile menu toggle ---
-    if (mobileMenuBtn && navbarMenu) {
-        mobileMenuBtn.addEventListener('click', () => {
-            navbarMenu.classList.toggle('active');
-        });
-    }
+    // --- Initialize UI Components ---
+    initNavigation(elements);
+    initMessageSystem(elements);
+    initProductFilters(elements);
+    initFormHandlers(elements);
     
-    // --- Category dropdown toggle ---
-    if (categoryBtn && categoryDropdown) {
-        categoryBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            categoryDropdown.classList.toggle('active');
-        });
-    }
-    
-    // --- User dropdown toggle ---
-    if (userMenuBtn && userDropdown) {
-        userMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userDropdown.classList.toggle('active');
-        });
-    }
-    
-    // --- Close dropdowns when clicking outside ---
-    document.addEventListener('click', (e) => {
-        // Close category dropdown
-        if (categoryDropdown && categoryBtn && 
-            !categoryDropdown.contains(e.target) && !categoryBtn.contains(e.target)) {
-            categoryDropdown.classList.remove('active');
+    // --- Navigation Functions ---
+    function initNavigation(elements) {
+        // Mobile menu toggle
+        if (elements.mobileMenuBtn && elements.navbarMenu) {
+            elements.mobileMenuBtn.addEventListener('click', () => {
+                elements.navbarMenu.classList.toggle('active');
+            });
         }
         
-        // Close user dropdown
-        if (userDropdown && userMenuBtn &&
-            !userDropdown.contains(e.target) && !userMenuBtn.contains(e.target)) {
-            userDropdown.classList.remove('active');
+        // Category dropdown toggle
+        if (elements.categoryBtn && elements.categoryDropdown) {
+            elements.categoryBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                elements.categoryDropdown.classList.toggle('active');
+            });
         }
-    });
-    
-    // --- Message handling ---
-    if (closeMessageBtns.length > 0) {
-        // Close message buttons
-        closeMessageBtns.forEach(button => {
-            button.addEventListener('click', () => {
-                const message = button.closest('.message');
-                message.style.opacity = '0';
-                setTimeout(() => message.remove(), 300);
-            });
-        });
         
-        // Auto-hide messages after 5 seconds
-        setTimeout(() => {
-            document.querySelectorAll('.message').forEach(message => {
-                message.style.opacity = '0';
-                setTimeout(() => message.remove(), 300);
+        // User dropdown toggle
+        if (elements.userMenuBtn && elements.userDropdown) {
+            elements.userMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                elements.userDropdown.classList.toggle('active');
             });
-        }, 5000);
-    }
-    
-    // --- Product search functionality ---
-    if (searchInput && productCards.length > 0) {
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            // Close category dropdown
+            if (elements.categoryDropdown && elements.categoryBtn && 
+                !elements.categoryDropdown.contains(e.target) && !elements.categoryBtn.contains(e.target)) {
+                elements.categoryDropdown.classList.remove('active');
+            }
             
-            productCards.forEach(card => {
+            // Close user dropdown
+            if (elements.userDropdown && elements.userMenuBtn &&
+                !elements.userDropdown.contains(e.target) && !elements.userMenuBtn.contains(e.target)) {
+                elements.userDropdown.classList.remove('active');
+            }
+        });
+        
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            if (elements.navbar) {
+                if (window.scrollY > 50) {
+                    elements.navbar.classList.add('navbar-scrolled');
+                } else {
+                    elements.navbar.classList.remove('navbar-scrolled');
+                }
+            }
+        });
+    }
+    
+    // --- Message System Functions ---
+    function initMessageSystem(elements) {
+        if (elements.closeMessageBtns.length > 0) {
+            // Close message buttons
+            elements.closeMessageBtns.forEach(button => {
+                button.addEventListener('click', () => {
+                    const message = button.closest('.message');
+                    fadeOutAndRemove(message);
+                });
+            });
+            
+            // Auto-hide messages after 5 seconds
+            setTimeout(() => {
+                document.querySelectorAll('.message').forEach(message => {
+                    fadeOutAndRemove(message);
+                });
+            }, 5000);
+        }
+        
+        function fadeOutAndRemove(element) {
+            element.style.opacity = '0';
+            setTimeout(() => element.remove(), 300);
+        }
+    }
+    
+    // --- Product Filter Functions ---
+    function initProductFilters(elements) {
+        // Search functionality
+        if (elements.searchInput && elements.productCards.length > 0) {
+            elements.searchInput.addEventListener('input', (e) => {
+                filterProducts();
+            });
+        }
+        
+        // Price range filter
+        if (elements.priceRange && elements.priceValue && elements.productCards.length > 0) {
+            // Initialize price value display
+            elements.priceValue.textContent = `£${elements.priceRange.value}`;
+            
+            elements.priceRange.addEventListener('input', () => {
+                const maxPrice = parseFloat(elements.priceRange.value);
+                elements.priceValue.textContent = `£${maxPrice}`;
+                filterProducts();
+            });
+        }
+        
+        // Category filter
+        if (elements.categoryFilters.length > 0 && elements.productCards.length > 0) {
+            elements.categoryFilters.forEach(filter => {
+                filter.addEventListener('change', () => {
+                    filterProducts();
+                });
+            });
+        }
+        
+        // Combined filter function
+        function filterProducts() {
+            // Get filter values
+            const searchTerm = elements.searchInput ? elements.searchInput.value.toLowerCase() : '';
+            const maxPrice = elements.priceRange ? parseFloat(elements.priceRange.value) : Infinity;
+            
+            // Get checked categories
+            const checkedCategories = Array.from(elements.categoryFilters || [])
+                .filter(f => f.checked)
+                .map(f => f.value);
+            
+            // Apply filters to each product card
+            elements.productCards.forEach(card => {
+                // Get product data
                 const title = card.querySelector('.product-title').textContent.toLowerCase();
                 const description = card.querySelector('.product-description')?.textContent.toLowerCase() || '';
+                const productPrice = parseFloat(card.querySelector('.product-price')?.dataset.price || '0');
+                const cardCategory = card.dataset.category;
                 
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                // Check if product matches all filters
+                const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                const matchesPrice = productPrice <= maxPrice;
+                const matchesCategory = checkedCategories.length === 0 || checkedCategories.includes(cardCategory);
+                
+                // Show or hide product based on filters
+                if (matchesSearch && matchesPrice && matchesCategory) {
                     card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }
             });
             
-            updateCategorySections();
-        });
-    }
-    
-    // --- Price range filter ---
-    if (priceRange && priceValue && productCards.length > 0) {
-        // Initialize price value display
-        priceValue.textContent = `£${priceRange.value}`;
+            // Update category sections visibility
+            updateCategorySections(checkedCategories);
+        }
         
-        priceRange.addEventListener('input', () => {
-            const maxPrice = parseFloat(priceRange.value);
-            priceValue.textContent = `£${maxPrice}`;
-            
-            // Filter products by price
-            productCards.forEach(card => {
-                const productPrice = parseFloat(card.querySelector('.product-price').dataset.price);
-                if (productPrice <= maxPrice) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-            
-            updateCategorySections();
-        });
-    }
-    
-    // --- Category filter ---
-    if (categoryFilters.length > 0 && productCards.length > 0) {
-        categoryFilters.forEach(filter => {
-            filter.addEventListener('change', () => {
-                // Get all checked categories
-                const checkedCategories = Array.from(categoryFilters)
-                    .filter(f => f.checked)
-                    .map(f => f.value);
-                
-                // If no categories are checked, show all products
-                if (checkedCategories.length === 0) {
-                    productCards.forEach(card => {
-                        card.style.display = 'flex';
-                    });
-                } else {
-                    // Filter products by selected categories
-                    productCards.forEach(card => {
-                        const cardCategory = card.dataset.category;
-                        if (checkedCategories.includes(cardCategory)) {
-                            card.style.display = 'flex';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
+        // Helper function to update category sections visibility
+        function updateCategorySections(checkedCategories = null) {
+            elements.categorySections.forEach(section => {
+                // If specific categories are checked, handle that case
+                if (checkedCategories && checkedCategories.length > 0) {
+                    const categoryName = section.querySelector('.category-title').textContent.toLowerCase().replace(/\s+/g, '_');
+                    if (checkedCategories.includes(categoryName)) {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                    return;
                 }
                 
-                updateCategorySections(checkedCategories);
+                // Otherwise, check if any products are visible
+                const visibleProducts = section.querySelectorAll('.product-card[style="display: flex;"]');
+                section.style.display = visibleProducts.length > 0 ? 'block' : 'none';
+            });
+        }
+    }
+    
+    // --- Form Handling Functions ---
+    function initFormHandlers(elements) {
+        // Quantity input validation
+        elements.quantityInputs.forEach(input => {
+            input.addEventListener('change', (e) => {
+                const value = parseInt(e.target.value);
+                const min = parseInt(e.target.min) || 1;
+                if (value < min) {
+                    e.target.value = min;
+                }
             });
         });
-    }
-    
-    // Helper function to update category sections visibility
-    function updateCategorySections(checkedCategories = null) {
-        document.querySelectorAll('.category-section').forEach(section => {
-            // If specific categories are checked, handle that case
-            if (checkedCategories && checkedCategories.length > 0) {
-                const categoryName = section.querySelector('.category-title').textContent.toLowerCase().replace(/\s+/g, '_');
-                if (checkedCategories.includes(categoryName)) {
-                    section.style.display = 'block';
-                } else {
-                    section.style.display = 'none';
+        
+        // Form submission loading states
+        elements.forms.forEach(form => {
+            form.addEventListener('submit', () => {
+                const submitButton = form.querySelector('button[type="submit"]');
+                if (submitButton) {
+                    submitButton.classList.add('loading');
+                    submitButton.disabled = true;
                 }
-                return;
-            }
-            
-            // Otherwise, check if any products are visible
-            const visibleProducts = section.querySelectorAll('.product-card[style="display: flex;"]');
-            section.style.display = visibleProducts.length > 0 ? 'block' : 'none';
-        });
-    }
-    
-    // --- Quantity input validation ---
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-        input.addEventListener('change', (e) => {
-            const value = parseInt(e.target.value);
-            const min = parseInt(e.target.min) || 1;
-            if (value < min) {
-                e.target.value = min;
-            }
-        });
-    });
-    
-    // --- Form submission loading states ---
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', () => {
-            const submitButton = form.querySelector('button[type="submit"]');
-            if (submitButton) {
-                submitButton.classList.add('loading');
-                submitButton.disabled = true;
-            }
-        });
-    });
-    
-    // --- Admin sidebar toggle ---
-    if (adminSidebarToggle && adminSidebar) {
-        adminSidebarToggle.addEventListener('click', () => {
-            adminSidebar.classList.toggle('active');
-        });
-    }
-    
-    // --- Image preview for product editing ---
-    if (imageInput && imagePreview) {
-        imageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+            });
         });
     }
 });

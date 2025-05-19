@@ -1,0 +1,77 @@
+/* Message notifications */
+.message {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: flex-start;
+}
+
+.message-success {
+  background-color: rgba(60, 184, 120, 0.15);
+  border-left: 4px solid var(--secondary);
+}
+
+.message-info {
+  background-color: rgba(0, 136, 204, 0.15);
+  border-left: 4px solid var(--primary);
+}
+
+.message-warning {
+  background-color: rgba(255, 127, 80, 0.15);
+  border-left: 4px solid var(--accent);
+}
+
+.message-error {
+  background-color: rgba(231, 76, 60, 0.15);
+  border-left: 4px solid var(--error);
+}
+
+.message-icon {
+  margin-right: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.message-success .message-icon {
+  color: var(--secondary);
+}
+
+.message-info .message-icon {
+  color: var(--primary);
+}
+
+.message-warning .message-icon {
+  color: var(--accent);
+}
+
+.message-error .message-icon {
+  color: var(--error);
+}
+
+.message-content {
+  flex: 1;
+}
+
+.message-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.message-body {
+  color: var(--gray-700);
+}
+
+.message-close {
+  background: none;
+  border: none;
+  color: var(--gray-600);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0.25rem;
+  margin-left: 0.5rem;
+}
+
+.message-close:hover {
+  color: var(--gray-800);
+}

@@ -25,14 +25,14 @@
     
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'store/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'store/css/main.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <!-- Header -->
     <header class="header" id="header">
-        <div class="container">
-            <nav class="navbar" aria-label="Main navigation">
+        <nav class="navbar" aria-label="Main navigation">
+            <div class="navbar-container">
                 <div class="navbar-brand">
                     <a href="{% url 'store:product_list' %}" class="navbar-logo-link">
                         <img src="{% static 'assets\images\Logo.jpg' %}" alt="Somerset Shrimp Shack" class="navbar-logo">
@@ -49,7 +49,7 @@
                             <a href="{% url 'store:product_list' %}" class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Home</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link" aria-haspopup="true">Shop</a>
+                            <a href="#" class="nav-link {% if 'category' in request.GET %}active{% endif %}" aria-haspopup="true">Shop</a>
                             <div class="dropdown-menu">
                                 <a href="{% url 'store:product_list' %}?category=neocaridina" class="dropdown-item">
                                     <i class="fas fa-water"></i> Neocaridina Shrimp
@@ -78,13 +78,13 @@
                             </div>
                         </li>
                         <li class="nav-item">
-                            <a href="{% url 'store:about_us' %}">About Us</a>
+                            <a href="{% url 'store:about_us' %}" class="nav-link {% if request.resolver_match.url_name == 'about_us' %}active{% endif %}">About Us</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{% url 'store:care_guides' %}">Care Guides</a>
+                            <a href="{% url 'store:care_guides' %}" class="nav-link {% if request.resolver_match.url_name == 'care_guides' %}active{% endif %}">Care Guides</a>
                         </li>
                         <li class="nav-item">
-                            <a href="{% url 'store:contact' %}">Contact</a>
+                            <a href="{% url 'store:contact' %}" class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">Contact</a>
                         </li>
                     </ul>
                 </div>
@@ -132,8 +132,8 @@
                         </div>
                     {% endif %}
                 </div>
-            </nav>
-        </div>
+            </div>
+        </nav>
     </header>
 
     <!-- Messages -->
@@ -193,13 +193,13 @@
                                 <a href="{% url 'store:product_list' %}" class="footer-link">Home</a>
                             </li>
                             <li class="footer-link-item">
-                                <a href="#" class="footer-link">About Us</a>
+                                <a href="{% url 'store:about_us' %}" class="footer-link">About Us</a>
                             </li>
                             <li class="footer-link-item">
-                                <a href="#" class="footer-link">Care Guides</a>
+                                <a href="{% url 'store:care_guides' %}" class="footer-link">Care Guides</a>
                             </li>
                             <li class="footer-link-item">
-                                <a href="#" class="footer-link">Contact</a>
+                                <a href="{% url 'store:contact' %}" class="footer-link">Contact</a>
                             </li>
                         </ul>
                     </div>
@@ -257,62 +257,91 @@
     </footer>
 
     <!-- JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Navbar scroll effect
-            const header = document.getElementById('header');
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 50) {
-                    header.classList.add('header-scrolled');
-                } else {
-                    header.classList.remove('header-scrolled');
-                }
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Navbar scroll effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                header.classList.add('header-scrolled');
+            } else {
+                header.classList.remove('header-scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const navbarToggler = document.querySelector('.navbar-toggler');
+        const navbarCollapse = document.querySelector('.navbar-collapse');
+
+        if (navbarToggler) {
+            navbarToggler.addEventListener('click', function() {
+                navbarCollapse.classList.toggle('show');
+                const expanded = navbarCollapse.classList.contains('show');
+                navbarToggler.setAttribute('aria-expanded', expanded);
             });
-    
-            // Mobile menu toggle
-            const navbarToggler = document.querySelector('.navbar-toggler');
-            const navbarCollapse = document.querySelector('.navbar-collapse');
-    
-            if (navbarToggler) {
-                navbarToggler.addEventListener('click', function() {
-                    navbarCollapse.classList.toggle('show');
-                    const expanded = navbarCollapse.classList.contains('show');
-                    navbarToggler.setAttribute('aria-expanded', expanded);
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.navbar-toggler') && !event.target.closest('.navbar-collapse')) {
+                navbarCollapse.classList.remove('show');
+                navbarToggler.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Handle dropdown menus in navbar
+        const dropdownToggles = document.querySelectorAll('.nav-item.dropdown .nav-link');
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const dropdown = this.closest('.dropdown');
+                const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+                
+                // Close all other dropdowns
+                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                    if (menu !== dropdownMenu) {
+                        menu.classList.remove('show');
+                    }
+                });
+                
+                // Toggle current dropdown
+                dropdownMenu.classList.toggle('show');
+            });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown')) {
+                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                    menu.classList.remove('show');
                 });
             }
-    
-            // Close dropdowns when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!navbarToggler.contains(event.target) && !navbarCollapse.contains(event.target)) {
-                    navbarCollapse.classList.remove('show');
-                    navbarToggler.setAttribute('aria-expanded', 'false');
-                }
-            });
-    
-            // Message close button
-            const messageCloseButtons = document.querySelectorAll('.message-close');
-            messageCloseButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const message = this.closest('.message');
-                    message.style.opacity = '0';
-                    setTimeout(() => {
-                        message.remove();
-                    }, 300);
-                });
-            });
-    
-            // Auto-hide messages after 5 seconds
-            setTimeout(() => {
-                const messages = document.querySelectorAll('.message');
-                messages.forEach(message => {
-                    message.style.opacity = '0';
-                    setTimeout(() => {
-                        message.remove();
-                    }, 300);
-                });
-            }, 5000);
         });
-    </script>
-    {% block extra_js %}{% endblock %}
+
+        // Message close button
+        const messageCloseButtons = document.querySelectorAll('.message-close');
+        messageCloseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const message = this.closest('.message');
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+            });
+        });
+
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(message => {
+                message.style.opacity = '0';
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+            });
+        }, 5000);
+    });
+</script>
+{% block extra_js %}{% endblock %}
 </body>
 </html>

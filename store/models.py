@@ -3,11 +3,13 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator, MinValueValidator, RegexValidator
 from django.utils.text import slugify
 from django.db.models import Sum, F
+from django.urls import reverse
 from decimal import Decimal
 import uuid
 
 # Function to generate unique slug
 def generate_unique_slug(instance):
+    """Generate a unique slug for the product name"""
     base_slug = slugify(instance.name)
     slug = base_slug
     counter = 1
@@ -27,15 +29,119 @@ def generate_unique_slug(instance):
             query = Product.objects.filter(slug=slug)
     return slug
 
+# Add this model alongside your other models
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    slug = models.SlugField(unique=True)
+    
+    class Meta:
+        verbose_name_plural = "Categories"
+    
+    def __str__(self):
+        return self.name
+    
+# Define constant choices at module level
+SIZE_CHOICES = [
+    ('small', 'Small'),
+    ('medium', 'Medium'),
+    ('large', 'Large'),
+]
+
 class Product(models.Model):
+    """
+    Model representing inventory products available for sale
+    """
+    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)
+    description = models.TextField(blank=True)
+    meta_description = models.CharField(max_length=160, blank=True, help_text="SEO meta description")
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
+    size = models.CharField(max_length=20, choices=SIZE_CHOICES, blank=True, null=True)
+    image = models.ImageField(
+        upload_to='products/%Y/%m/',
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(['jpg', 'jpeg', 'png', 'webp'])]
+    )
+    stock = models.IntegerField(default=0)
+    available = models.BooleanField(default=True, db_index=True)
+    featured = models.BooleanField(default=False, help_text="Feature this product on the homepage")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['category', 'available']),
+            models.Index(fields=['price', 'available']),
+            models.Index(fields=['featured', 'available']),
+            models.Index(fields=['size', 'category']),
+        ]
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
+
+    def save(self, *args, **kwargs):
+        # Generate slug if not provided
+        if not self.slug:
+            self.slug = generate_unique_slug(self)
+
+        # NOTE: We're commenting out the auto-update available status to fix the issue
+        # with products not appearing in the store
+        # self.available = self.stock > 0
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        if self.size:
+            return f"{self.name} - {self.get_size_display()}"
+        return self.name
+
+    def get_absolute_url(self):
+        """Return the URL for this product"""
+        return reverse('store:product_detail', args=[self.slug])
+
+    @property
+    def is_in_stock(self):
+        """Check if product is in stock"""
+        return self.stock > 0 and self.available
+
+    @property
+    def display_price(self):
+        """Return price formatted for display with £ symbol"""
+        return f"£{self.price}"
+
+    @property
+    def stock_status(self):
+        """Return stock status as a string"""
+        if not self.available:
+            return "outofstock"
+        elif self.stock <= 0:
+            return "outofstock"
+        elif self.stock <= 5:
+            return "low"
+        else:
+            return "instock"
+
+    @property
+    def get_category_display_name(self):
+        """Return the human-readable category name"""
+        return self.category.name if self.category else "Unknown Category"
+
+
+class OrderItem(models.Model):
+    """
+    Model representing an individual item within an order
+    """
+    order = models.ForeignKey('Order', related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.PROTECT)
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     CATEGORY_CHOICES = [
-        ('neocaridina', 'Neocaridina Shrimp'),
-        ('caridina', 'Caridina Shrimp'),
-        ('floating_plants', 'Floating Plants'),
-        ('stem_plants', 'Stem Plants'),
-        ('rosette_plants', 'Rosette Plants'),
-        ('botanicals', 'Botanicals'),
         ('food', 'Food'),
+        ('drink', 'Drink'),
         ('merchandise', 'Merchandise'),
     ]
     
@@ -51,7 +157,6 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     meta_description = models.CharField(max_length=160, blank=True, help_text="SEO meta description")
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
-    # Added size field for products that come in different sizes (like shrimp)
     size = models.CharField(max_length=20, choices=SIZE_CHOICES, blank=True, null=True)
     image = models.ImageField(
         upload_to='products/%Y/%m/',  
@@ -81,8 +186,9 @@ class Product(models.Model):
         if not self.slug:
             self.slug = generate_unique_slug(self)
             
-        # Auto-update available status based on stock
-        self.available = self.stock > 0
+        # NOTE: We're commenting out the auto-update available status to fix the issue
+        # with products not appearing in the store
+        # self.available = self.stock > 0
         
         super().save(*args, **kwargs)
 
@@ -91,8 +197,13 @@ class Product(models.Model):
             return f"{self.name} - {self.get_size_display()}"
         return self.name
 
+    def get_absolute_url(self):
+        """Return the URL for this product"""
+        return reverse('store:product_detail', args=[self.slug])
+
     @property
     def is_in_stock(self):
+        """Check if product is in stock"""
         return self.stock > 0 and self.available
         
     @property
@@ -103,15 +214,28 @@ class Product(models.Model):
     @property
     def stock_status(self):
         """Return stock status as a string"""
-        if not self.available or self.stock <= 0:
+        if not self.available:
+            return "outofstock"
+        elif self.stock <= 0:
             return "outofstock"
         elif self.stock <= 5:
             return "low"
         else:
             return "instock"
+            
+    @property
+    def get_category_display_name(self):
+        """Return the human-readable category name"""
+        for cat_value, cat_name in self.CATEGORY_CHOICES:
+            if self.category == cat_value:
+                return cat_name
+        return "Unknown Category"
 
 
 class OrderItem(models.Model):
+    """
+    Model representing an individual item within an order
+    """
     order = models.ForeignKey('Order', related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, related_name='order_items', on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
@@ -131,6 +255,7 @@ class OrderItem(models.Model):
 
     @property
     def subtotal(self):
+        """Calculate the subtotal for this item"""
         return Decimal(self.quantity) * self.price
         
     def save(self, *args, **kwargs):
@@ -145,6 +270,9 @@ class OrderItem(models.Model):
 
 
 class Order(models.Model):
+    """
+    Model representing a customer order
+    """
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('paid', 'Paid'),
@@ -221,6 +349,10 @@ class Order(models.Model):
         self.total_amount = self.calculate_total()
         self.save(update_fields=['total_amount'])
         
+    def get_absolute_url(self):
+        """Return the URL for this order's detail page"""
+        return reverse('store:order_detail', args=[self.order_reference])
+        
     @property
     def formatted_total(self):
         """Return the total amount formatted with £ symbol"""
@@ -259,3 +391,20 @@ class Order(models.Model):
             raise ValidationError({'tracking_number': 'Tracking number is required for shipped/delivered orders'})
             
         super().clean()
+        
+    def get_shipping_address_display(self):
+        """Return formatted shipping address"""
+        parts = []
+        if self.shipping_name:
+            parts.append(self.shipping_name)
+        if self.shipping_address:
+            parts.append(self.shipping_address)
+        if self.shipping_city:
+            parts.append(self.shipping_city)
+        if self.shipping_state:
+            parts.append(self.shipping_state)
+        if self.shipping_zip:
+            parts.append(self.shipping_zip)
+        if self.shipping_country:
+            parts.append(self.shipping_country)
+        return ', '.join(parts)

@@ -280,11 +280,10 @@
                     
                     <div class="form-group">
                         <div class="form-check">
-                            <input type="checkbox" id="featured" name="featured" class="form-check-input" {% if product.featured %}checked{% endif %}>
-                            <label for="featured" class="form-check-label">Feature this product on the homepage</label>
+                            <input type="checkbox" id="available" name="available" class="form-check-input" {% if product.available %}checked{% endif %}>
+                            <label for="available" class="form-check-label">Make this product available in the store</label>
                         </div>
                     </div>
-                </div>
                 
                 <div class="form-section">
                     <h2 class="form-section-title">Product Image</h2>
