@@ -134,7 +134,7 @@ def product_list(request):
     elif sort == 'price-desc':
         products = products.order_by('-price')
     elif sort == 'newest':
-        products = products.order_by('-created')  # Assuming the field is 'created' not 'created_at'
+        products = products.order_by('-created_at')  # Using the correct field name
     else:  # Default to name
         products = products.order_by('name')
     
@@ -166,9 +166,9 @@ def product_list(request):
         'price_range': price_range,
     })
 
-def product_detail(request, slug):
-    """Show detailed information about a product"""
-    product = get_object_or_404(Product, slug=slug, available=True)
+def product_detail(request, product_slug):
+    """Display detailed product information"""
+    product = get_object_or_404(Product, slug=product_slug)
     
     # Load related products in same category
     related_products = Product.objects.filter(
@@ -192,9 +192,9 @@ def category_detail(request, slug):
     # Find the category by slug or 404
     category = get_object_or_404(Category, slug=slug)
     
-    # Get all available products in this category
+    # Get all available products in this category - FIX: use category object directly
     products = Product.objects.filter(
-        category=category.name,  # Use the category name as stored in Product
+        category=category,  # Changed from category.name to category
         available=True
     ).order_by('name')
     
@@ -832,8 +832,9 @@ def dashboard(request):
     products_count = Product.objects.count()
     orders_count = Order.objects.count()
     recent_orders = Order.objects.order_by('-created_at')[:5]
-    # Using the correct field name for category
-    low_stock_products = Product.objects.filter(stock__lt=10).values('id', 'name', 'category', 'stock', 'slug')
+    
+    # FIX: Properly query low stock products and select related category
+    low_stock_products = Product.objects.filter(stock__lt=10).select_related('category')
     
     # Calculate total revenue
     total_revenue = Order.objects.filter(status='paid').aggregate(
@@ -892,16 +893,20 @@ def stock_management(request):
     View for managing product stock levels
     """
     # Extract filters from request
-    category = request.GET.get('category')
+    category_id = request.GET.get('category')
     stock_status = request.GET.get('stock_status')
     search = request.GET.get('search', '')
     
     # Start with all products
     products = Product.objects.all()
     
-    # Apply filters if provided
-    if category:
-        products = products.filter(category=category)
+    # Apply filters if provided - FIX: use category_id for filtering
+    if category_id:
+        try:
+            category_id = int(category_id)
+            products = products.filter(category_id=category_id)
+        except (ValueError, TypeError):
+            pass
         
     if stock_status:
         if stock_status == 'low':
@@ -930,7 +935,7 @@ def stock_management(request):
         'title': 'Stock Management',
         'products': page_obj,
         'categories': categories,
-        'current_category': category,
+        'current_category': category_id,
         'current_stock_status': stock_status,
         'search_query': search,
     })

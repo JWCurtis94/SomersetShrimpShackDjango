@@ -29,8 +29,6 @@ def generate_unique_slug(instance):
             query = Product.objects.filter(slug=slug)
     return slug
 
-# Add this model alongside your other models
-
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
@@ -53,7 +51,13 @@ class Product(models.Model):
     """
     Model representing inventory products available for sale
     """
-    category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
+    # FIX: Use db_column parameter to match existing column name in database
+    category = models.ForeignKey(
+        Category, 
+        on_delete=models.CASCADE, 
+        related_name='products',
+        db_column='category_id'  # Explicitly set the database column name
+    )
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)
     description = models.TextField(blank=True)
@@ -75,10 +79,10 @@ class Product(models.Model):
     class Meta:
         ordering = ['-created_at']
         indexes = [
-            models.Index(fields=['category', 'available']),
-            models.Index(fields=['price', 'available']),
-            models.Index(fields=['featured', 'available']),
-            models.Index(fields=['size', 'category']),
+            models.Index(fields=['category', 'available'], name='prod_cat_avail_idx'),
+            models.Index(fields=['price', 'available'], name='prod_price_avail_idx'),
+            models.Index(fields=['featured', 'available'], name='prod_feat_avail_idx'),
+            models.Index(fields=['size', 'category'], name='prod_size_cat_idx'),
         ]
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
@@ -88,9 +92,10 @@ class Product(models.Model):
         if not self.slug:
             self.slug = generate_unique_slug(self)
 
-        # NOTE: We're commenting out the auto-update available status to fix the issue
-        # with products not appearing in the store
-        # self.available = self.stock > 0
+        # FIX: Re-enable automatic availability setting based on stock
+        # Only set available=False when stock becomes 0, never automatically set to True
+        if self.stock <= 0:
+            self.available = False
 
         super().save(*args, **kwargs)
 
@@ -128,146 +133,7 @@ class Product(models.Model):
     @property
     def get_category_display_name(self):
         """Return the human-readable category name"""
-        return self.category.name if self.category else "Unknown Category"
-
-
-class OrderItem(models.Model):
-    """
-    Model representing an individual item within an order
-    """
-    order = models.ForeignKey('Order', related_name='items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.PROTECT)
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    CATEGORY_CHOICES = [
-        ('food', 'Food'),
-        ('drink', 'Drink'),
-        ('merchandise', 'Merchandise'),
-    ]
-    
-    SIZE_CHOICES = [
-        ('small', 'Small'),
-        ('medium', 'Medium'),
-        ('large', 'Large'),
-    ]
-
-    name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, unique=True, blank=True, db_index=True)
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, db_index=True)
-    description = models.TextField(blank=True)
-    meta_description = models.CharField(max_length=160, blank=True, help_text="SEO meta description")
-    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
-    size = models.CharField(max_length=20, choices=SIZE_CHOICES, blank=True, null=True)
-    image = models.ImageField(
-        upload_to='products/%Y/%m/',  
-        blank=True,
-        null=True,
-        validators=[FileExtensionValidator(['jpg', 'jpeg', 'png', 'webp'])]
-    )
-    stock = models.IntegerField(default=0)  
-    available = models.BooleanField(default=True, db_index=True)
-    featured = models.BooleanField(default=False, help_text="Feature this product on the homepage")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['-created_at']
-        indexes = [
-            models.Index(fields=['category', 'available']),
-            models.Index(fields=['price', 'available']),
-            models.Index(fields=['featured', 'available']),
-            models.Index(fields=['size', 'category']),
-        ]
-        verbose_name = 'Product'
-        verbose_name_plural = 'Products'
-
-    def save(self, *args, **kwargs):
-        # Generate slug if not provided
-        if not self.slug:
-            self.slug = generate_unique_slug(self)
-            
-        # NOTE: We're commenting out the auto-update available status to fix the issue
-        # with products not appearing in the store
-        # self.available = self.stock > 0
-        
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        if self.size:
-            return f"{self.name} - {self.get_size_display()}"
-        return self.name
-
-    def get_absolute_url(self):
-        """Return the URL for this product"""
-        return reverse('store:product_detail', args=[self.slug])
-
-    @property
-    def is_in_stock(self):
-        """Check if product is in stock"""
-        return self.stock > 0 and self.available
-        
-    @property
-    def display_price(self):
-        """Return price formatted for display with £ symbol"""
-        return f"£{self.price}"
-        
-    @property
-    def stock_status(self):
-        """Return stock status as a string"""
-        if not self.available:
-            return "outofstock"
-        elif self.stock <= 0:
-            return "outofstock"
-        elif self.stock <= 5:
-            return "low"
-        else:
-            return "instock"
-            
-    @property
-    def get_category_display_name(self):
-        """Return the human-readable category name"""
-        for cat_value, cat_name in self.CATEGORY_CHOICES:
-            if self.category == cat_value:
-                return cat_name
-        return "Unknown Category"
-
-
-class OrderItem(models.Model):
-    """
-    Model representing an individual item within an order
-    """
-    order = models.ForeignKey('Order', related_name='items', on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.PROTECT)
-    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    size = models.CharField(max_length=20, blank=True, null=True)
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['order', 'product']),
-        ]
-        verbose_name = 'Order Item'
-        verbose_name_plural = 'Order Items'
-
-    def __str__(self):
-        size_str = f" ({self.size})" if self.size else ""
-        return f"{self.quantity}x {self.product.name}{size_str}"
-
-    @property
-    def subtotal(self):
-        """Calculate the subtotal for this item"""
-        return Decimal(self.quantity) * self.price
-        
-    def save(self, *args, **kwargs):
-        # Make sure price is set from product if not specified
-        if not self.price and self.product:
-            self.price = self.product.price
-        super().save(*args, **kwargs)
-        
-        # Update order total when item is saved or updated
-        if self.order:
-            self.order.update_totals()
-
+        return self.category.name if hasattr(self, 'category') and self.category else "Unknown Category"
 
 class Order(models.Model):
     """
@@ -276,7 +142,6 @@ class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('paid', 'Paid'),
-        ('processing', 'Processing'),
         ('shipped', 'Shipped'),
         ('delivered', 'Delivered'),
         ('cancelled', 'Cancelled'),
@@ -316,9 +181,9 @@ class Order(models.Model):
         verbose_name = 'Order'
         verbose_name_plural = 'Orders'
         indexes = [
-            models.Index(fields=['status', 'created_at']),
-            models.Index(fields=['user', 'status']),
-            models.Index(fields=['email', 'status']),
+            models.Index(fields=['status', 'created_at'], name='order_status_created_idx'),
+            models.Index(fields=['user', 'status'], name='order_user_status_idx'),
+            models.Index(fields=['email', 'status'], name='order_email_status_idx'),
         ]
 
     def __str__(self):
@@ -408,3 +273,24 @@ class Order(models.Model):
         if self.shipping_country:
             parts.append(self.shipping_country)
         return ', '.join(parts)
+
+class OrderItem(models.Model):
+    """Model representing an item within an order"""
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='order_items', on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1, validators=[MinValueValidator(1)])
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # Price at time of order
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=["order", "product"], name="order_item_prod_idx"),
+        ]
+        verbose_name = "Order Item"
+        verbose_name_plural = "Order Items"
+    
+    def __str__(self):
+        return f"{self.quantity}x {self.product.name} in Order {self.order.order_reference}"
+    
+    @property
+    def subtotal(self):
+        return self.price * self.quantity
