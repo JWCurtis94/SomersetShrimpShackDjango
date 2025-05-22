@@ -53,47 +53,73 @@ ROOT_URLCONF = 'ecommerce.urls'
 
 WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
-# Database configuration - ultra direct approach
-# Get all environment variables for debugging
-print("All environment variables:")
-for key, value in os.environ.items():
-    if 'DATABASE' in key or 'HEROKU_POSTGRESQL' in key:
-        print(f"{key}: {value[:15]}..." if value else f"{key}: {value}")
+# Database configuration for local development and Heroku deployment
+# Load environment variables from .env file
+load_dotenv()
 
-# Get the DATABASE_URL from Heroku
+# Get DATABASE_URL from environment (Heroku will set this automatically)
 db_url = os.environ.get('DATABASE_URL')
-print(f"Raw DATABASE_URL: {db_url[:30]}..." if db_url else "Raw DATABASE_URL: None")
 
-# Get any other potential database URLs
+# Check for alternative Heroku PostgreSQL URLs (backup)
 heroku_pg_url = None
 for key, value in os.environ.items():
     if 'HEROKU_POSTGRESQL_' in key and '_URL' in key:
         heroku_pg_url = value
-        print(f"Found alternative PG URL: {key} = {value[:30]}...")
+        break
 
-# Try to use the DATABASE_URL first
-if db_url and 'postgres:' in db_url:
-    print(f"Using primary DATABASE_URL")
+# Configure database based on available URLs
+if db_url and ('postgres' in db_url or 'postgresql' in db_url):
+    # Use primary DATABASE_URL (from Heroku or local .env)
     DATABASES = {
-        'default': dj_database_url.parse(db_url)
+        'default': dj_database_url.parse(db_url, conn_max_age=600)
     }
-# If not available, try to use a HEROKU_POSTGRESQL_*_URL if found
-elif heroku_pg_url and 'postgres:' in heroku_pg_url:
-    print(f"Using alternative HEROKU_POSTGRESQL URL")
+    print("✅ Using PostgreSQL database")
+    
+elif heroku_pg_url and ('postgres' in heroku_pg_url or 'postgresql' in heroku_pg_url):
+    # Fallback to alternative Heroku PostgreSQL URL
     DATABASES = {
-        'default': dj_database_url.parse(heroku_pg_url)
+        'default': dj_database_url.parse(heroku_pg_url, conn_max_age=600)
     }
-# Fallback to SQLite for local development
+    print("✅ Using alternative Heroku PostgreSQL database")
+    
 else:
-    print("Using SQLite database (fallback)")
+    # Final fallback to SQLite for local development
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+    print("⚠️ Using SQLite database (local development)")
 
-print(f"Final database config: ENGINE={DATABASES['default'].get('ENGINE')}, HOST={DATABASES['default'].get('HOST', 'localhost')}")
+# Add SSL configuration for production (Heroku requires SSL)
+if 'postgresql' in DATABASES['default'].get('ENGINE', ''):
+    # Check if we're on Heroku by looking for Heroku-specific indicators
+    is_heroku = any([
+        'DATABASE_URL' in os.environ and 'heroku' in os.environ.get('DATABASE_URL', ''),
+        'DYNO' in os.environ,  # Heroku sets this environment variable
+        'heroku' in os.environ.get('DATABASE_URL', '').lower()
+    ])
+    
+    if is_heroku:
+        DATABASES['default']['OPTIONS'] = {
+            'sslmode': 'require',
+        }
+        print("🔒 SSL enabled for Heroku PostgreSQL")
+    else:
+        DATABASES['default']['OPTIONS'] = {
+            'sslmode': 'disable',
+        }
+        print("🔓 SSL disabled for local PostgreSQL")
+
+# Debug output
+db_engine = DATABASES['default'].get('ENGINE', 'Unknown')
+db_name = DATABASES['default'].get('NAME', 'Unknown')
+db_host = DATABASES['default'].get('HOST', 'localhost')
+print(f"Final database config:")
+print(f"  Engine: {db_engine}")
+print(f"  Name: {db_name}")
+print(f"  Host: {db_host}")
 
 TEMPLATES = [
     {

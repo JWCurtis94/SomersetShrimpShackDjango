@@ -1,0 +1,487 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Premium Aquatic Livestock & Plants - Somerset Shrimp Shack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pagination-link {
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+    }
+    
+    .pagination-current {
+        padding: 0.5rem 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-background"></div>
+    <div class="hero-bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+    
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Premium Aquatic Life for Your Tank</h1>
+            <p class="hero-subtitle">Discover our selection of high-quality shrimp, plants, and accessories for the perfect aquascape experience.</p>
+            <div class="hero-btn-group">
+                <a href="#products-container" class="btn btn-primary">Shop All Products</a>
+                <a href="{% url 'store:care_guides' %}" class="btn btn-outline">Care Guides</a>
+            </div>
+        </div>
+    </div>
+    
+    <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Premium shrimp" class="hero-image">
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Shop by Category</h2>
+            <p class="section-subtitle">Browse our carefully curated categories to find exactly what you're looking for</p>
+        </div>
+        
+        <div class="category-grid">
+            <a href="{% url 'store:product_list' %}?category=neocaridina" class="category-card">
+                <img src="{% static 'store/images/categories/neocaridina.jpg' %}" alt="Neocaridina Shrimp" class="category-image">
+                <div class="category-overlay">
+                    <h3 class="category-name">Neocaridina Shrimp</h3>
+                </div>
+            </a>
+            
+            <a href="{% url 'store:product_list' %}?category=caridina" class="category-card">
+                <img src="{% static 'store/images/categories/caridina.jpg' %}" alt="Caridina Shrimp" class="category-image">
+                <div class="category-overlay">
+                    <h3 class="category-name">Caridina Shrimp</h3>
+                </div>
+            </a>
+            
+            <a href="{% url 'store:product_list' %}?category=floating_plants" class="category-card">
+                <img src="{% static 'store/images/categories/floating-plants.jpg' %}" alt="Floating Plants" class="category-image">
+                <div class="category-overlay">
+                    <h3 class="category-name">Floating Plants</h3>
+                </div>
+            </a>
+            
+            <a href="{% url 'store:product_list' %}?category=stem_plants" class="category-card">
+                <img src="{% static 'store/images/categories/stem-plants.jpg' %}" alt="Stem Plants" class="category-image">
+                <div class="category-overlay">
+                    <h3 class="category-name">Stem Plants</h3>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Filter & Products Section -->
+<section class="product-listing">
+    <div class="container">
+        <!-- Filter Section -->
+        <div class="filters">
+            <form action="{% url 'store:product_list' %}" method="GET" role="search" aria-label="Product search and filters">
+                <div class="search-container">
+                    <label for="search-input" class="sr-only">Search products</label>
+                    <input type="text" 
+                           id="search-input" 
+                           name="q" 
+                           class="search-input" 
+                           placeholder="Search products..." 
+                           value="{{ request.GET.q }}"
+                           aria-label="Search products">
+                    <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                </div>
+                
+                <div class="sort-container">
+                    <label for="sort-select" class="sr-only">Sort products</label>
+                    <select id="sort-select" name="sort" class="sort-select" aria-label="Sort products">
+                        <option value="default" {% if sort == 'default' %}selected{% endif %}>Sort by: Default</option>
+                        <option value="price-asc" {% if sort == 'price-asc' %}selected{% endif %}>Price (Low to High)</option>
+                        <option value="price-desc" {% if sort == 'price-desc' %}selected{% endif %}>Price (High to Low)</option>
+                        <option value="name-asc" {% if sort == 'name-asc' %}selected{% endif %}>Name (A-Z)</option>
+                        <option value="name-desc" {% if sort == 'name-desc' %}selected{% endif %}>Name (Z-A)</option>
+                    </select>
+                </div>
+                
+                <button type="button" id="reset-filters" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-sync-alt" aria-hidden="true"></i> Reset Filters
+                </button>
+            </form>
+            
+            <div class="filter-section">
+                <h3 id="price-filter-label">Price Range</h3>
+                <div class="price-filter">
+                    <input type="range" 
+                           id="price-range" 
+                           min="0" 
+                           max="50" 
+                           step="1" 
+                           value="50" 
+                           aria-labelledby="price-filter-label" 
+                           aria-valuemin="0" 
+                           aria-valuemax="50"
+                           aria-valuenow="50"
+                           aria-valuetext="£50">
+                    <span id="price-value">£50</span>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <h3>Categories</h3>
+                <div class="category-filters">
+                    {% for category_name, display_name in categories.items %}
+                    <label class="category-label">
+                        <input type="checkbox" 
+                               class="category-filter" 
+                               value="{{ category_name|slugify }}"
+                               id="category-{{ category_name|slugify }}"
+                               {% if request.GET.category == category_name %}checked{% endif %}>
+                        <span>{{ display_name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="active-filters" id="active-filters"></div>
+        </div>
+
+        <!-- Products Section -->
+        <div id="products-container" aria-live="polite">
+            {% if categorized_products %}
+                {% for category, products in categorized_products.items %}
+                    {% if products %}
+                    <section class="category-section">
+                        <h2 class="category-title">{{ category }}</h2>
+                        <div class="product-grid">
+                            {% for product in products %}
+                            <article class="product-card" data-category="{{ product.category|slugify }}" data-price="{{ product.price }}" itemscope itemtype="http://schema.org/Product">
+                                <a href="{% url 'store:product_detail' product.id %}" class="product-image-link">
+                                    {% if product.image %}
+                                    <img src="{{ product.image.url }}" 
+                                         alt="{{ product.name }}"
+                                         class="product-image"
+                                         itemprop="image">
+                                    {% else %}
+                                    <img src="{% static 'store/images/no-image.png' %}" 
+                                         alt="No image available"
+                                         class="product-image">
+                                    {% endif %}
+                                    
+                                    {% if product.featured %}
+                                    <span class="product-badge badge-featured">Featured</span>
+                                    {% endif %}
+                                </a>
+                                
+                                <div class="product-content">
+                                    <span class="product-category">{{ product.get_category_display }}</span>
+                                    <h3 class="product-title" itemprop="name">
+                                        <a href="{% url 'store:product_detail' product.id %}" itemprop="url">
+                                            {{ product.name }}
+                                        </a>
+                                    </h3>
+                                    <p class="product-description" itemprop="description">
+                                        {{ product.description|truncatewords:15 }}
+                                    </p>
+                                    
+                                    <div class="product-meta">
+                                        <div class="product-price-wrapper">
+                                            <span class="product-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                                                <meta itemprop="priceCurrency" content="GBP">
+                                                <span itemprop="price">£{{ product.price }}</span>
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="product-footer">
+                                            <div class="product-stock {% if product.stock > 5 %}in-stock{% elif product.stock > 0 %}low-stock{% else %}out-of-stock{% endif %}">
+                                                <i class="fas {% if product.stock > 5 %}fa-check-circle{% elif product.stock > 0 %}fa-exclamation-circle{% else %}fa-times-circle{% endif %}"></i>
+                                                {% if product.stock > 5 %}
+                                                In Stock
+                                                {% elif product.stock > 0 %}
+                                                Low Stock
+                                                {% else %}
+                                                Out of Stock
+                                                {% endif %}
+                                            </div>
+                                            
+                                            <form method="post" action="{% url 'store:add_to_cart' product.id %}">
+                                                {% csrf_token %}
+                                                {% if product.size %}
+                                                    <input type="hidden" name="size" value="{{ product.size }}">
+                                                {% endif %}
+                                                <input type="hidden" name="quantity" value="1">
+                                                <button type="submit" class="btn-add-to-cart" {% if product.stock <= 0 %}disabled{% endif %}>
+                                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </article>
+                            {% endfor %}
+                        </div>
+                    </section>
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <div class="pagination-container">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                            <li class="pagination-item">
+                                <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" class="pagination-link" aria-label="First page">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li class="pagination-item">
+                                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" class="pagination-link" aria-label="Previous page">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                        
+                        {% for num in page_obj.paginator.page_range %}
+                            {% if page_obj.number == num %}
+                                <li class="pagination-item">
+                                    <span class="pagination-current">{{ num }}</span>
+                                </li>
+                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                <li class="pagination-item">
+                                    <a class="pagination-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if page_obj.has_next %}
+                            <li class="pagination-item">
+                                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" class="pagination-link" aria-label="Next page">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li class="pagination-item">
+                                <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" class="pagination-link" aria-label="Last page">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+            {% else %}
+                <div class="no-products">
+                    <i class="fas fa-search"></i>
+                    <p>No products found. Try adjusting your search or filters.</p>
+                    <a href="{% url 'store:product_list' %}" class="btn btn-primary">View All Products</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Price slider
+        const priceRange = document.getElementById('price-range');
+        const priceValue = document.getElementById('price-value');
+        const productCards = document.querySelectorAll('.product-card');
+        const resetButton = document.getElementById('reset-filters');
+        const categoryFilters = document.querySelectorAll('.category-filter');
+        const activeFiltersContainer = document.getElementById('active-filters');
+        const sortSelect = document.getElementById('sort-select');
+        
+        // Initialize price filter
+        if (priceRange && priceValue) {
+            priceRange.addEventListener('input', function() {
+                const value = this.value;
+                priceValue.textContent = `£${value}`;
+                this.setAttribute('aria-valuenow', value);
+                this.setAttribute('aria-valuetext', `£${value}`);
+                
+                filterByPrice(value);
+            });
+        }
+        
+        // Initialize category filters
+        categoryFilters.forEach(filter => {
+            filter.addEventListener('change', function() {
+                filterByCategories();
+                updateActiveFilters();
+            });
+        });
+        
+        // Sort select
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                this.form.submit();
+            });
+        }
+        
+        // Reset filters
+        if (resetButton) {
+            resetButton.addEventListener('click', function() {
+                // Reset price range
+                if (priceRange) {
+                    priceRange.value = priceRange.getAttribute('max');
+                    priceValue.textContent = `£${priceRange.value}`;
+                }
+                
+                // Reset category checkboxes
+                categoryFilters.forEach(filter => {
+                    filter.checked = false;
+                });
+                
+                // Reset active filters
+                updateActiveFilters();
+                
+                // Show all products
+                productCards.forEach(card => {
+                    card.style.display = 'flex';
+                });
+                
+                // Reset sections visibility
+                updateCategorySections();
+                
+                // Reset URL parameters
+                window.history.replaceState({}, document.title, window.location.pathname);
+            });
+        }
+        
+        function filterByPrice(maxPrice) {
+            productCards.forEach(card => {
+                const cardPrice = parseFloat(card.dataset.price);
+                
+                // Update data-price-match attribute for combined filtering
+                card.dataset.matchesPrice = (cardPrice <= maxPrice) ? 'true' : 'false';
+                
+                updateCardVisibility(card);
+            });
+            
+            updateCategorySections();
+        }
+        
+        function filterByCategories() {
+            const checkedCategories = Array.from(categoryFilters)
+                .filter(filter => filter.checked)
+                .map(filter => filter.value);
+            
+            productCards.forEach(card => {
+                const cardCategory = card.dataset.category;
+                
+                // Update data-category-match attribute for combined filtering
+                card.dataset.matchesCategory = (checkedCategories.length === 0 || checkedCategories.includes(cardCategory)) ? 'true' : 'false';
+                
+                updateCardVisibility(card);
+            });
+            
+            updateCategorySections();
+        }
+        
+        function updateCardVisibility(card) {
+            const matchesPrice = card.dataset.matchesPrice !== 'false';
+            const matchesCategory = card.dataset.matchesCategory !== 'false';
+            
+            card.style.display = (matchesPrice && matchesCategory) ? 'flex' : 'none';
+        }
+        
+        function updateCategorySections() {
+            // Find each category section and check if it has any visible products
+            const categorySections = document.querySelectorAll('.category-section');
+            
+            categorySections.forEach(section => {
+                const products = section.querySelectorAll('.product-card');
+                const hasVisibleProducts = Array.from(products).some(product => product.style.display !== 'none');
+                
+                section.style.display = hasVisibleProducts ? 'block' : 'none';
+            });
+            
+            // Show no products message if all categories are hidden
+            const allSectionsHidden = Array.from(categorySections).every(section => section.style.display === 'none');
+            const noProductsElement = document.querySelector('.no-products');
+            
+            if (noProductsElement) {
+                noProductsElement.style.display = allSectionsHidden ? 'flex' : 'none';
+            }
+        }
+        
+        function updateActiveFilters() {
+            activeFiltersContainer.innerHTML = '';
+            
+            // Add category filters
+            const activeCategories = Array.from(categoryFilters)
+                .filter(filter => filter.checked)
+                .map(filter => {
+                    const label = filter.closest('label').textContent.trim();
+                    return { value: filter.value, label };
+                });
+            
+            activeCategories.forEach(category => {
+                const filterTag = document.createElement('span');
+                filterTag.className = 'filter-tag';
+                filterTag.innerHTML = `${category.label} <i class="fas fa-times" data-filter-type="category" data-filter-value="${category.value}"></i>`;
+                
+                activeFiltersContainer.appendChild(filterTag);
+            });
+            
+            // Price filter only if it's not at maximum
+            if (priceRange && parseInt(priceRange.value) < parseInt(priceRange.max)) {
+                const filterTag = document.createElement('span');
+                filterTag.className = 'filter-tag';
+                filterTag.innerHTML = `Price: <= £${priceRange.value} <i class="fas fa-times" data-filter-type="price"></i>`;
+                
+                activeFiltersContainer.appendChild(filterTag);
+            }
+            
+            // Add event listeners to remove filters
+            document.querySelectorAll('.filter-tag i').forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const filterType = this.dataset.filterType;
+                    
+                    if (filterType === 'category') {
+                        const filterValue = this.dataset.filterValue;
+                        const checkbox = document.querySelector(`.category-filter[value="${filterValue}"]`);
+                        
+                        if (checkbox) {
+                            checkbox.checked = false;
+                            filterByCategories();
+                        }
+                    } else if (filterType === 'price') {
+                        priceRange.value = priceRange.getAttribute('max');
+                        priceValue.textContent = `£${priceRange.value}`;
+                        filterByPrice(priceRange.value);
+                    }
+                    
+                    updateActiveFilters();
+                });
+            });
+        }
+        
+        // Initial state setup
+        productCards.forEach(card => {
+            card.dataset.matchesPrice = 'true';
+            card.dataset.matchesCategory = 'true';
+        });
+        
+        // Initialize active filters
+        updateActiveFilters();
+    });
+</script>
+{% endblock %}
