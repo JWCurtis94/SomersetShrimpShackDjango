@@ -84,4 +84,10 @@ urlpatterns = [
     path('categories/add/', staff_member_required(views.add_category), name='add_category'),
     path('categories/edit/<int:category_id>/', staff_member_required(views.edit_category), name='edit_category'),
     path('categories/delete/<int:category_id>/', staff_member_required(views.delete_category), name='delete_category'),
+    
+    # Debug URLs
+    path('debug-session/', views.debug_session, name='debug_session'),
+    
+    # Test URLs
+    path('test-cart/', views.test_cart, name='test_cart'),
 ]

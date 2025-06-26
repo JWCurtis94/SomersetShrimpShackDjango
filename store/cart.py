@@ -107,6 +107,26 @@ class Cart:
         self.session["cart"] = {}
         self.session.modified = True
 
+    def is_in_cart(self, product, size=None):
+        """
+        Check if a product is already in the cart
+        
+        Args:
+            product: Product object to check
+            size: Optional product size to check for specific variant
+            
+        Returns:
+            bool: True if the product is in the cart, False otherwise
+        """
+        product_id = str(product.id)
+        
+        # Create the cart key based on product ID and optional size
+        cart_key = product_id
+        if size:
+            cart_key = f"{product_id}_{size}"
+            
+        return cart_key in self.cart
+
     def get_items(self):
         """Return all cart items"""
         return self.cart.values()

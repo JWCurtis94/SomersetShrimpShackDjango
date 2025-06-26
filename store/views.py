@@ -195,6 +195,9 @@ def product_list(request):
         max_price=Max('price')
     )
     
+    # Get total products count for hero stats
+    total_products = Product.objects.filter(available=True).count()
+    
     return render(request, 'store/product_list.html', {
         'products': products_page,
         'categorized_products': categorized_products,
@@ -206,11 +209,13 @@ def product_list(request):
         'search_query': search,
         'in_stock_only': in_stock == "1",
         'price_range': price_range,
+        'total_products': total_products,
+        'sort': sort,  # Add sort for template
     })
 
-def product_detail(request, product_slug):
+def product_detail(request, slug):
     """Display detailed product information"""
-    product = get_object_or_404(Product, slug=product_slug)
+    product = get_object_or_404(Product, slug=slug)
     
     # Load related products in same category
     related_products = Product.objects.filter(
@@ -356,6 +361,9 @@ def cart_view(request):
     """Show current cart contents"""
     cart = Cart(request)
     cart_items = cart.get_cart_items()
+    print(f"DEBUG: cart_view called, cart items: {len(cart_items)}")
+    for item in cart_items:
+        print(f"DEBUG: Cart item: {item.product.name}, quantity: {item.quantity}")
     
     # Calculate cart totals
     total_price = cart.get_total_price()
@@ -387,6 +395,8 @@ def cart_view(request):
 @require_http_methods(["POST", "GET"])
 def add_to_cart(request, product_id):
     """Add a product to the shopping cart"""
+    print(f"DEBUG: add_to_cart called with product_id={product_id}, method={request.method}")
+    
     # Rate limiting: limit to 10 add-to-cart actions per minute per IP
     client_ip = request.META.get('REMOTE_ADDR', '')
     cache_key = f"add_to_cart_{client_ip}"
@@ -400,6 +410,7 @@ def add_to_cart(request, product_id):
     
     product = get_object_or_404(Product, id=product_id)
     cart = Cart(request)
+    print(f"DEBUG: Found product: {product.name}, cart items before: {len(cart.get_cart_items())}")
     
     # Check if product is in stock and available
     if not product.is_in_stock:
@@ -429,14 +440,25 @@ def add_to_cart(request, product_id):
         
         # Add to cart
         cart.add(product, quantity=quantity, size=size)
+        print(f"DEBUG: Added to cart. Cart items after: {len(cart.get_cart_items())}")
         
         product_name = product.name
         if size:
             product_name = f"{product_name} ({size})"
             
         messages.success(request, f"Added {quantity}x {product_name} to your cart.")
+        print(f"DEBUG: Success message added")
         
-        # Redirect based on 'next' parameter or to cart
+        # Check if this is an AJAX request
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'success',
+                'message': f"Added {quantity}x {product_name} to your cart.",
+                'cart_item_count': cart.get_item_count(),
+                'cart_total': str(cart.get_total_price())
+            })
+        
+        # For regular requests, redirect based on 'next' parameter or to cart
         next_url = request.POST.get('next')
         if next_url:
             try:
@@ -914,35 +936,99 @@ def dashboard(request):
     """
     Admin dashboard showing key metrics
     """
+    from django.contrib.auth.models import User
+    from datetime import datetime, timedelta
+    
+    # Get current month and year
+    now = timezone.now()
+    current_month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    last_month_start = (current_month_start - timedelta(days=1)).replace(day=1)
+    
     # Get counts for dashboard stats
-    products_count = Product.objects.count()
-    orders_count = Order.objects.count()
-    recent_orders = Order.objects.order_by('-created_at')[:5]
+    total_products = Product.objects.count()
     
-    # FIX: Properly query low stock products and select related category
-    low_stock_products = Product.objects.filter(stock__lt=10).select_related('category')
+    # Total orders (all time)
+    total_orders = Order.objects.count()
     
-    # Calculate total revenue
+    # Total orders this month
+    orders_this_month = Order.objects.filter(
+        created_at__gte=current_month_start
+    ).count()
+    
+    # Total orders last month
+    orders_last_month = Order.objects.filter(
+        created_at__gte=last_month_start,
+        created_at__lt=current_month_start
+    ).count()
+    
+    # Calculate order growth percentage
+    if orders_last_month > 0:
+        order_growth = ((orders_this_month - orders_last_month) / orders_last_month) * 100
+    else:
+        order_growth = 100 if orders_this_month > 0 else 0
+    
+    # Total revenue (from paid orders)
     total_revenue = Order.objects.filter(status='paid').aggregate(
-        total=Sum(F('total_amount'))
+        total=Sum('total_amount')
     )['total'] or Decimal('0')
     
-    # Get monthly order counts
-    current_month = timezone.now().month
-    current_year = timezone.now().year
+    # Revenue this month
+    revenue_this_month = Order.objects.filter(
+        status='paid',
+        created_at__gte=current_month_start
+    ).aggregate(total=Sum('total_amount'))['total'] or Decimal('0')
     
+    # Revenue last month
+    revenue_last_month = Order.objects.filter(
+        status='paid',
+        created_at__gte=last_month_start,
+        created_at__lt=current_month_start
+    ).aggregate(total=Sum('total_amount'))['total'] or Decimal('0')
+    
+    # Calculate revenue growth percentage
+    if revenue_last_month > 0:
+        revenue_growth = ((revenue_this_month - revenue_last_month) / revenue_last_month) * 100
+    else:
+        revenue_growth = 100 if revenue_this_month > 0 else 0
+    
+    # Active customers (customers who have made orders this month)
+    active_customers = Order.objects.filter(
+        created_at__gte=current_month_start
+    ).values('email').distinct().count()
+    
+    # Active customers last month
+    active_customers_last_month = Order.objects.filter(
+        created_at__gte=last_month_start,
+        created_at__lt=current_month_start
+    ).values('email').distinct().count()
+    
+    # Calculate customer growth percentage
+    if active_customers_last_month > 0:
+        customer_growth = ((active_customers - active_customers_last_month) / active_customers_last_month) * 100
+    else:
+        customer_growth = 100 if active_customers > 0 else 0
+    
+    # Recent orders for display
+    recent_orders = Order.objects.select_related().order_by('-created_at')[:5]
+    
+    # Low stock products (stock < 10)
+    low_stock_products = Product.objects.filter(stock__lt=10).select_related('category')
+    
+    # Products for overview section
+    products = Product.objects.select_related('category').order_by('-created_at')[:10]
+    
+    # Get monthly data for charts (past 6 months)
     monthly_orders = []
     monthly_revenue = []
     
     for i in range(6):  # Past 6 months
-        month = (current_month - i) % 12 or 12  # Handle December (0)
-        year = current_year if month <= current_month else current_year - 1
+        month_date = current_month_start - timedelta(days=30 * i)
+        month_start = month_date.replace(day=1)
         
-        month_start = timezone.datetime(year, month, 1)
-        if month == 12:
-            next_month_start = timezone.datetime(year + 1, 1, 1)
+        if month_start.month == 12:
+            next_month_start = month_start.replace(year=month_start.year + 1, month=1)
         else:
-            next_month_start = timezone.datetime(year, month + 1, 1)
+            next_month_start = month_start.replace(month=month_start.month + 1)
         
         # Orders this month
         month_orders = Order.objects.filter(
@@ -954,7 +1040,7 @@ def dashboard(request):
         count = month_orders.count()
         revenue = month_orders.aggregate(total=Sum('total_amount'))['total'] or Decimal('0')
         
-        month_name = timezone.datetime(year, month, 1).strftime('%b %Y')
+        month_name = month_start.strftime('%b %Y')
         monthly_orders.append({'month': month_name, 'count': count})
         monthly_revenue.append({'month': month_name, 'amount': float(revenue)})
     
@@ -964,10 +1050,17 @@ def dashboard(request):
     
     return render(request, 'store/dashboard.html', {
         'title': 'Admin Dashboard',
-        'products_count': products_count,
-        'orders_count': orders_count,
+        'total_products': total_products,
+        'total_orders': total_orders,
+        'orders_this_month': orders_this_month,
+        'order_growth': round(order_growth, 1),
         'total_revenue': total_revenue,
+        'revenue_this_month': revenue_this_month,
+        'revenue_growth': round(revenue_growth, 1),
+        'active_customers': active_customers,
+        'customer_growth': round(customer_growth, 1),
         'recent_orders': recent_orders,
+        'products': products,
         'low_stock_products': low_stock_products,
         'monthly_orders': monthly_orders,
         'monthly_revenue': monthly_revenue,
@@ -1206,7 +1299,7 @@ def update_order_status(request, order_id):
         notes = request.POST.get('notes')
         
         # Update status if valid
-        if new_status and new_status in dict(Order.STATUS_CHOICES):
+        if new_status and new_status in [choice[0] for choice in Order.STATUS_CHOICES]:
             old_status = order.get_status_display()
             order.status = new_status
             
@@ -1233,11 +1326,7 @@ def update_order_status(request, order_id):
                 'status': order.get_status_display()
             })
         
-        # Redirect to referer or order management
-        referer = request.META.get('HTTP_REFERER')
-        if referer and 'order' in referer:
-            return redirect(referer)
-            
+        # Always redirect back to order management for dropdown submissions
         return redirect('store:order_management')
     
     # GET request - show the update form
@@ -1537,3 +1626,25 @@ def custom_logout(request):
     return render(request, 'store/logout.html', {
         'title': 'Logout'
     })
+
+def debug_session(request):
+    """Debug session data"""
+    from django.http import JsonResponse
+    cart = Cart(request)
+    
+    debug_info = {
+        'session_key': request.session.session_key,
+        'session_data': dict(request.session),
+        'cart_items_count': len(cart.get_cart_items()),
+        'cart_raw': cart.cart,
+        'cart_total': str(cart.get_total_price()),
+    }
+    
+    return JsonResponse(debug_info, indent=2)
+
+def test_cart(request):
+    """Simple test page for cart functionality"""
+    products = Product.objects.filter(is_active=True)[:5]  # Get first 5 products
+    return render(request, 'store/test_cart.html', {'products': products})
+
+###################

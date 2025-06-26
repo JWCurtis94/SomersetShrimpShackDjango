@@ -190,6 +190,85 @@
 </section>
 {% endblock %}
 
+{% block extra_css %}
+<style>
+/* Cart quantity input styling - CRITICAL FIX */
+.quantity-input {
+    width: 60px !important;
+    padding: 8px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    text-align: center !important;
+    font-size: 14px !important;
+    background: white !important;
+    color: #333 !important;
+    box-shadow: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: textfield !important;
+    appearance: none !important;
+    margin: 0 5px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 10 !important;
+    position: relative !important;
+}
+
+.quantity-input:focus {
+    outline: none !important;
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25) !important;
+}
+
+/* Hide number input spinners */
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+
+/* Quantity controls styling */
+.quantity-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    margin: 10px 0 !important;
+}
+
+.quantity-btn {
+    background: #f8f9fa !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #333 !important;
+    transition: all 0.2s ease !important;
+}
+
+.quantity-btn:hover {
+    background: #e9ecef !important;
+    border-color: #bbb !important;
+}
+
+.stock-limit-msg {
+    color: #dc3545 !important;
+    font-size: 12px !important;
+    margin-top: 5px !important;
+    padding: 5px 10px !important;
+    background: #f8d7da !important;
+    border: 1px solid #f5c6cb !important;
+    border-radius: 4px !important;
+}
+</style>
+{% endblock %}
+
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
