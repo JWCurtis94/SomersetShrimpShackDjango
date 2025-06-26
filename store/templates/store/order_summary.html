@@ -1,0 +1,349 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Order Summary - Somerset Shrimp Shack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .order-summary-section {
+        padding: 3rem 0;
+    }
+    
+    .order-summary-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .order-summary-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    
+    .order-summary-header i {
+        font-size: 3rem;
+        color: var(--secondary);
+        margin-bottom: 1rem;
+    }
+    
+    .order-summary-title {
+        margin-bottom: 0.75rem;
+    }
+    
+    .order-summary-subtitle {
+        color: var(--gray-600);
+    }
+    
+    .order-card {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+    
+    .order-header {
+        padding: 1.25rem;
+        background-color: var(--light);
+        border-bottom: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .order-id {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--dark);
+    }
+    
+    .order-date {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+    }
+    
+    .order-status {
+        padding: 0.35rem 0.75rem;
+        border-radius: 1rem;
+        font-size: 0.8125rem;
+        font-weight: 600;
+    }
+    
+    .order-body {
+        padding: 1.25rem;
+    }
+    
+    .order-items {
+        margin-bottom: 1.25rem;
+    }
+    
+    .order-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .order-item:last-child {
+        border-bottom: none;
+    }
+    
+    .item-image-container {
+        width: 60px;
+        height: 60px;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        margin-right: 1rem;
+    }
+    
+    .item-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .item-details {
+        flex-grow: 1;
+    }
+    
+    .item-name {
+        font-weight: 500;
+        color: var(--gray-800);
+        margin-bottom: 0.25rem;
+    }
+    
+    .item-meta {
+        font-size: 0.875rem;
+        color: var(--gray-600);
+    }
+    
+    .item-price {
+        font-weight: 600;
+        color: var(--primary-dark);
+        white-space: nowrap;
+        padding-left: 1rem;
+    }
+    
+    .order-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .detail-box {
+        padding: 1.25rem;
+        background-color: var(--gray-100);
+        border-radius: var(--border-radius);
+    }
+    
+    .detail-box-title {
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 0.75rem;
+        position: relative;
+        display: inline-block;
+        font-size: 1rem;
+    }
+    
+    .detail-box-title::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background-color: var(--primary);
+    }
+    
+    .detail-text {
+        margin-bottom: 0.25rem;
+    }
+    
+    .order-summary {
+        padding: 1.25rem;
+        background-color: var(--gray-100);
+        border-radius: var(--border-radius);
+    }
+    
+    .summary-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+    
+    .summary-label {
+        color: var(--gray-700);
+    }
+    
+    .summary-value {
+        font-weight: 500;
+    }
+    
+    .summary-total {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--gray-300);
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 1.125rem;
+    }
+    
+    .order-actions {
+        margin-top: 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .order-details-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .order-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .order-status {
+            margin-top: 0.75rem;
+        }
+        
+        .order-item {
+            flex-wrap: wrap;
+        }
+        
+        .item-price {
+            width: 100%;
+            padding-left: 0;
+            margin-top: 0.75rem;
+        }
+        
+        .order-actions .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="order-summary-section">
+    <div class="container">
+        <div class="order-summary-container">
+            <div class="order-summary-header">
+                <i class="fas fa-check-circle"></i>
+                <h1 class="order-summary-title">Thank You for Your Order!</h1>
+                <p class="order-summary-subtitle">Your order has been received and is being processed</p>
+            </div>
+            
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id">Order #{{ order.id }}</div>
+                        <div class="order-date">Placed on {{ order.created_at|date:"F j, Y, g:i a" }}</div>
+                    </div>
+                    
+                    <div>
+                        <span class="order-status status-{{ order.status|lower }}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="order-body">
+                    <div class="order-details-grid">
+                        <div class="detail-box">
+                            <h3 class="detail-box-title">Shipping Address</h3>
+                            <p class="detail-text">{{ order.shipping_address.name }}</p>
+                            <p class="detail-text">{{ order.shipping_address.street_address }}</p>
+                            <p class="detail-text">
+                                {{ order.shipping_address.city }}, 
+                                {{ order.shipping_address.state }} 
+                                {{ order.shipping_address.postal_code }}
+                            </p>
+                            <p class="detail-text">{{ order.shipping_address.country }}</p>
+                        </div>
+                        
+                        <div class="detail-box">
+                            <h3 class="detail-box-title">Payment Information</h3>
+                            <p class="detail-text">Payment Method: {{ order.payment_method }}</p>
+                            <p class="detail-text">Transaction ID: {{ order.transaction_id|default:"N/A" }}</p>
+                            <p class="detail-text">Email: {{ order.email }}</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="summary-title">Order Items</h3>
+                    <div class="order-items">
+                        {% for item in order.orderitem_set.all %}
+                            <div class="order-item">
+                                <div class="item-image-container">
+                                    {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="item-image">
+                                    {% else %}
+                                        <div class="placeholder-image"></div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="item-details">
+                                    <div class="item-name">{{ item.product.name }}</div>
+                                    <div class="item-meta">
+                                        Quantity: {{ item.quantity }}
+                                        {% if item.size %} | Size: {{ item.size }}{% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="item-price">£{{ item.price }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="order-summary">
+                        <h3 class="summary-title">Order Summary</h3>
+                        
+                        <div class="summary-row">
+                            <span class="summary-label">Subtotal</span>
+                            <span class="summary-value">£{{ order.subtotal }}</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span class="summary-label">Shipping</span>
+                            <span class="summary-value">£{{ order.shipping_cost }}</span>
+                        </div>
+                        
+                        {% if order.discount %}
+                        <div class="summary-row">
+                            <span class="summary-label">Discount</span>
+                            <span class="summary-value">-£{{ order.discount }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="summary-row summary-total">
+                            <span class="summary-label">Total</span>
+                            <span class="summary-value">£{{ order.total_price }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="order-actions">
+                        <a href="{% url 'store:product_list' %}" class="btn btn-outline">
+                            <i class="fas fa-shopping-bag"></i> Continue Shopping
+                        </a>
+                        
+                        <a href="{% url 'store:order_history' %}" class="btn btn-primary">
+                            <i class="fas fa-list"></i> View All Orders
+                        </a>
+                        
+                        <a href="#" class="btn btn-accent">
+                            <i class="fas fa-file-invoice"></i> Download Invoice
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

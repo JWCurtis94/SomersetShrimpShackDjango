@@ -1,0 +1,22 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Guide: {{ guide.title }} - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="guide-detail">
+        <h1>{{ guide.title }}</h1>
+        
+        {% if guide.image %}
+        <img src="{% static 'store/images/'|add:guide.image %}" alt="{{ guide.title }}" class="guide-image">
+        {% endif %}
+        
+        <div class="guide-content">
+            {{ guide.content|linebreaks }}
+        </div>
+        
+        <a href="{% url 'store:care_guides' %}" class="btn btn-secondary">← Back to All Guides</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Payment Cancelled - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="cancel-message">
+        <h1>Payment Cancelled</h1>
+        <p>Your payment was cancelled. No charges have been made.</p>
+        
+        <div class="actions">
+            <a href="{% url 'store:cart_view' %}" class="btn btn-primary">Return to Cart</a>
+            <a href="{% url 'store:home' %}" class="btn btn-secondary">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

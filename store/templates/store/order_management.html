@@ -1,0 +1,93 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Order Management - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Order Management</h1>
+    
+    <div class="stats">
+        <p><strong>Total Orders:</strong> {{ order_count }}</p>
+        <p><strong>Total Revenue:</strong> £{{ total_revenue }}</p>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filters">
+        <form method="get">
+            <select name="status">
+                <option value="">All Status</option>
+                {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Search orders...">
+            <input type="date" name="start_date" value="{{ start_date }}">
+            <input type="date" name="end_date" value="{{ end_date }}">
+            <button type="submit" class="btn btn-secondary">Filter</button>
+        </form>
+    </div>
+    
+    {% if orders %}
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_reference }}</td>
+                <td>{{ order.email }}</td>
+                <td>{{ order.created_at|date:"M d, Y" }}</td>
+                <td>{{ order.get_status_display }}</td>
+                <td>{{ order.formatted_total }}</td>
+                <td>
+                    <a href="{% url 'store:order_detail' order_reference=order.order_reference %}" class="btn btn-sm">View</a>
+                    <form method="post" action="{% url 'store:update_order_status' order_id=order.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <select name="status" onchange="this.form.submit()">
+                            {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!-- Pagination -->
+    {% if orders.has_other_pages %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if orders.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ orders.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ orders.number }} of {{ orders.paginator.num_pages }}
+            </span>
+
+            {% if orders.has_next %}
+                <a href="?page={{ orders.next_page_number }}">next</a>
+                <a href="?page={{ orders.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <p>No orders found.</p>
+    {% endif %}
+</div>
+{% endblock %}
