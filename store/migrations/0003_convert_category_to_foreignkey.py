@@ -10,25 +10,33 @@ def forward_func(apps, schema_editor):
     category_dict = {}
     
     for name in category_names:
-        category, created = Category.objects.get_or_create(
-            name=name,
-            defaults={'slug': name.lower().replace(' ', '-')}
-        )
-        category_dict[name] = category.id
-    
-    # Add category_id field temporarily
-    # We'll use raw SQL to avoid Django ORM's constraints
-    db_alias = schema_editor.connection.alias
-    schema_editor.execute(
-        "ALTER TABLE store_product ADD COLUMN category_id integer"
-    )
+        if name:  # Only process non-empty names
+            category, created = Category.objects.get_or_create(
+                name=name,
+                defaults={'slug': name.lower().replace(' ', '-').replace('_', '-')}
+            )
+            category_dict[name] = category.id
     
     # Update each product with the correct category_id
+    # The category_id field should already exist from the initial migration
     for product in Product.objects.all():
-        if product.category in category_dict:
-            schema_editor.execute(
-                f"UPDATE store_product SET category_id = {category_dict[product.category]} WHERE id = {product.id}"
-            )
+        if product.category and product.category in category_dict:
+            product.category_id = category_dict[product.category]
+            product.save(update_fields=['category_id'])
+
+def reverse_func(apps, schema_editor):
+    # Reverse operation - copy category names back from FK
+    Product = apps.get_model('store', 'Product')
+    
+    for product in Product.objects.all():
+        if product.category_id:
+            try:
+                category = product.category
+                # This would require the old category field to exist
+                # For now, just pass
+                pass
+            except:
+                pass
 
 class Migration(migrations.Migration):
 
@@ -37,10 +45,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # Run custom SQL
-        migrations.RunPython(forward_func),
+        # Run custom data migration
+        migrations.RunPython(forward_func, reverse_func),
         
-        # Change the field definition
+        # Change the field definition from CharField to ForeignKey
         migrations.AlterField(
             model_name='product',
             name='category',
