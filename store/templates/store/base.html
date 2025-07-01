@@ -236,6 +236,29 @@
     <!-- JavaScript -->
     <script src="{% static 'store/js/main.js' %}"></script>
 <script>
+    // Debug script to test dropdown functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Base template JS loaded');
+        
+        // Test selectors
+        const categoryBtn = document.querySelector('.category-btn');
+        const categoryDropdown = document.querySelector('.category-dropdown');
+        
+        console.log('Found category button:', categoryBtn);
+        console.log('Found category dropdown:', categoryDropdown);
+        
+        if (categoryBtn) {
+            console.log('Adding test click listener to category button');
+            categoryBtn.addEventListener('click', function(e) {
+                console.log('TEST: Category button clicked via base template');
+                e.preventDefault();
+                if (categoryDropdown) {
+                    categoryDropdown.classList.toggle('show');
+                    console.log('Toggled show class, dropdown classes:', categoryDropdown.className);
+                }
+            });
+        }
+    });
     document.addEventListener('DOMContentLoaded', function() {
         // Navbar scroll effect
         const header = document.getElementById('header');

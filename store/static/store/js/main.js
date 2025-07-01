@@ -4,6 +4,8 @@
  * and product display functionality
  */
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Main.js loaded');
+    
     // --- DOM Elements ---
     const elements = {
         // Navigation elements
@@ -37,6 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- Navigation Functions ---
     function initNavigation(elements) {
+        console.log('Initializing navigation');
+        console.log('categoryBtn:', elements.categoryBtn);
+        console.log('categoryDropdown:', elements.categoryDropdown);
+        
         // Mobile menu toggle
         if (elements.mobileMenuBtn && elements.navbarMenu) {
             elements.mobileMenuBtn.addEventListener('click', () => {
@@ -46,11 +52,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Category dropdown toggle
         if (elements.categoryBtn && elements.categoryDropdown) {
+            console.log('Adding category dropdown listener');
             elements.categoryBtn.addEventListener('click', (e) => {
+                console.log('Category button clicked');
                 e.preventDefault();
                 e.stopPropagation();
                 elements.categoryDropdown.classList.toggle('show');
             });
+        } else {
+            console.log('Category elements not found');
         }
         
         // User dropdown toggle
