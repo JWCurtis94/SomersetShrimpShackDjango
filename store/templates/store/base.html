@@ -49,8 +49,8 @@
                             <a href="{% url 'store:product_list' %}" class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Home</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link {% if 'category' in request.GET %}active{% endif %}" aria-haspopup="true">Shop</a>
-                            <div class="dropdown-menu">
+                            <a href="#" class="nav-link category-btn {% if 'category' in request.GET %}active{% endif %}" aria-haspopup="true">Shop</a>
+                            <div class="dropdown-menu category-dropdown">
                                 {% for category in nav_categories %}
                                 <a href="{% url 'store:product_list' %}?category={{ category.slug }}" class="dropdown-item">
                                     <i class="fas fa-tag"></i> {{ category.name }}
