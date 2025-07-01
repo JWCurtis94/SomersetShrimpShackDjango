@@ -226,7 +226,8 @@
 }
 
 .dropdown:hover .dropdown-menu,
-.dropdown-menu.show {
+.dropdown-menu.show,
+.category-dropdown.show {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);

@@ -49,7 +49,7 @@
                             <a href="{% url 'store:product_list' %}" class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">Home</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link category-btn {% if 'category' in request.GET %}active{% endif %}" aria-haspopup="true">Shop ({{ nav_categories|length }} categories)</a>
+                            <a href="#" class="nav-link category-btn {% if 'category' in request.GET %}active{% endif %}" aria-haspopup="true">Shop</a>
                             <div class="dropdown-menu category-dropdown">
                                 {% if nav_categories %}
                                     {% for category in nav_categories %}
@@ -242,24 +242,17 @@
 <script>
     // Simple direct approach to dropdown functionality
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM loaded');
-        
         // Find the category button and dropdown
         const categoryBtn = document.querySelector('.category-btn');
         const categoryDropdown = document.querySelector('.category-dropdown');
-        
-        console.log('Category button found:', !!categoryBtn);
-        console.log('Category dropdown found:', !!categoryDropdown);
         
         if (categoryBtn && categoryDropdown) {
             // Add click event to show/hide dropdown
             categoryBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('Category button clicked');
                 
                 // Toggle the dropdown using CSS class instead of style.display
                 categoryDropdown.classList.toggle('show');
-                console.log('Dropdown classes after toggle:', categoryDropdown.className);
             });
             
             // Close dropdown when clicking elsewhere
