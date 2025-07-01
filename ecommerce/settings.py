@@ -26,7 +26,8 @@ else:
         '127.0.0.1',
         '.herokuapp.com',  # Heroku apps
         '.railway.app',    # Railway apps
-        # Add your production domain here
+        'somersetshrimpshack.uk',  # Your production domain
+        'www.somersetshrimpshack.uk',  # Include www subdomain
     ]
 
 # Application definition
@@ -154,6 +155,13 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # CSRF Configuration
 CSRF_COOKIE_AGE = 31449600  # 1 year
 CSRF_USE_SESSIONS = False  # Use cookies instead of sessions for better performance
+
+# CSRF Trusted Origins for production domain
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        'https://somersetshrimpshack.uk',
+        'https://www.somersetshrimpshack.uk',
+    ]
 
 # Authentication Settings
 AUTHENTICATION_BACKENDS = [
