@@ -26,15 +26,6 @@
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'store/css/main.css' %}">
-    <style>
-        /* Debug CSS - make dropdown visible to test if it exists */
-        .category-dropdown {
-            background-color: yellow !important;
-            border: 2px solid red !important;
-            padding: 10px !important;
-            min-height: 100px !important;
-        }
-    </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -266,18 +257,15 @@
                 e.preventDefault();
                 console.log('Category button clicked');
                 
-                // Toggle the dropdown
-                if (categoryDropdown.style.display === 'block') {
-                    categoryDropdown.style.display = 'none';
-                } else {
-                    categoryDropdown.style.display = 'block';
-                }
+                // Toggle the dropdown using CSS class instead of style.display
+                categoryDropdown.classList.toggle('show');
+                console.log('Dropdown classes after toggle:', categoryDropdown.className);
             });
             
             // Close dropdown when clicking elsewhere
             document.addEventListener('click', function(e) {
                 if (!categoryBtn.contains(e.target) && !categoryDropdown.contains(e.target)) {
-                    categoryDropdown.style.display = 'none';
+                    categoryDropdown.classList.remove('show');
                 }
             });
         }
