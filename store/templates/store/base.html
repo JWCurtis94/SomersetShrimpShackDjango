@@ -236,25 +236,35 @@
     <!-- JavaScript -->
     <script src="{% static 'store/js/main.js' %}"></script>
 <script>
-    // Debug script to test dropdown functionality
+    // Simple direct approach to dropdown functionality
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('Base template JS loaded');
+        console.log('DOM loaded');
         
-        // Test selectors
+        // Find the category button and dropdown
         const categoryBtn = document.querySelector('.category-btn');
         const categoryDropdown = document.querySelector('.category-dropdown');
         
-        console.log('Found category button:', categoryBtn);
-        console.log('Found category dropdown:', categoryDropdown);
+        console.log('Category button found:', !!categoryBtn);
+        console.log('Category dropdown found:', !!categoryDropdown);
         
-        if (categoryBtn) {
-            console.log('Adding test click listener to category button');
+        if (categoryBtn && categoryDropdown) {
+            // Add click event to show/hide dropdown
             categoryBtn.addEventListener('click', function(e) {
-                console.log('TEST: Category button clicked via base template');
                 e.preventDefault();
-                if (categoryDropdown) {
-                    categoryDropdown.classList.toggle('show');
-                    console.log('Toggled show class, dropdown classes:', categoryDropdown.className);
+                console.log('Category button clicked');
+                
+                // Toggle the dropdown
+                if (categoryDropdown.style.display === 'block') {
+                    categoryDropdown.style.display = 'none';
+                } else {
+                    categoryDropdown.style.display = 'block';
+                }
+            });
+            
+            // Close dropdown when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (!categoryBtn.contains(e.target) && !categoryDropdown.contains(e.target)) {
+                    categoryDropdown.style.display = 'none';
                 }
             });
         }
