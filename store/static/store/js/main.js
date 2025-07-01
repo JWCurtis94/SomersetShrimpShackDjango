@@ -47,16 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Category dropdown toggle
         if (elements.categoryBtn && elements.categoryDropdown) {
             elements.categoryBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                elements.categoryDropdown.classList.toggle('active');
+                elements.categoryDropdown.classList.toggle('show');
             });
         }
         
         // User dropdown toggle
         if (elements.userMenuBtn && elements.userDropdown) {
             elements.userMenuBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
-                elements.userDropdown.classList.toggle('active');
+                elements.userDropdown.classList.toggle('show');
             });
         }
         
@@ -65,13 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Close category dropdown
             if (elements.categoryDropdown && elements.categoryBtn && 
                 !elements.categoryDropdown.contains(e.target) && !elements.categoryBtn.contains(e.target)) {
-                elements.categoryDropdown.classList.remove('active');
+                elements.categoryDropdown.classList.remove('show');
             }
             
             // Close user dropdown
             if (elements.userDropdown && elements.userMenuBtn &&
                 !elements.userDropdown.contains(e.target) && !elements.userMenuBtn.contains(e.target)) {
-                elements.userDropdown.classList.remove('active');
+                elements.userDropdown.classList.remove('show');
             }
         });
         

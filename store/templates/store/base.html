@@ -80,10 +80,10 @@
                     
                     {% if user.is_authenticated %}
                         <div class="dropdown">
-                            <a href="#" class="nav-icon" aria-haspopup="true">
+                            <a href="#" class="nav-icon user-menu-btn" aria-haspopup="true">
                                 <i class="fas fa-user-circle"></i>
                             </a>
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu user-dropdown">
                                 <a href="{% url 'store:order_history' %}" class="dropdown-item">
                                     <i class="fas fa-history"></i> Order History
                                 </a>
@@ -99,10 +99,10 @@
                         </div>
                     {% else %}
                         <div class="dropdown">
-                            <a href="#" class="nav-icon" aria-haspopup="true">
+                            <a href="#" class="nav-icon user-menu-btn" aria-haspopup="true">
                                 <i class="fas fa-user"></i>
                             </a>
-                            <div class="dropdown-menu">
+                            <div class="dropdown-menu user-dropdown">
                                 <a href="{% url 'store:login' %}" class="dropdown-item">
                                     <i class="fas fa-sign-in-alt"></i> Login
                                 </a>
@@ -234,6 +234,7 @@
     </footer>
 
     <!-- JavaScript -->
+    <script src="{% static 'store/js/main.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Navbar scroll effect
@@ -263,35 +264,6 @@
             if (!event.target.closest('.navbar-toggler') && !event.target.closest('.navbar-collapse')) {
                 navbarCollapse.classList.remove('show');
                 navbarToggler.setAttribute('aria-expanded', 'false');
-            }
-        });
-
-        // Handle dropdown menus in navbar
-        const dropdownToggles = document.querySelectorAll('.nav-item.dropdown .nav-link');
-        dropdownToggles.forEach(toggle => {
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const dropdown = this.closest('.dropdown');
-                const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-                
-                // Close all other dropdowns
-                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                    if (menu !== dropdownMenu) {
-                        menu.classList.remove('show');
-                    }
-                });
-                
-                // Toggle current dropdown
-                dropdownMenu.classList.toggle('show');
-            });
-        });
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.dropdown')) {
-                document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                    menu.classList.remove('show');
-                });
             }
         });
 
