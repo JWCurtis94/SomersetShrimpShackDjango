@@ -1515,7 +1515,7 @@ def category_management(request):
     """
     View for managing categories
     """
-    categories = Category.objects.all().order_by('name')
+    categories = Category.objects.all().order_by('order', 'name')
     
     return render(request, 'store/category_management.html', {
         'title': 'Category Management',
@@ -1648,3 +1648,32 @@ def test_cart(request):
     return render(request, 'store/test_cart.html', {'products': products})
 
 ###################
+
+@staff_member_required
+@require_http_methods(["POST"])
+def update_category_order(request):
+    """
+    AJAX view for updating category order
+    """
+    import json
+    from django.http import JsonResponse
+    
+    try:
+        data = json.loads(request.body)
+        category_orders = data.get('categories', [])
+        
+        for item in category_orders:
+            category_id = item.get('id')
+            new_order = item.get('order')
+            
+            try:
+                category = Category.objects.get(id=category_id)
+                category.order = new_order
+                category.save()
+            except Category.DoesNotExist:
+                continue
+        
+        return JsonResponse({'success': True, 'message': 'Category order updated successfully!'})
+    
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': f'Error updating category order: {str(e)}'})

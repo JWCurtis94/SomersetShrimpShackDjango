@@ -92,6 +92,65 @@
         margin-bottom: 1rem;
         color: var(--gray-400);
     }
+    
+    /* Drag and Drop Styles */
+    .drag-handle {
+        cursor: move;
+        text-align: center;
+        width: 100px;
+    }
+    
+    .drag-handle i {
+        color: var(--gray-400);
+        margin-right: 0.5rem;
+    }
+    
+    .order-number {
+        font-weight: 600;
+        color: var(--primary);
+    }
+    
+    .sortable-ghost {
+        opacity: 0.5;
+        background-color: var(--blue-50);
+    }
+    
+    .sortable-chosen {
+        background-color: var(--blue-100);
+    }
+    
+    .sortable-drag {
+        background-color: var(--white);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    #reorder-mode-info {
+        background-color: var(--blue-50);
+        border: 1px solid var(--blue-200);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: none;
+    }
+    
+    #reorder-mode-info.active {
+        display: block;
+    }
+    
+    .save-order-btn {
+        background-color: var(--success);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        margin-left: 1rem;
+        cursor: pointer;
+        display: none;
+    }
+    
+    .save-order-btn.active {
+        display: inline-block;
+    }
 </style>
 {% endblock %}
 
@@ -101,12 +160,15 @@
         <!-- Header -->
         <div class="management-header">
             <h1 class="management-title">Category Management</h1>
-            <p class="management-subtitle">Manage your product categories</p>
+            <p class="management-subtitle">Manage your product categories and their display order</p>
             
             <div class="dashboard-actions">
                 <a href="{% url 'store:add_category' %}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Add New Category
                 </a>
+                <button id="toggle-reorder" class="btn btn-outline">
+                    <i class="fas fa-sort"></i> Reorder Categories
+                </button>
                 <a href="{% url 'store:dashboard' %}" class="btn btn-outline">
                     <i class="fas fa-arrow-left"></i> Back to Dashboard
                 </a>
@@ -124,6 +186,24 @@
         </div>
         {% endif %}
         
+        <!-- Reorder Mode Info -->
+        <div id="reorder-mode-info">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong><i class="fas fa-info-circle"></i> Reorder Mode Active</strong>
+                    <p style="margin: 0.5rem 0 0 0; color: var(--gray-600);">Drag and drop categories to reorder them. The order determines how they appear in the Shop dropdown menu.</p>
+                </div>
+                <div>
+                    <button id="save-order" class="save-order-btn">
+                        <i class="fas fa-save"></i> Save Order
+                    </button>
+                    <button id="cancel-reorder" class="btn btn-outline btn-sm">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <!-- Categories Table -->
         <div class="category-table">
             <div class="table-header">
@@ -131,9 +211,10 @@
             </div>
             
             {% if categories %}
-            <table class="table">
+            <table class="table" id="categories-table">
                 <thead>
                     <tr>
+                        <th class="drag-handle-header">Order</th>
                         <th>Image</th>
                         <th>Name</th>
                         <th>Slug</th>
@@ -143,9 +224,13 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="sortable-categories">
                     {% for category in categories %}
-                    <tr>
+                    <tr data-category-id="{{ category.id }}" data-order="{{ category.order }}">
+                        <td class="drag-handle">
+                            <i class="fas fa-grip-vertical"></i>
+                            <span class="order-number">{{ category.order }}</span>
+                        </td>
                         <td>
                             {% if category.image %}
                             <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image">
@@ -201,4 +286,153 @@
         </div>
     </div>
 </section>
+
+<!-- Include SortableJS for drag and drop -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggle-reorder');
+    const reorderInfo = document.getElementById('reorder-mode-info');
+    const saveBtn = document.getElementById('save-order');
+    const cancelBtn = document.getElementById('cancel-reorder');
+    const tableBody = document.getElementById('sortable-categories');
+    
+    let sortable = null;
+    let isReorderMode = false;
+    let originalOrder = [];
+    
+    // Store original order
+    function storeOriginalOrder() {
+        originalOrder = Array.from(tableBody.children).map(row => ({
+            id: row.dataset.categoryId,
+            order: row.dataset.order
+        }));
+    }
+    
+    // Toggle reorder mode
+    toggleBtn.addEventListener('click', function() {
+        if (!isReorderMode) {
+            enableReorderMode();
+        } else {
+            disableReorderMode();
+        }
+    });
+    
+    // Enable reorder mode
+    function enableReorderMode() {
+        isReorderMode = true;
+        storeOriginalOrder();
+        
+        toggleBtn.innerHTML = '<i class="fas fa-times"></i> Exit Reorder';
+        toggleBtn.classList.add('btn-danger');
+        reorderInfo.classList.add('active');
+        
+        // Initialize SortableJS
+        sortable = Sortable.create(tableBody, {
+            handle: '.drag-handle',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag',
+            onEnd: function() {
+                updateOrderNumbers();
+            }
+        });
+    }
+    
+    // Disable reorder mode
+    function disableReorderMode() {
+        isReorderMode = false;
+        
+        toggleBtn.innerHTML = '<i class="fas fa-sort"></i> Reorder Categories';
+        toggleBtn.classList.remove('btn-danger');
+        reorderInfo.classList.remove('active');
+        
+        if (sortable) {
+            sortable.destroy();
+            sortable = null;
+        }
+    }
+    
+    // Update order numbers display
+    function updateOrderNumbers() {
+        const rows = Array.from(tableBody.children);
+        rows.forEach((row, index) => {
+            const orderSpan = row.querySelector('.order-number');
+            orderSpan.textContent = (index + 1) * 10;
+        });
+    }
+    
+    // Save order
+    saveBtn.addEventListener('click', function() {
+        const categories = Array.from(tableBody.children).map((row, index) => ({
+            id: parseInt(row.dataset.categoryId),
+            order: (index + 1) * 10
+        }));
+        
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        
+        fetch('{% url "store:update_category_order" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({categories: categories})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update data attributes
+                categories.forEach((cat, index) => {
+                    const row = tableBody.children[index];
+                    row.dataset.order = cat.order;
+                });
+                
+                // Show success message
+                showMessage('Category order updated successfully!', 'success');
+                disableReorderMode();
+            } else {
+                showMessage('Error: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            showMessage('Network error: ' + error.message, 'error');
+        })
+        .finally(() => {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> Save Order';
+        });
+    });
+    
+    // Cancel reorder
+    cancelBtn.addEventListener('click', function() {
+        // Restore original order
+        originalOrder.forEach((item, index) => {
+            const row = document.querySelector(`tr[data-category-id="${item.id}"]`);
+            if (row) {
+                tableBody.appendChild(row);
+                row.querySelector('.order-number').textContent = item.order;
+            }
+        });
+        
+        disableReorderMode();
+    });
+    
+    // Show message function
+    function showMessage(message, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `alert alert-${type}`;
+        messageDiv.textContent = message;
+        
+        const container = document.querySelector('.container');
+        container.insertBefore(messageDiv, container.firstChild);
+        
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 5000);
+    }
+});
+</script>
 {% endblock %}

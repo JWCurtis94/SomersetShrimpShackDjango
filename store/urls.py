@@ -84,6 +84,7 @@ urlpatterns = [
     path('categories/add/', staff_member_required(views.add_category), name='add_category'),
     path('categories/edit/<int:category_id>/', staff_member_required(views.edit_category), name='edit_category'),
     path('categories/delete/<int:category_id>/', staff_member_required(views.delete_category), name='delete_category'),
+    path('categories/update-order/', csrf_exempt(staff_member_required(views.update_category_order)), name='update_category_order'),
     
     # Debug URLs
     path('debug-session/', views.debug_session, name='debug_session'),
