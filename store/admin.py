@@ -55,13 +55,23 @@ class ProductAdmin(admin.ModelAdmin):
 # Custom admin view for Categories
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug', 'order', 'product_count', 'has_image', 'created_at']
+    list_display = ['name', 'order', 'slug', 'product_count', 'has_image', 'created_at']
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ['name', 'description']
     list_per_page = 20
     list_editable = ['order']
     ordering = ['order', 'name']
     fields = ['name', 'slug', 'description', 'image', 'order']
+    
+    # Add some helpful text at the top of the admin
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context['title'] = 'Categories - Use the Order field to control display order (lower numbers appear first)'
+        return super().changelist_view(request, extra_context=extra_context)
+    
+    def get_queryset(self, request):
+        """Ensure categories are ordered properly in admin"""
+        return super().get_queryset(request).order_by('order', 'name')
     
     def product_count(self, obj):
         """Display the number of products in this category"""
