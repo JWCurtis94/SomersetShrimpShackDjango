@@ -53,12 +53,16 @@ class Category(models.Model):
         null=True,
         help_text="Category image for display on the website"
     )
+    order = models.PositiveIntegerField(
+        default=0,
+        help_text="Order for displaying categories (lower numbers appear first)"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
         verbose_name_plural = "Categories"
-        ordering = ['name']
+        ordering = ['order', 'name']
     
     def __str__(self):
         return self.name

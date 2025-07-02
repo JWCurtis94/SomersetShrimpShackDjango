@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib import messages
+from django.core.exceptions import ValidationError
 from .models import Product, Order, OrderItem, Category
 
 # Inline display of OrderItem within Order admin
@@ -21,15 +23,45 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ['category', 'available']
     search_fields = ['name', 'description']
     prepopulated_fields = {'slug': ('name',)}
+    list_editable = ['stock', 'available']
+    
+    def save_model(self, request, obj, form, change):
+        """Custom save method to handle potential errors"""
+        try:
+            # Call the model's clean method first
+            obj.full_clean()
+            super().save_model(request, obj, form, change)
+            if not change:  # Only show message for new products
+                messages.success(request, f'Product "{obj.name}" was created successfully.')
+        except ValidationError as e:
+            # Handle validation errors gracefully
+            error_message = "Validation Error: "
+            if hasattr(e, 'message_dict'):
+                for field, errors in e.message_dict.items():
+                    error_message += f"{field}: {', '.join(errors)}; "
+            else:
+                error_message += str(e)
+            messages.error(request, error_message)
+            raise
+        except Exception as e:
+            # Log the error for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error saving product {obj.name}: {str(e)}", exc_info=True)
+            messages.error(request, f"Error saving product: {str(e)}")
+            # Re-raise the exception so the user sees the error
+            raise
 
 # Custom admin view for Categories
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug', 'product_count', 'has_image', 'created_at']
+    list_display = ['name', 'slug', 'order', 'product_count', 'has_image', 'created_at']
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ['name', 'description']
     list_per_page = 20
-    fields = ['name', 'slug', 'description', 'image']
+    list_editable = ['order']
+    ordering = ['order', 'name']
+    fields = ['name', 'slug', 'description', 'image', 'order']
     
     def product_count(self, obj):
         """Display the number of products in this category"""
