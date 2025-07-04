@@ -18,6 +18,19 @@ class CategoryForm(forms.ModelForm):
             'order': forms.NumberInput(attrs={'min': 0}),
         }
     
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Make order field optional with default value
+        self.fields['order'].required = False
+        self.fields['order'].initial = 0
+    
+    def clean_order(self):
+        """Ensure order field has a default value"""
+        order = self.cleaned_data.get('order')
+        if order is None or order == '':
+            return 0
+        return order
+    
     def clean_name(self):
         """Validate category name"""
         name = self.cleaned_data.get('name')
