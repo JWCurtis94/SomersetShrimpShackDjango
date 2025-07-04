@@ -7,8 +7,8 @@ from django.contrib.auth import views as auth_views
 app_name = 'store'
 
 urlpatterns = [
-    # Home page
-    path('', views.home, name='home'),
+    # Redirect root URL directly to product list (shop)
+    path('', views.product_list, name='home'),
     
     # Shop URLs
     path('products/', views.product_list, name='product_list'),
