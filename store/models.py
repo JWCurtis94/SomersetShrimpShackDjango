@@ -71,6 +71,13 @@ class Category(models.Model):
         """Return the URL for this category"""
         return reverse('store:category_detail', args=[self.slug])
     
+    def get_next_order(self):
+        """Get the next available order number"""
+        last_category = Category.objects.exclude(pk=self.pk).order_by('order').last()
+        if last_category:
+            return last_category.order + 10
+        return 10
+    
     def clean(self):
         """Validate the category model"""
         from django.core.exceptions import ValidationError
@@ -104,6 +111,10 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         # Strip whitespace from name
         self.name = self.name.strip() if self.name else ''
+        
+        # Auto-assign order if not set
+        if self.order == 0:
+            self.order = self.get_next_order()
         
         # Generate slug before validation
         if not self.slug:

@@ -1698,6 +1698,8 @@ def update_category_order(request):
         if not category_orders:
             return JsonResponse({'success': False, 'message': 'No category order data provided'})
         
+        logger.info(f"Updating category order for {len(category_orders)} categories")
+        
         with transaction.atomic():
             updated_count = 0
             for item in category_orders:
@@ -1705,19 +1707,24 @@ def update_category_order(request):
                 new_order = item.get('order')
                 
                 if category_id is None or new_order is None:
+                    logger.warning(f"Missing id or order in item: {item}")
                     continue
                 
                 try:
                     category = Category.objects.get(id=category_id)
+                    old_order = category.order
                     category.order = new_order
                     category.save()
                     updated_count += 1
+                    logger.info(f"Updated category '{category.name}' order from {old_order} to {new_order}")
                 except Category.DoesNotExist:
                     logger.warning(f"Category with id {category_id} does not exist")
                     continue
                 except Exception as e:
                     logger.error(f"Error updating category {category_id}: {str(e)}")
                     continue
+        
+        logger.info(f"Successfully updated order for {updated_count} categories")
         
         return JsonResponse({
             'success': True, 
@@ -1726,6 +1733,7 @@ def update_category_order(request):
         })
     
     except json.JSONDecodeError:
+        logger.error("Invalid JSON data received")
         return JsonResponse({'success': False, 'message': 'Invalid JSON data'})
     except Exception as e:
         logger.error(f"Error updating category order: {str(e)}", exc_info=True)

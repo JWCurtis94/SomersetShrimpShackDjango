@@ -148,8 +148,17 @@
         display: none;
     }
     
-    .save-order-btn.active {
+    .save-order-btn.show {
         display: inline-block;
+    }
+    
+    .save-order-btn:hover {
+        background-color: var(--success-dark);
+    }
+    
+    .save-order-btn:disabled {
+        background-color: var(--gray-400);
+        cursor: not-allowed;
     }
 </style>
 {% endblock %}
@@ -327,6 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleBtn.innerHTML = '<i class="fas fa-times"></i> Exit Reorder';
         toggleBtn.classList.add('btn-danger');
         reorderInfo.classList.add('active');
+        saveBtn.classList.add('show');
         
         // Initialize SortableJS
         sortable = Sortable.create(tableBody, {
@@ -348,6 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
         toggleBtn.innerHTML = '<i class="fas fa-sort"></i> Reorder Categories';
         toggleBtn.classList.remove('btn-danger');
         reorderInfo.classList.remove('active');
+        saveBtn.classList.remove('show');
         
         if (sortable) {
             sortable.destroy();
@@ -391,14 +402,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 // Show success message
-                showMessage('Category order updated successfully!', 'success');
+                showMessage('Category order updated successfully! The changes will be reflected in the shop dropdown.', 'success');
                 disableReorderMode();
+                
+                // Reload the page after a short delay to show the updated order
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } else {
                 showMessage('Error: ' + data.message, 'error');
             }
         })
         .catch(error => {
             showMessage('Network error: ' + error.message, 'error');
+            console.error('Error:', error);
         })
         .finally(() => {
             saveBtn.disabled = false;

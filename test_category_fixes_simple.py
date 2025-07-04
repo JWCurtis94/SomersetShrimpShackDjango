@@ -93,13 +93,13 @@ def test_category_ordering():
     # Clean up existing test data
     Category.objects.filter(name__icontains="order test").delete()
     
-    # Create categories with different orders
+    # Create categories with specific orders
     categories = []
     for i in range(3):
         category = Category.objects.create(
             name=f"Order Test Category {i}",
             description=f"Test category {i}",
-            order=i * 10
+            order=(i + 1) * 10  # 10, 20, 30
         )
         categories.append(category)
     
@@ -109,9 +109,10 @@ def test_category_ordering():
     if len(ordered_categories) == 3:
         correct_order = True
         for i, cat in enumerate(ordered_categories):
-            expected_order = i * 10
+            expected_order = (i + 1) * 10  # 10, 20, 30
             if cat.order != expected_order:
                 correct_order = False
+                print(f"  Category {i}: expected order {expected_order}, got {cat.order}")
                 break
         
         if correct_order:
@@ -120,6 +121,8 @@ def test_category_ordering():
             print("✗ Category ordering failed - wrong order")
     else:
         print(f"✗ Expected 3 categories, got {len(ordered_categories)}")
+        for cat in ordered_categories:
+            print(f"  Found: {cat.name} (order: {cat.order})")
 
 def test_update_category_order_endpoint():
     """Test the update category order functionality"""
@@ -133,28 +136,36 @@ def test_update_category_order_endpoint():
         category = Category.objects.create(
             name=f"Update Test Category {i}",
             description=f"Test category {i}",
-            order=i * 10
+            order=(i + 1) * 10  # 10, 20, 30
         )
         categories.append(category)
     
-    # Simulate reordering
+    # Simulate reordering by directly updating order values
     try:
-        # Change order of categories
-        categories[0].order = 20
-        categories[0].save()
+        # Manually set specific orders to test reordering
+        # Category 0: 10 -> 30 (last position)
+        # Category 1: 20 -> 10 (first position) 
+        # Category 2: 30 -> 20 (middle position)
         
-        categories[1].order = 0
-        categories[1].save()
+        cat0 = Category.objects.get(name="Update Test Category 0")
+        cat1 = Category.objects.get(name="Update Test Category 1")
+        cat2 = Category.objects.get(name="Update Test Category 2")
         
-        categories[2].order = 10
-        categories[2].save()
+        cat0.order = 30
+        cat0.save()
         
-        # Check new order
+        cat1.order = 10
+        cat1.save()
+        
+        cat2.order = 20
+        cat2.save()
+        
+        # Check new order - should be Category 1, Category 2, Category 0
         reordered = list(Category.objects.filter(name__icontains="update test").order_by('order'))
         expected_names = [
-            "Update Test Category 1",  # order 0
-            "Update Test Category 2",  # order 10
-            "Update Test Category 0",  # order 20
+            "Update Test Category 1",  # order 10
+            "Update Test Category 2",  # order 20
+            "Update Test Category 0",  # order 30
         ]
         
         actual_names = [cat.name for cat in reordered]
@@ -163,6 +174,9 @@ def test_update_category_order_endpoint():
             print("✓ Category order update works correctly")
         else:
             print(f"✗ Category order update failed. Expected: {expected_names}, Got: {actual_names}")
+            print("Details:")
+            for cat in reordered:
+                print(f"  {cat.name}: order = {cat.order}")
     
     except Exception as e:
         print(f"✗ Error testing category order update: {e}")
