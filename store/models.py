@@ -46,7 +46,7 @@ def generate_unique_slug(instance, max_length=255):
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    slug = models.SlugField(unique=True, max_length=100)
+    slug = models.SlugField(unique=True, max_length=100, blank=True)
     image = models.ImageField(
         upload_to='categories/', 
         blank=True, 
@@ -71,9 +71,47 @@ class Category(models.Model):
         """Return the URL for this category"""
         return reverse('store:category_detail', args=[self.slug])
     
+    def clean(self):
+        """Validate the category model"""
+        from django.core.exceptions import ValidationError
+        
+        # Validate image file if provided
+        if self.image:
+            # Check file size (max 5MB)
+            if hasattr(self.image, 'size') and self.image.size > 5 * 1024 * 1024:
+                raise ValidationError({'image': 'Image file too large. Maximum size is 5MB.'})
+            
+            # Check file extension
+            if hasattr(self.image, 'name'):
+                valid_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+                file_extension = self.image.name.lower().split('.')[-1]
+                if f'.{file_extension}' not in valid_extensions:
+                    raise ValidationError({'image': f'Invalid image format. Allowed formats: {", ".join(valid_extensions)}'})
+        
+        # Validate name
+        if not self.name or not self.name.strip():
+            raise ValidationError({'name': 'Category name is required.'})
+        
+        # Ensure name is unique (case-insensitive)
+        if self.pk:
+            existing = Category.objects.filter(name__iexact=self.name.strip()).exclude(pk=self.pk).first()
+        else:
+            existing = Category.objects.filter(name__iexact=self.name.strip()).first()
+        
+        if existing:
+            raise ValidationError({'name': 'A category with this name already exists.'})
+    
     def save(self, *args, **kwargs):
+        # Strip whitespace from name
+        self.name = self.name.strip() if self.name else ''
+        
+        # Generate slug before validation
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = generate_unique_slug(self)
+        
+        # Always run clean() before saving
+        self.full_clean()
+        
         super().save(*args, **kwargs)
     
 # Define constant choices at module level

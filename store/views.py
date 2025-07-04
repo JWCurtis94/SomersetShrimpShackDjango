@@ -22,13 +22,14 @@ from django.db import transaction
 
 from .models import Product, Order, OrderItem, Category
 from .cart import Cart
-from .forms import CheckoutForm, ProductForm, ContactForm
+from .forms import CheckoutForm, ProductForm, ContactForm, CategoryForm
 
 from decimal import Decimal, InvalidOperation
 import uuid
 import stripe
 import json
 import logging
+import os
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -79,6 +80,26 @@ def paginate_queryset(request, queryset, per_page=12):
         page_obj = paginator.page(paginator.num_pages)
     
     return page_obj
+
+def ensure_media_directories():
+    """Ensure that media directories exist for file uploads"""
+    import os
+    from django.conf import settings
+    
+    if hasattr(settings, 'MEDIA_ROOT') and settings.MEDIA_ROOT:
+        # Create media directories if they don't exist
+        media_dirs = [
+            os.path.join(settings.MEDIA_ROOT, 'categories'),
+            os.path.join(settings.MEDIA_ROOT, 'products'),
+        ]
+        
+        for dir_path in media_dirs:
+            if not os.path.exists(dir_path):
+                try:
+                    os.makedirs(dir_path, exist_ok=True)
+                    logger.info(f"Created media directory: {dir_path}")
+                except Exception as e:
+                    logger.error(f"Error creating media directory {dir_path}: {str(e)}")
 
 ###################
 # Public Views
@@ -1527,27 +1548,32 @@ def add_category(request):
     """
     View for adding a new category
     """
+    # Ensure media directories exist
+    ensure_media_directories()
+    
     if request.method == 'POST':
-        name = request.POST.get('name', '').strip()
-        description = request.POST.get('description', '').strip()
-        image = request.FILES.get('image')
-        
-        if name:
-            # Create category with auto-generated slug
-            category = Category(
-                name=name,
-                description=description,
-                image=image
-            )
-            category.save()
-            
-            messages.success(request, f'Category "{category.name}" created successfully!')
-            return redirect('store:category_management')
+        form = CategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                with transaction.atomic():
+                    category = form.save()
+                    messages.success(request, f'Category "{category.name}" created successfully!')
+                    return redirect('store:category_management')
+            except Exception as e:
+                # Handle any database errors
+                messages.error(request, f'Error creating category: {str(e)}')
+                logger.error(f"Error creating category: {str(e)}", exc_info=True)
         else:
-            messages.error(request, 'Category name is required.')
+            # Display form validation errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = CategoryForm()
     
     return render(request, 'store/add_category.html', {
         'title': 'Add Category',
+        'form': form,
     })
 
 @staff_member_required
@@ -1557,26 +1583,33 @@ def edit_category(request, category_id):
     """
     category = get_object_or_404(Category, id=category_id)
     
+    # Ensure media directories exist
+    ensure_media_directories()
+    
     if request.method == 'POST':
-        name = request.POST.get('name', '').strip()
-        description = request.POST.get('description', '').strip()
-        image = request.FILES.get('image')
-        
-        if name:
-            category.name = name
-            category.description = description
-            if image:
-                category.image = image
-            category.save()
-            
-            messages.success(request, f'Category "{category.name}" updated successfully!')
-            return redirect('store:category_management')
+        form = CategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            try:
+                with transaction.atomic():
+                    category = form.save()
+                    messages.success(request, f'Category "{category.name}" updated successfully!')
+                    return redirect('store:category_management')
+            except Exception as e:
+                # Handle any database errors
+                messages.error(request, f'Error updating category: {str(e)}')
+                logger.error(f"Error updating category {category.name}: {str(e)}", exc_info=True)
         else:
-            messages.error(request, 'Category name is required.')
+            # Display form validation errors
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = CategoryForm(instance=category)
     
     return render(request, 'store/edit_category.html', {
         'title': 'Edit Category',
         'category': category,
+        'form': form,
     })
 
 @staff_member_required
@@ -1662,18 +1695,38 @@ def update_category_order(request):
         data = json.loads(request.body)
         category_orders = data.get('categories', [])
         
-        for item in category_orders:
-            category_id = item.get('id')
-            new_order = item.get('order')
-            
-            try:
-                category = Category.objects.get(id=category_id)
-                category.order = new_order
-                category.save()
-            except Category.DoesNotExist:
-                continue
+        if not category_orders:
+            return JsonResponse({'success': False, 'message': 'No category order data provided'})
         
-        return JsonResponse({'success': True, 'message': 'Category order updated successfully!'})
+        with transaction.atomic():
+            updated_count = 0
+            for item in category_orders:
+                category_id = item.get('id')
+                new_order = item.get('order')
+                
+                if category_id is None or new_order is None:
+                    continue
+                
+                try:
+                    category = Category.objects.get(id=category_id)
+                    category.order = new_order
+                    category.save()
+                    updated_count += 1
+                except Category.DoesNotExist:
+                    logger.warning(f"Category with id {category_id} does not exist")
+                    continue
+                except Exception as e:
+                    logger.error(f"Error updating category {category_id}: {str(e)}")
+                    continue
+        
+        return JsonResponse({
+            'success': True, 
+            'message': f'Successfully updated {updated_count} categories',
+            'updated_count': updated_count
+        })
     
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'message': 'Invalid JSON data'})
     except Exception as e:
+        logger.error(f"Error updating category order: {str(e)}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'Error updating category order: {str(e)}'})

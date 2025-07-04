@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product
+from .models import Product, Category
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -8,6 +8,50 @@ class ProductForm(forms.ModelForm):
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
         }
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name', 'description', 'image', 'order']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'order': forms.NumberInput(attrs={'min': 0}),
+        }
+    
+    def clean_name(self):
+        """Validate category name"""
+        name = self.cleaned_data.get('name')
+        if name:
+            name = name.strip()
+            if not name:
+                raise forms.ValidationError('Category name cannot be empty.')
+            
+            # Check for duplicate names (case-insensitive)
+            existing_query = Category.objects.filter(name__iexact=name)
+            if self.instance and self.instance.pk:
+                existing_query = existing_query.exclude(pk=self.instance.pk)
+            
+            if existing_query.exists():
+                raise forms.ValidationError('A category with this name already exists.')
+        
+        return name
+    
+    def clean_image(self):
+        """Validate the image field"""
+        image = self.cleaned_data.get('image')
+        if image:
+            # Check file size (max 5MB)
+            if hasattr(image, 'size') and image.size > 5 * 1024 * 1024:
+                raise forms.ValidationError('Image file too large. Maximum size is 5MB.')
+            
+            # Check file extension
+            if hasattr(image, 'name'):
+                valid_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+                file_name = image.name.lower()
+                if not any(file_name.endswith(ext) for ext in valid_extensions):
+                    raise forms.ValidationError(f'Invalid image format. Allowed formats: {", ".join(valid_extensions)}')
+        
+        return image
 
 class CheckoutForm(forms.Form):
     email = forms.EmailField(label='Email Address', required=True)
