@@ -212,12 +212,16 @@ if USE_S3:
     # MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
     
     # S3 Settings
-    AWS_DEFAULT_ACL = 'public-read'
+    AWS_DEFAULT_ACL = None  # Use bucket's default policy instead of ACLs
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
     AWS_S3_FILE_OVERWRITE = False
     AWS_LOCATION = 'media'
+    
+    # Additional S3 settings for newer AWS security requirements
+    AWS_QUERYSTRING_AUTH = False  # Don't add authentication parameters to URLs
+    AWS_S3_SIGNATURE_VERSION = 's3v4'  # Use the latest signature version
 else:
     # Local media files (for development)
     MEDIA_URL = '/media/'
