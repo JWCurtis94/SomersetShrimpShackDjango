@@ -1,0 +1,53 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ category.name }}</h1>
+    {% if category.description %}
+    <p class="category-description">{{ category.description }}</p>
+    {% endif %}
+    
+    {% if products %}
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p class="price">{{ product.display_price }}</p>
+            <p class="stock-status">{{ product.stock_status|title }}</p>
+            <a href="{{ product.get_absolute_url }}" class="btn btn-primary">View Details</a>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if products.has_other_pages %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if products.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ products.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ products.number }} of {{ products.paginator.num_pages }}
+            </span>
+
+            {% if products.has_next %}
+                <a href="?page={{ products.next_page_number }}">next</a>
+                <a href="?page={{ products.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <p>No products found in this category.</p>
+    {% endif %}
+</div>
+{% endblock %}

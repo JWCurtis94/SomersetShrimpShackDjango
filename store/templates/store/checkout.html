@@ -1,0 +1,38 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Checkout - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Checkout</h1>
+    
+    <div class="checkout-container">
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            {% for item in cart_items %}
+            <div class="checkout-item">
+                <span>{{ item.product.name }}{% if item.size %} ({{ item.size }}){% endif %}</span>
+                <span>Qty: {{ item.quantity }}</span>
+                <span>{{ item.subtotal }}</span>
+            </div>
+            {% endfor %}
+            
+            <div class="totals">
+                <div>Subtotal: £{{ total }}</div>
+                <div>Shipping: £{{ shipping_cost }}</div>
+                <div class="grand-total">Total: £{{ grand_total }}</div>
+            </div>
+        </div>
+        
+        <div class="checkout-form">
+            <h2>Billing Information</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

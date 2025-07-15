@@ -1,0 +1,51 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Logout - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-container">
+            {% if user.is_authenticated %}
+                <div class="auth-header">
+                    <h1>Confirm Logout</h1>
+                    <p>Are you sure you want to log out, {{ user.username }}?</p>
+                </div>
+                
+                <div class="logout-message">
+                    <div class="logout-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                    <p>You will be signed out of your account and redirected to the home page.</p>
+                </div>
+
+                <form method="post" class="auth-form">
+                    {% csrf_token %}
+                    <div class="auth-actions">
+                        <button type="submit" class="btn btn-primary">Yes, Log Me Out</button>
+                        <a href="{% url 'store:home' %}" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+            {% else %}
+                <div class="auth-header">
+                    <h1>You Have Been Logged Out</h1>
+                    <p>Thank you for visiting Somerset Shrimp Shack</p>
+                </div>
+                
+                <div class="logout-message">
+                    <div class="logout-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <p>You have successfully logged out of your account.</p>
+                </div>
+
+                <div class="auth-actions">
+                    <a href="{% url 'store:login' %}" class="btn btn-primary">Log In Again</a>
+                    <a href="{% url 'store:product_list' %}" class="btn btn-outline">Continue Shopping</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

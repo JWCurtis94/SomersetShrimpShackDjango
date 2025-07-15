@@ -1,0 +1,436 @@
+/* CARE GUIDES PAGE */
+.care-guides-page {
+  padding: 40px 0;
+  background-color: var(--light-bg);
+}
+
+.care-guides-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.care-guides-title {
+  font-size: 2.5rem;
+  color: var(--dark);
+  margin-bottom: 1rem;
+}
+
+.care-guides-intro {
+  font-size: 1.1rem;
+  color: var(--gray-700);
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Tabs Navigation */
+.care-guides-tabs {
+  margin: 2rem 0;
+}
+
+.tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.tab-item {
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.tab-item:hover {
+  color: var(--primary);
+}
+
+.tab-item.active {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Guide Sections */
+.guide-section {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.guide-section.active {
+  display: block;
+}
+
+.guide-header {
+  display: flex;
+  margin-bottom: 2rem;
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.guide-image {
+  flex: 0 0 40%;
+  background-size: cover;
+  background-position: center;
+  min-height: 300px;
+}
+
+.guide-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.guide-intro {
+  flex: 0 0 60%;
+  padding: 2rem;
+}
+
+.guide-intro h2 {
+  color: var(--primary);
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+.guide-intro p {
+  line-height: 1.6;
+  color: var(--gray-700);
+}
+
+/* Parameters Grid */
+.guide-parameters {
+  background-color: var(--light);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+}
+
+.guide-parameters h3 {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.parameters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.parameter {
+  background-color: var(--white);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.parameter-name {
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+
+.parameter-value {
+  color: var(--gray-800);
+  font-size: 1.1rem;
+}
+
+/* Guide Content */
+.guide-section-content {
+  line-height: 1.6;
+}
+
+.guide-section-content h3 {
+  color: var(--primary);
+  margin: 2rem 0 1rem;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.guide-section-content ul {
+  margin-bottom: 1.5rem;
+}
+
+.guide-section-content li {
+  margin-bottom: 0.5rem;
+}
+
+.guide-section-content strong {
+  color: var(--primary);
+}
+
+/* Care Tips Box */
+.care-tips {
+  background-color: var(--light);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin: 2rem 0;
+  border-left: 4px solid var(--primary);
+}
+
+.care-tips h3 {
+  color: var(--primary);
+  margin-top: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.care-tips ul {
+  margin-bottom: 0;
+}
+
+/* Plant Categories */
+.plant-category {
+  margin-bottom: 3rem;
+}
+
+.plant-category h4 {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+}
+
+.plant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.plant-card {
+  background-color: var(--white);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease;
+}
+
+.plant-card:hover {
+  transform: translateY(-5px);
+}
+
+.plant-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.plant-card h5 {
+  padding: 15px 15px 5px;
+  margin: 0;
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.plant-card p {
+  padding: 0 15px;
+  color: var(--gray-700);
+}
+
+.plant-requirements {
+  list-style: none;
+  padding: 0 15px 15px;
+  margin: 0;
+  color: var(--gray-600);
+}
+
+/* Setup Guide Styles */
+.setup-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+  margin-bottom: 2rem;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  background-color: var(--white);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.checklist-icon {
+  color: var(--primary);
+  margin-right: 15px;
+  font-size: 1.2rem;
+  margin-top: 3px;
+}
+
+.checklist-item strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--primary);
+}
+
+.setup-steps {
+  counter-reset: step-counter;
+  list-style-type: none;
+  padding: 0;
+}
+
+.setup-steps li {
+  counter-increment: step-counter;
+  position: relative;
+  padding-left: 50px;
+  margin-bottom: 1.5rem;
+  min-height: 40px;
+}
+
+.setup-steps li::before {
+  content: counter(step-counter);
+  background: var(--primary);
+  color: var(--white);
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.setup-steps li strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.cycle-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 1.5rem 0;
+}
+
+.cycle-stage {
+  flex: 1 1 200px;
+  background-color: var(--white);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.cycle-stage h4 {
+  color: var(--primary);
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.acclimation-steps {
+  background-color: var(--white);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.acclimation-steps h4 {
+  color: var(--primary);
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.acclimation-steps ol {
+  padding-left: 20px;
+}
+
+.acclimation-steps li {
+  margin-bottom: 15px;
+}
+
+/* Maintenance Schedule */
+.maintenance-schedule {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.maintenance-item {
+  background-color: var(--white);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.maintenance-item h4 {
+  color: var(--primary);
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.maintenance-item ul {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 992px) {
+  .guide-header {
+    flex-direction: column;
+  }
+  
+  .guide-image, .guide-intro {
+    flex: 0 0 100%;
+  }
+  
+  .guide-image {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tab-item {
+    padding: 10px 15px;
+    font-size: 1rem;
+  }
+  
+  .parameters-grid, 
+  .maintenance-schedule, 
+  .plant-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .setup-checklist {
+    grid-template-columns: 1fr;
+  }
+  
+  .care-guides-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs-nav {
+    flex-direction: column;
+  }
+  
+  .tab-item {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .guide-intro {
+    padding: 1rem;
+  }
+  
+  .guide-parameters,
+  .care-tips {
+    padding: 1rem;
+  }
+}

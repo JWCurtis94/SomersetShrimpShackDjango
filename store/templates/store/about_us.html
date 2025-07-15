@@ -1,0 +1,140 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}About Somerset Shrimp Shack - Our Story{% endblock %}
+
+{% block content %}
+<section class="about-page">
+    <div class="container">
+        <!-- Breadcrumb navigation -->
+        <div class="product-breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'store:product_list' %}" class="breadcrumb-link">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <span class="breadcrumb-current">About Us</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="about-container">
+            <div class="about-header">
+                <h1 class="about-title">About Somerset Shrimp Shack</h1>
+                <div class="about-subtitle">Bringing Aquatic Beauty to Your Home</div>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-image-container">
+                    <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Somerset Shrimp Shack founder with shrimp tank" class="about-hero-image">
+                </div>
+                
+                <div class="about-story">
+                    <h2>Our Story</h2>
+                    <p>
+                        Somerset Shrimp Shack began in 2024 with a simple passion: to share the stunning 
+                        beauty of freshwater shrimp with fellow hobbyists across the UK. What started as 
+                        a small personal collection quickly grew into something much bigger.
+                    </p>
+                    <p>
+                        Founded by Emerzon Fitzgerald, our business 
+                        is dedicated to providing healthy, vibrant shrimp and plants from ethically managed 
+                        tanks. We believe that aquarium keeping should be sustainable, educational, 
+                        and bring joy to hobbyists of all experience levels.
+                    </p>
+                </div>
+                
+                <div class="about-mission">
+                    <h2>Our Mission</h2>
+                    <p>
+                        At Somerset Shrimp Shack, our mission is threefold:
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Quality</strong> - We provide only the healthiest shrimp and plants, 
+                            carefully selected and maintained in our state-of-the-art breeding facility.
+                        </li>
+                        <li>
+                            <strong>Education</strong> - We share knowledge with our community through 
+                            comprehensive care guides, responsive customer service, and regular workshops.
+                        </li>
+                        <li>
+                            <strong>Sustainability</strong> - We're committed to ethical breeding practices 
+                            that support conservation efforts and reduce impact on wild populations.
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="about-facility">
+                    <h2>Our Facility</h2>
+                    <p>
+                        Located in the heart of Somerset, our facility is dedicated to the careful breeding and care of a wide range of freshwater shrimp and aquatic plants. Each tank is maintained to the highest standards, with daily monitoring of water parameters and the use of advanced filtration systems to ensure optimal living conditions.
+                    </p>
+                    <p>
+                        We prioritize health, colour, and genetic diversity in all our breeding efforts. Through ongoing refinement of our techniques and a commitment to quality, we’re proud to offer shrimp that thrive in both hobbyist and professional aquariums.
+                    </p>
+                </div>
+                
+                    <div class="about-team">
+                        <h2>Meet Our Team</h2>
+                        <div class="team-members">
+                            <div class="team-member">
+                                <h3>Emerzon Fitzgerald</h3>
+                                <div class="team-member-role">Founder</div>
+                                <p>
+                                    Emerzon started out as a passionate shrimp hobbyist and quickly discovered a deep love for the craft. Driven by a desire to share that passion with others, he founded Somerset Shrimp Shack to bring high-quality, responsibly bred shrimp to fellow enthusiasts.
+                                </p>
+                            </div>
+
+                            <div class="team-member">
+                                <h3>Courtney Toms</h3>
+                                <div class="team-member-role">Operations & Admin</div>
+                                <p>
+                                    Courtney oversees all administrative and operational tasks, ensuring the business runs efficiently and remains focused on providing top-tier service to our customers and community.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                
+                <div class="about-values">
+                    <h2>Our Values</h2>
+                    <div class="values-grid">
+                        <div class="value-item">
+                            <i class="fas fa-leaf value-icon"></i>
+                            <h3>Sustainability</h3>
+                            <p>We're committed to environmentally responsible breeding practices.</p>
+                        </div>
+                        
+                        <div class="value-item">
+                            <i class="fas fa-heart value-icon"></i>
+                            <h3>Passion</h3>
+                            <p>We genuinely love what we do and share that enthusiasm with our customers.</p>
+                        </div>
+                        
+                        <div class="value-item">
+                            <i class="fas fa-star value-icon"></i>
+                            <h3>Quality</h3>
+                            <p>We never compromise on the health and quality of our livestock.</p>
+                        </div>
+                        
+                        <div class="value-item">
+                            <i class="fas fa-users value-icon"></i>
+                            <h3>Community</h3>
+                            <p>We foster a supportive community of shrimp enthusiasts across the UK.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-contact">
+                    <h2>Get In Touch</h2>
+                    <p>
+                        Have questions about our shrimp, plants, or care practices? We'd love to hear from you! 
+                        Our team is always available to help with your aquarium needs.
+                    </p>
+                    <a href="{% url 'store:contact' %}" class="btn btn-primary">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

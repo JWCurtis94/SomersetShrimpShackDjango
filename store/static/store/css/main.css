@@ -1,0 +1,34 @@
+/* Main CSS file - imports all other files */
+
+/* Base */
+@import url('./base/variables.css');
+@import url('./base/reset.css');
+@import url('./base/global.css');
+@import url('./base/layout.css');
+@import url('./base/responsive.css');
+@import url('./base/polish.css');
+
+/* Components */
+@import url('./components/buttons.css');
+@import url('./components/navbar.css');
+@import url('./components/cards.css');
+@import url('./components/forms.css');
+@import url('./components/pagination.css');
+@import url('./components/footer.css');
+@import url('./components/messages.css');
+
+/* Admin */
+@import url('./admin/styles.css');
+@import url('./admin/dashboard.css');
+
+/* Pages */
+@import url('./pages/home.css');
+@import url('./pages/product.css');
+@import url('./pages/cart.css');
+@import url('./pages/care-guides.css');
+@import url('./pages/about.css');
+@import url('./pages/contact.css');
+@import url('./pages/auth.css');
+
+/* Utilities */
+@import url('./utilities/animations.css');

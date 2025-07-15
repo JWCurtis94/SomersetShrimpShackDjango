@@ -1,0 +1,134 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Contact Us - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<section class="contact-page">
+    <div class="container">
+        <!-- Breadcrumb navigation -->
+        <div class="product-breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'store:product_list' %}" class="breadcrumb-link">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <span class="breadcrumb-current">Contact Us</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Page Header -->
+        <div class="contact-header">
+            <h1 class="contact-title">Contact Us</h1>
+            <p class="contact-subtitle">Get in touch with Somerset Shrimp Shack</p>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="contact-main">
+            <!-- Contact Form Section -->
+            <div class="contact-form-section">
+                <h2>Send Us a Message</h2>
+                <form class="contact-form" method="post" action="{% url 'store:contact' %}">
+                    {% csrf_token %}
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Name *</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" id="email" name="email" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject" class="form-label">Subject *</label>
+                        <input type="text" id="subject" name="subject" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message" class="form-label">Message *</label>
+                        <textarea id="message" name="message" class="form-control" rows="6" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+            
+            <!-- Contact Info & Map Section -->
+            <div class="contact-info-section">
+                <!-- Contact Details -->
+                <div class="contact-details">
+                    <h2>Get In Touch</h2>
+                    
+                    <div class="contact-item">
+                        <div class="contact-item-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-item-content">
+                            <h4>Location</h4>
+                            <p>Somerset, UK</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-item-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-item-content">
+                            <h4>Email</h4>
+                            <p>info@somersetshrimpshack.uk</p>
+                            <span class="response-time">We respond within 24 hours</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Map -->
+                <div class="map-container">
+                    <h3>Find Us</h3>
+                    <div class="map-embed">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20182.33651084994!2d-2.9989!3d51.1279!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x486d8654b5b5b3b7%3A0x3b7d8f2a2a8b3e4d!2sBridgwater%2C%20Somerset%2C%20UK!5e0!3m2!1sen!2sus!4v1708823849687!5m2!1sen!2sus" 
+                            width="100%" 
+                            height="300" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-items">
+                <div class="faq-item">
+                    <h3>Do you ship internationally?</h3>
+                    <p>Currently, we only ship within the UK mainland. We're working on expanding our shipping options to EU countries in the near future.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>What are your shipping rates?</h3>
+                    <p>We charge a flat rate of £4.99 for all orders. Orders over £50 qualify for free shipping.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>How do you ensure the shrimp arrive alive?</h3>
+                    <p>We use specialized insulated packaging with heat/cold packs as needed depending on the season. All livestock is carefully acclimated before shipping and packaged with oxygen.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h3>What if my order arrives damaged?</h3>
+                    <p>We offer a live arrival guarantee. Please contact us within 24 hours with photos, and we'll arrange for replacement or refund.</p>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

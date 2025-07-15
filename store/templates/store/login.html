@@ -1,0 +1,63 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Login - Somerset Shrimp Shack{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'store/css/pages/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to your Somerset Shrimp Shack account</p>
+            </div>
+
+            <form method="post" action="{% url 'store:login' %}" class="auth-form" onsubmit="console.log('Form submitted to store:login'); return true;">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <p>Please check the form for errors:</p>
+                    {{ form.errors }}
+                </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                    <div class="form-error">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}">Password</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                    <div class="form-error">{{ form.password.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{% url 'store:signup' %}">Sign up</a></p>
+                <p><a href="{% url 'store:password_reset' %}">Forgot your password?</a></p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,283 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Payment Successful - Somerset Shrimp Shack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-section {
+        padding: 4rem 0;
+        text-align: center;
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .success-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .success-icon {
+        font-size: 5rem;
+        color: var(--secondary);
+        margin-bottom: 1.5rem;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    
+    .success-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+    
+    .success-message {
+        font-size: 1.25rem;
+        color: var(--gray-600);
+        margin-bottom: 2rem;
+    }
+    
+    .order-details {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+        text-align: left;
+    }
+    
+    .order-number {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .order-email {
+        color: var(--gray-600);
+        margin-bottom: 1.5rem;
+    }
+    
+    .order-summary-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+    
+    .summary-label {
+        color: var(--gray-700);
+    }
+    
+    .summary-value {
+        font-weight: 500;
+    }
+    
+    .summary-total {
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--gray-300);
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 1.125rem;
+    }
+    
+    .success-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .shipping-info {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--gray-200);
+    }
+    
+    .shipping-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .success-title {
+            font-size: 2rem;
+        }
+        
+        .success-message {
+            font-size: 1rem;
+        }
+        
+        .success-actions {
+            flex-direction: column;
+        }
+        
+        .success-actions .btn {
+            width: 100%;
+        }
+    }
+    
+    .tracking-info {
+        background-color: var(--light);
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+    
+    .tracking-info p {
+        margin-bottom: 0.5rem;
+    }
+    
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background-color: #f0f;
+        opacity: 0;
+        top: 0;
+        left: 50%;
+        animation: confetti 5s ease-in-out infinite;
+    }
+    
+    @keyframes confetti {
+        0% {
+            opacity: 1;
+            transform: translateY(0) rotate(0deg);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(100vh) rotate(720deg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="success-section">
+    <div class="container">
+        <div class="success-container">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h1 class="success-title">Payment Successful!</h1>
+            <p class="success-message">Thank you for your order. We're preparing your items for shipment.</p>
+            
+            <div class="order-details">
+                <div class="order-number">Order #{{ order.id }}</div>
+                <div class="order-email">A confirmation email has been sent to {{ order.email }}</div>
+                
+                <h3 class="order-summary-title">Order Summary</h3>
+                <div class="summary-row">
+                    <span class="summary-label">Order Date</span>
+                    <span class="summary-value">{{ order.created_at|date:"F j, Y" }}</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="summary-label">Payment Method</span>
+                    <span class="summary-value">{{ order.payment_method }}</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal</span>
+                    <span class="summary-value">£{{ order.subtotal }}</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span class="summary-label">Shipping</span>
+                    <span class="summary-value">£{{ order.shipping_cost }}</span>
+                </div>
+                
+                {% if order.discount %}
+                <div class="summary-row">
+                    <span class="summary-label">Discount</span>
+                    <span class="summary-value">-£{{ order.discount }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="summary-row summary-total">
+                    <span class="summary-label">Total</span>
+                    <span class="summary-value">£{{ order.total_price }}</span>
+                </div>
+                
+                <div class="shipping-info">
+                    <h3 class="shipping-title">Shipping Information</h3>
+                    <p>{{ order.shipping_address.name }}</p>
+                    <p>{{ order.shipping_address.street_address }}</p>
+                    <p>{{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.postal_code }}</p>
+                    <p>{{ order.shipping_address.country }}</p>
+                </div>
+                
+                <div class="tracking-info">
+                    <p>Expected delivery: <strong>{{ expected_delivery|date:"F j, Y" }}</strong></p>
+                    <p>You will receive a shipping confirmation email when your order ships.</p>
+                </div>
+            </div>
+            
+            <div class="success-actions">
+                <a href="{% url 'store:order_summary' order.id %}" class="btn btn-primary">
+                    <i class="fas fa-file-invoice"></i> View Order Details
+                </a>
+                <a href="{% url 'store:product_list' %}" class="btn btn-outline">
+                    <i class="fas fa-shopping-bag"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Confetti animation elements -->
+    <div class="confetti" style="left: 10%; animation-delay: 0s; background-color: #3CB878;"></div>
+    <div class="confetti" style="left: 20%; animation-delay: 0.5s; background-color: #0088CC;"></div>
+    <div class="confetti" style="left: 30%; animation-delay: 1s; background-color: #FF9F40;"></div>
+    <div class="confetti" style="left: 40%; animation-delay: 1.5s; background-color: #3CB878;"></div>
+    <div class="confetti" style="left: 50%; animation-delay: 0.8s; background-color: #0088CC;"></div>
+    <div class="confetti" style="left: 60%; animation-delay: 2s; background-color: #FF9F40;"></div>
+    <div class="confetti" style="left: 70%; animation-delay: 2.5s; background-color: #3CB878;"></div>
+    <div class="confetti" style="left: 80%; animation-delay: 1.2s; background-color: #0088CC;"></div>
+    <div class="confetti" style="left: 90%; animation-delay: 0.3s; background-color: #FF9F40;"></div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create more confetti dynamically
+        const colors = ['#3CB878', '#0088CC', '#FF9F40', '#9B59B6', '#F1C40F'];
+        const confettiContainer = document.querySelector('.success-section');
+        
+        for (let i = 0; i < 20; i++) {
+            const confetti = document.createElement('div');
+            confetti.classList.add('confetti');
+            
+            const size = Math.random() * 8 + 6;
+            const left = Math.random() * 100;
+            const delay = Math.random() * 5;
+            const duration = Math.random() * 3 + 4;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            confetti.style.width = `${size}px`;
+            confetti.style.height = `${size}px`;
+            confetti.style.left = `${left}%`;
+            confetti.style.animationDelay = `${delay}s`;
+            confetti.style.animationDuration = `${duration}s`;
+            confetti.style.backgroundColor = color;
+            
+            confettiContainer.appendChild(confetti);
+        }
+    });
+</script>
+{% endblock %}

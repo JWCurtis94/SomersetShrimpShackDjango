@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - Somerset Shrimp Shack</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #2c5282; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background-color: #f8f9fa; padding: 20px; border: 1px solid #e9ecef; }
+        .footer { background-color: #e9ecef; padding: 15px; text-align: center; border-radius: 0 0 8px 8px; font-size: 14px; }
+        .order-details { background-color: white; padding: 15px; margin: 15px 0; border-radius: 5px; border: 1px solid #dee2e6; }
+        .item { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .item:last-child { border-bottom: none; }
+        .price { font-weight: bold; color: #2c5282; }
+        .total { background-color: #2c5282; color: white; padding: 10px; text-align: right; font-weight: bold; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Order Confirmation</h1>
+        <p>Thank you for your order!</p>
+    </div>
+    
+    <div class="content">
+        <p>Dear {{ order.customer_name|default:"Valued Customer" }},</p>
+        
+        <p>Thank you for your order with Somerset Shrimp Shack! Your payment has been confirmed and we're preparing your order.</p>
+        
+        <div class="order-details">
+            <h3>Order Details</h3>
+            <p><strong>Order Number:</strong> #{{ order.id }}</p>
+            <p><strong>Order Date:</strong> {{ order.created_at|date:"F d, Y" }}</p>
+            <p><strong>Email:</strong> {{ order.email }}</p>
+        </div>
+        
+        <div class="order-details">
+            <h3>Items Ordered</h3>
+            {% for item in order_items %}
+            <div class="item">
+                <strong>{{ item.product.name }}</strong>{% if item.size %} ({{ item.size }}){% endif %}<br>
+                Quantity: {{ item.quantity }} × £{{ item.price }} = <span class="price">£{{ item.get_total_price }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="order-details">
+            <h3>Pricing Summary</h3>
+            <p>Subtotal: <span class="price">£{{ order.get_total_price }}</span></p>
+            <p>Shipping: <span class="price">£{{ shipping_cost }}</span></p>
+            <div class="total">Total: £{{ total }}</div>
+        </div>
+        
+        {% if order.shipping_name %}
+        <div class="order-details">
+            <h3>Shipping Address</h3>
+            <p>
+                {{ order.shipping_name }}<br>
+                {{ order.shipping_address }}<br>
+                {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip }}<br>
+                {{ order.shipping_country }}
+            </p>
+        </div>
+        {% endif %}
+        
+        <p>We will process your order and send you tracking information once it ships.</p>
+        
+        <p>If you have any questions about your order, please contact us at:</p>
+        <ul>
+            <li><strong>Email:</strong> info@somersetshrimpsack.co.uk</li>
+            <li><strong>Phone:</strong> [Your Phone Number]</li>
+        </ul>
+    </div>
+    
+    <div class="footer">
+        <p>Thank you for choosing Somerset Shrimp Shack!</p>
+        <p><em>The Somerset Shrimp Shack Team</em></p>
+    </div>
+</body>
+</html>

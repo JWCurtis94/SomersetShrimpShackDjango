@@ -1,0 +1,663 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Shrimp & Plant Care Guides - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<section class="care-guides-page">
+    <div class="container">
+        <!-- Breadcrumb navigation -->
+        <div class="product-breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'store:product_list' %}" class="breadcrumb-link">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <span class="breadcrumb-current">Care Guides</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="care-guides-header">
+            <h1 class="care-guides-title">Shrimp & Plant Care Guides</h1>
+            <p class="care-guides-intro">
+                Welcome to our comprehensive care guides for freshwater shrimp and aquatic plants. These guides are designed to help both beginners and experienced hobbyists maintain healthy, thriving aquariums. Use the navigation below to jump to specific sections.
+            </p>
+        </div>
+        
+        <!-- Navigation tabs for different guides -->
+        <div class="care-guides-tabs">
+            <ul class="tabs-nav">
+                <li class="tab-item active" data-target="neocaridina-guide">Neocaridina Shrimp</li>
+                <li class="tab-item" data-target="caridina-guide">Caridina Shrimp</li>
+                <li class="tab-item" data-target="plants-guide">Aquatic Plants</li>
+                <li class="tab-item" data-target="setup-guide">Tank Setup</li>
+            </ul>
+        </div>
+        
+        <!-- Care guides content -->
+        <div class="care-guides-content">
+            <!-- Neocaridina Shrimp Guide -->
+            <div id="neocaridina-guide" class="guide-section active">
+                <div class="guide-header">
+                    <div class="guide-image">
+                        <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Neocaridina Cherry Shrimp">
+                    </div>
+                    <div class="guide-intro">
+                        <h2>Neocaridina Shrimp Care Guide</h2>
+                        <p>
+                            Neocaridina shrimp (including Cherry Shrimp, Blue Dream, Yellow Fire, etc.) are perfect for beginners due to their hardiness and adaptability to a wide range of water parameters. These colorful freshwater shrimp are peaceful community tank inhabitants that help control algae while adding vibrant color to your aquarium.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="guide-parameters">
+                    <h3>Optimal Water Parameters</h3>
+                    <div class="parameters-grid">
+                        <div class="parameter">
+                            <div class="parameter-name">Temperature</div>
+                            <div class="parameter-value">20-26°C (68-78°F)</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">pH</div>
+                            <div class="parameter-value">6.5-8.0</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">GH (General Hardness)</div>
+                            <div class="parameter-value">6-14 dGH</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">KH (Carbonate Hardness)</div>
+                            <div class="parameter-value">2-8 dKH</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">TDS (Total Dissolved Solids)</div>
+                            <div class="parameter-value">150-300 ppm</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">Ammonia</div>
+                            <div class="parameter-value">0 ppm</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">Nitrite</div>
+                            <div class="parameter-value">0 ppm</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">Nitrate</div>
+                            <div class="parameter-value">&lt;20 ppm</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="guide-section-content">
+                    <h3>Habitat Requirements</h3>
+                    <p>
+                        Neocaridina shrimp thrive in established tanks with plenty of hiding spaces and surfaces to graze on. A well-planted tank with driftwood, rocks, and leaf litter provides the perfect environment for them to explore and feed. A mature biofilm on surfaces is extremely beneficial for these shrimp.
+                    </p>
+                    <ul>
+                        <li><strong>Tank Size:</strong> Minimum 5 gallons (19 liters), larger is better for a stable colony</li>
+                        <li><strong>Substrate:</strong> Any aquarium-safe substrate is suitable; darker substrates make colors pop</li>
+                        <li><strong>Plants:</strong> Java moss, Anubias, Amazon swords, floating plants for shade</li>
+                        <li><strong>Hiding Places:</strong> Driftwood, ceramic tubes, cholla wood, Indian almond leaves</li>
+                    </ul>
+                    
+                    <h3>Feeding</h3>
+                    <p>
+                        Neocaridina shrimp are excellent scavengers that will constantly forage for food. They primarily feed on biofilm, algae, and detritus in your tank.
+                    </p>
+                    <ul>
+                        <li><strong>Natural Diet:</strong> Biofilm, algae, detritus, decaying plant matter</li>
+                        <li><strong>Supplemental Foods:</strong> High-quality shrimp pellets, blanched vegetables (spinach, zucchini, kale), leaf litter (Indian almond leaves, mulberry leaves)</li>
+                        <li><strong>Feeding Schedule:</strong> Small amounts 2-3 times per week; shrimp should be able to consume all food within 2-3 hours</li>
+                        <li><strong>Calcium:</strong> Ensure adequate calcium for proper molting through mineral supplements, cuttlebone, or shrimp mineral balls</li>
+                    </ul>
+                    
+                    <h3>Breeding</h3>
+                    <p>
+                        Neocaridina shrimp breed readily in captivity when kept in proper conditions. They reproduce through eggs carried under the female's tail (berried females) until the babies hatch as miniature versions of adults.
+                    </p>
+                    <ul>
+                        <li><strong>Sexual Maturity:</strong> Reached at approximately 4-6 months of age</li>
+                        <li><strong>Breeding Trigger:</strong> Stable water parameters and good nutrition</li>
+                        <li><strong>Pregnancy Duration:</strong> 3-4 weeks from eggs appearing to hatching</li>
+                        <li><strong>Brood Size:</strong> 20-30 baby shrimp per female</li>
+                        <li><strong>Special Care:</strong> No special care required; babies will feed on the same biofilm as adults</li>
+                    </ul>
+                    
+                    <div class="care-tips">
+                        <h3>Pro Tips for Success</h3>
+                        <ul>
+                            <li>Maintain stable water parameters - avoid sudden changes</li>
+                            <li>Use a pre-filter sponge on filter intakes to prevent baby shrimp from being sucked in</li>
+                            <li>Perform small, regular water changes (10-15%) instead of large, infrequent ones</li>
+                            <li>Always treat tap water with a quality dechlorinator before adding to the tank</li>
+                            <li>Keep copper levels at absolutely zero - copper is highly toxic to shrimp</li>
+                            <li>Introduce new shrimp slowly with proper acclimation (drip method recommended)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Caridina Shrimp Guide -->
+            <div id="caridina-guide" class="guide-section">
+                <div class="guide-header">
+                    <div class="guide-image">
+                        <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Caridina Crystal Red Shrimp">
+                    </div>
+                    <div class="guide-intro">
+                        <h2>Caridina Shrimp Care Guide</h2>
+                        <p>
+                            Caridina shrimp species (including Crystal Red/Black, Taiwan Bee, Tiger Shrimp, etc.) are more specialized and require more precise water parameters than their Neocaridina cousins. These shrimp are prized for their striking colors and patterns but require more attention to water chemistry and stability.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="guide-parameters">
+                    <h3>Optimal Water Parameters</h3>
+                    <div class="parameters-grid">
+                        <div class="parameter">
+                            <div class="parameter-name">Temperature</div>
+                            <div class="parameter-value">18-24°C (65-75°F)</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">pH</div>
+                            <div class="parameter-value">5.8-6.8</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">GH (General Hardness)</div>
+                            <div class="parameter-value">4-6 dGH</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">KH (Carbonate Hardness)</div>
+                            <div class="parameter-value">0-2 dKH</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">TDS (Total Dissolved Solids)</div>
+                            <div class="parameter-value">120-200 ppm</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">Ammonia</div>
+                            <div class="parameter-value">0 ppm</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">Nitrite</div>
+                            <div class="parameter-value">0 ppm</div>
+                        </div>
+                        <div class="parameter">
+                            <div class="parameter-name">Nitrate</div>
+                            <div class="parameter-value">&lt;10 ppm</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="guide-section-content">
+                    <h3>Habitat Requirements</h3>
+                    <p>
+                        Caridina shrimp require very specific water conditions and appreciate a well-established, mature aquarium. Their natural habitat is typically soft, slightly acidic water with plenty of hiding places.
+                    </p>
+                    <ul>
+                        <li><strong>Tank Size:</strong> Minimum 10 gallons (38 liters) for stable water parameters</li>
+                        <li><strong>Substrate:</strong> Active buffering substrates like ADA Amazonia or Fluval Stratum strongly recommended</li>
+                        <li><strong>Plants:</strong> Java moss, Anubias, Bucephalandra, floating plants for shade</li>
+                        <li><strong>Hiding Places:</strong> Alder cones, Indian almond leaves, cholla wood, dense plant cover</li>
+                        <li><strong>Filtration:</strong> Oversized filtration recommended, preferably with biological media</li>
+                    </ul>
+                    
+                    <h3>Water Preparation</h3>
+                    <p>
+                        Unlike Neocaridina, most Caridina species require very specific water parameters that often can't be achieved with tap water alone.
+                    </p>
+                    <ul>
+                        <li><strong>RO/DI Water:</strong> Highly recommended to start with pure water</li>
+                        <li><strong>Remineralization:</strong> Use specialized shrimp remineralizers (like Salty Shrimp GH+) to achieve target parameters</li>
+                        <li><strong>Buffer:</strong> Active substrate or botanical items (like alder cones) help maintain acidic pH</li>
+                        <li><strong>Testing:</strong> Regular testing of GH, KH, TDS, and pH is essential</li>
+                    </ul>
+                    
+                    <h3>Feeding</h3>
+                    <p>
+                        Caridina shrimp have similar feeding requirements to Neocaridina but are often more sensitive to excess food and the resulting water quality issues.
+                    </p>
+                    <ul>
+                        <li><strong>Natural Diet:</strong> Biofilm, algae, detritus, bacterial colonies</li>
+                        <li><strong>Supplemental Foods:</strong> High-quality shrimp-specific foods, specialized bee shrimp foods, blanched vegetables, leaf litter</li>
+                        <li><strong>Feeding Schedule:</strong> Small amounts every 2-3 days; remove any uneaten food after 2 hours</li>
+                        <li><strong>Protein:</strong> Occasional protein supplements help with molting and breeding</li>
+                    </ul>
+                    
+                    <h3>Breeding</h3>
+                    <p>
+                        Caridina shrimp breeding is similar to Neocaridina but often requires more precise water conditions to be successful.
+                    </p>
+                    <ul>
+                        <li><strong>Sexual Maturity:</strong> Reached at approximately 5-6 months of age</li>
+                        <li><strong>Breeding Trigger:</strong> Very stable water parameters, slight temperature fluctuations, protein-rich diet</li>
+                        <li><strong>Pregnancy Duration:</strong> 4-5 weeks from eggs appearing to hatching</li>
+                        <li><strong>Brood Size:</strong> 15-25 baby shrimp per female</li>
+                        <li><strong>Baby Care:</strong> Babies are more sensitive than adults; biofilm-rich environment is crucial</li>
+                    </ul>
+                    
+                    <div class="care-tips">
+                        <h3>Pro Tips for Success</h3>
+                        <ul>
+                            <li>Invest in quality testing equipment - precision matters for Caridina</li>
+                            <li>Always prepare water changes ahead of time with proper remineralization</li>
+                            <li>Avoid sudden temperature changes; use a heater with a controller if needed</li>
+                            <li>Maintain a TDS pen for quick water quality checks</li>
+                            <li>Keep Caridina species separated from Neocaridina to prevent hybridization</li>
+                            <li>Consider a chiller for warmer months as Caridina prefer cooler temperatures</li>
+                            <li>Create microbial diversity with botanicals like alder cones and leaf litter</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aquatic Plants Guide -->
+            <div id="plants-guide" class="guide-section">
+                <div class="guide-header">
+                    <div class="guide-image">
+                        <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Planted Aquarium">
+                    </div>
+                    <div class="guide-intro">
+                        <h2>Aquatic Plants Care Guide</h2>
+                        <p>
+                            Aquatic plants not only enhance the beauty of your aquarium but also provide shelter for your shrimp, help maintain water quality, and create a more natural ecosystem. The right plants can dramatically improve shrimp health, breeding success, and overall tank stability.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="guide-section-content">
+                    <h3>Plant Categories for Shrimp Tanks</h3>
+                    
+                    <div class="plant-category">
+                        <h4>Easy Beginner Plants</h4>
+                        <div class="plant-grid">
+                            <div class="plant-card">
+                                <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Java Moss">
+                                <h5>Java Moss</h5>
+                                <p>Perfect for shrimp grazing and baby hiding places. Attaches to any surface and thrives in low light.</p>
+                                <ul class="plant-requirements">
+                                    <li><strong>Light:</strong> Low-Medium</li>
+                                    <li><strong>CO2:</strong> Not required</li>
+                                    <li><strong>Growth:</strong> Slow to moderate</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="plant-card">
+                                <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Anubias">
+                                <h5>Anubias</h5>
+                                <p>Hardy, slow-growing plant with tough leaves that develop biofilm. Attach to hardscape rather than planting in substrate.</p>
+                                <ul class="plant-requirements">
+                                    <li><strong>Light:</strong> Low-Medium</li>
+                                    <li><strong>CO2:</strong> Not required</li>
+                                    <li><strong>Growth:</strong> Very slow</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="plant-card">
+                                <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Java Fern">
+                                <h5>Java Fern</h5>
+                                <p>Versatile and hardy plant that provides good grazing surfaces. Attach to hardscape rather than burying the rhizome.</p>
+                                <ul class="plant-requirements">
+                                    <li><strong>Light:</strong> Low-Medium</li>
+                                    <li><strong>CO2:</strong> Not required</li>
+                                    <li><strong>Growth:</strong> Slow</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="plant-category">
+                        <h4>Floating Plants</h4>
+                        <div class="plant-grid">
+                            <div class="plant-card">
+                                <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Frogbit">
+                                <h5>Frogbit</h5>
+                                <p>Beautiful floating plant that provides shade and absorbs excess nutrients. Long roots become grazing grounds.</p>
+                                <ul class="plant-requirements">
+                                    <li><strong>Light:</strong> Medium-High</li>
+                                    <li><strong>CO2:</strong> Not required</li>
+                                    <li><strong>Growth:</strong> Fast</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="plant-card">
+                                <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Salvinia">
+                                <h5>Salvinia</h5>
+                                <p>Small floating fern that provides surface coverage and helps reduce light intensity for shy shrimp.</p>
+                                <ul class="plant-requirements">
+                                    <li><strong>Light:</strong> Medium</li>
+                                    <li><strong>CO2:</strong> Not required</li>
+                                    <li><strong>Growth:</strong> Very fast</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="plant-card">
+                                <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Duckweed">
+                                <h5>Duckweed</h5>
+                                <p>Tiny floating plant that multiplies rapidly and is excellent at absorbing nitrates. Can become invasive if not controlled.</p>
+                                <ul class="plant-requirements">
+                                    <li><strong>Light:</strong> Low-High</li>
+                                    <li><strong>CO2:</strong> Not required</li>
+                                    <li><strong>Growth:</strong> Extremely fast</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="plant-category">
+                        <h4>Stem Plants</h4>
+                        <div class="plant-grid">
+                            <div class="plant-card">
+                                <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Rotala">
+                                <h5>Rotala</h5>
+                                <p>Fast-growing stem plant that provides vertical structure and helps with nutrient export. Many varieties available.</p>
+                                <ul class="plant-requirements">
+                                    <li><strong>Light:</strong> Medium-High</li>
+                                    <li><strong>CO2:</strong> Beneficial</li>
+                                    <li><strong>Growth:</strong> Fast</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="plant-card">
+                                <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Bacopa">
+                                <h5>Bacopa</h5>
+                                <p>Hardy stem plant with thick round leaves. More forgiving than many other stem plants for beginners.</p>
+                                <ul class="plant-requirements">
+                                    <li><strong>Light:</strong> Medium</li>
+                                    <li><strong>CO2:</strong> Optional</li>
+                                    <li><strong>Growth:</strong> Moderate</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="plant-card">
+                                <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Hornwort">
+                                <h5>Hornwort</h5>
+                                <p>Versatile plant that can be planted or left floating. Excellent for reducing nitrates and providing cover.</p>
+                                <ul class="plant-requirements">
+                                    <li><strong>Light:</strong> Low-Medium</li>
+                                    <li><strong>CO2:</strong> Not required</li>
+                                    <li><strong>Growth:</strong> Fast</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>Plant Care Essentials</h3>
+                    <ul>
+                        <li><strong>Lighting:</strong> 6-8 hours daily for most plants; adjustable intensity based on plant needs</li>
+                        <li><strong>Fertilization:</strong> Use shrimp-safe fertilizers at reduced dosages for most plants; root tabs for heavy root feeders</li>
+                        <li><strong>Trimming:</strong> Regular maintenance prevents overgrowth and stimulates new growth</li>
+                        <li><strong>Planting:</strong> Ensure proper planting depth; don't bury rhizomes of Anubias or Java Fern</li>
+                        <li><strong>Quarantine:</strong> Always quarantine new plants to prevent introducing pests</li>
+                    </ul>
+                    
+                    <div class="care-tips">
+                        <h3>Pro Tips for Planted Shrimp Tanks</h3>
+                        <ul>
+                            <li>Use plant combinations that provide different growth habits for maximum biofilm development</li>
+                            <li>Moss is particularly valuable in shrimp tanks - prioritize different varieties</li>
+                            <li>Avoid plants that require heavy fertilization or CO2 unless you're experienced</li>
+                            <li>Leave some open areas for feeding and observation</li>
+                            <li>Consider using a soil substrate capped with sand or fine gravel for optimal plant growth</li>
+                            <li>Floating plants help reduce light intensity and make shy shrimp more comfortable</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tank Setup Guide -->
+            <div id="setup-guide" class="guide-section">
+                <div class="guide-header">
+                    <div class="guide-image">
+                        <img src="{% static 'store/images/hero-shrimp.png' %}" alt="Shrimp Tank Setup">
+                    </div>
+                    <div class="guide-intro">
+                        <h2>Shrimp Tank Setup Guide</h2>
+                        <p>
+                            Setting up a proper environment for your freshwater shrimp is crucial for their long-term health and breeding success. This guide will walk you through creating the ideal shrimp habitat from scratch, with considerations for both Neocaridina and Caridina species.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="guide-section-content">
+                    <h3>Equipment Checklist</h3>
+                    <div class="setup-checklist">
+                        <div class="checklist-item">
+                            <i class="fas fa-check-circle checklist-icon"></i>
+                            <div>
+                                <strong>Tank</strong>
+                                <p>10-20 gallons recommended for stability; larger is better</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <i class="fas fa-check-circle checklist-icon"></i>
+                            <div>
+                                <strong>Filter</strong>
+                                <p>Sponge filter or HOB with pre-filter sponge to prevent shrimp from being sucked in</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <i class="fas fa-check-circle checklist-icon"></i>
+                            <div>
+                                <strong>Substrate</strong>
+                                <p>Inert for Neocaridina; active buffering for Caridina (e.g., ADA Amazonia, Fluval Stratum)</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <i class="fas fa-check-circle checklist-icon"></i>
+                            <div>
+                                <strong>Light</strong>
+                                <p>LED light suitable for planted tanks with timer</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <i class="fas fa-check-circle checklist-icon"></i>
+                            <div>
+                                <strong>Heater</strong>
+                                <p>Adjustable heater appropriate for tank volume (optional for Caridina in temperate rooms)</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <i class="fas fa-check-circle checklist-icon"></i>
+                            <div>
+                                <strong>Test Kit</strong>
+                                <p>pH, GH, KH, TDS meter, ammonia, nitrite, nitrate</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <i class="fas fa-check-circle checklist-icon"></i>
+                            <div>
+                                <strong>Water Conditioner</strong>
+                                <p>Shrimp-safe water conditioner (e.g., Seachem Prime)</p>
+                            </div>
+                        </div>
+                        <div class="checklist-item">
+                            <i class="fas fa-check-circle checklist-icon"></i>
+                            <div>
+                                <strong>RO/DI System</strong>
+                                <p>For Caridina setups (or bottled RO water)</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>Step-by-Step Setup</h3>
+                    <ol class="setup-steps">
+                        <li>
+                            <strong>Clean Equipment</strong>
+                            <p>Rinse all equipment with water only (no soap). For used equipment, consider a diluted bleach rinse (1:20) followed by thorough rinsing and dechlorination.</p>
+                        </li>
+                        <li>
+                            <strong>Install Substrate</strong>
+                            <p>For Neocaridina: Add 1-2 inches of inert substrate (sand or fine gravel)<br>
+                            For Caridina: Add 1.5-2.5 inches of active buffering substrate</p>
+                        </li>
+                        <li>
+                            <strong>Install Filtration</strong>
+                            <p>Set up sponge filter or HOB with pre-filter sponge. Position for good water circulation without excessive flow.</p>
+                        </li>
+                        <li>
+                            <strong>Add Hardscape</strong>
+                            <p>Arrange rocks, driftwood, cholla wood, and other decorations. Create caves and hiding spaces for shrimp.</p>
+                        </li>
+                        <li>
+                            <strong>Add Plants</strong>
+                            <p>Plant rooted plants in substrate. Attach moss and epiphytes to hardscape using cotton thread or super glue gel.</p>
+                        </li>
+                        <li>
+                            <strong>Fill Tank</strong>
+                            <p>For Neocaridina: Treated tap water (if parameters suitable)<br>
+                            For Caridina: RO/DI water remineralized with shrimp-specific minerals</p>
+                            <p>Place a plate or plastic bag on substrate while filling to prevent disruption.</p>
+                        </li>
+                        <li>
+                            <strong>Install Equipment</strong>
+                            <p>Set up heater, thermometer, and install light fixture. Don't turn on heater until it's fully submerged.</p>
+                        </li>
+                        <li>
+                            <strong>Start Cycling</strong>
+                            <p>Begin fishless cycling by adding ammonia source (fish food, pure ammonia, or commercial bacteria starter). This process typically takes 4-6 weeks.</p>
+                        </li>
+                        <li>
+                            <strong>Monitor Parameters</strong>
+                            <p>Test water regularly during cycling. Wait for ammonia and nitrite to read 0 ppm and nitrates to be present before adding shrimp.</p>
+                        </li>
+                        <li>
+                            <strong>Add Botanicals</strong>
+                            <p>Add Indian almond leaves, alder cones, or other botanicals to enhance biofilm and provide beneficial compounds.</p>
+                        </li>
+                    </ol>
+                    
+                    <h3>Cycling Your Shrimp Tank</h3>
+                    <p>
+                        A properly cycled tank is non-negotiable for keeping shrimp. The nitrogen cycle establishes beneficial bacteria that process toxic waste compounds.
+                    </p>
+                    <div class="cycle-stages">
+                        <div class="cycle-stage">
+                            <h4>Week 1-2</h4>
+                            <p>Ammonia rises as waste breaks down. Beneficial bacteria begins to colonize but isn't established yet. You should see ammonia readings of 2-4 ppm.</p>
+                        </div>
+                        
+                        <div class="cycle-stage">
+                            <h4>Week 2-3</h4>
+                            <p>Nitrite-converting bacteria begin to develop. Ammonia levels start to decrease, and nitrite levels rise.</p>
+                        </div>
+                        
+                        <div class="cycle-stage">
+                            <h4>Week 3-5</h4>
+                            <p>Nitrate-converting bacteria develop. Ammonia drops to near zero, nitrite begins to fall, and nitrate levels rise.</p>
+                        </div>
+                        
+                        <div class="cycle-stage">
+                            <h4>Week 5-6</h4>
+                            <p>Cycle complete when ammonia and nitrite read 0 ppm consistently. Nitrate present but should be kept below 20 ppm for Neocaridina and 10 ppm for Caridina.</p>
+                        </div>
+                    </div>
+                    
+                    <h3>Introducing Shrimp to Your Tank</h3>
+                    <p>
+                        Proper acclimation is crucial for shrimp survival, as they are highly sensitive to changes in water parameters.
+                    </p>
+                    <div class="acclimation-steps">
+                        <h4>Drip Acclimation Method (Recommended)</h4>
+                        <ol>
+                            <li>
+                                <strong>Prepare Container</strong>
+                                <p>Place shrimp and their shipping water into a clean container. Keep it in a dim area to reduce stress.</p>
+                            </li>
+                            <li>
+                                <strong>Setup Drip Line</strong>
+                                <p>Create a siphon with airline tubing from your tank to the container. Tie a loose knot in the tubing to control flow rate (1-2 drops per second).</p>
+                            </li>
+                            <li>
+                                <strong>Drip Acclimate</strong>
+                                <p>Allow tank water to slowly drip into the container for 1-2 hours. This gradually matches parameters in the shipping water to your tank water.</p>
+                            </li>
+                            <li>
+                                <strong>Transfer Shrimp</strong>
+                                <p>Use a shrimp-safe net or plastic spoon to gently transfer shrimp to the tank. Avoid adding shipping water if possible.</p>
+                            </li>
+                            <li>
+                                <strong>Monitor</strong>
+                                <p>Monitor shrimp closely for the first 48-72 hours. Normal behavior includes exploration, grazing, and hiding.</p>
+                            </li>
+                        </ol>
+                    </div>
+                    
+                    <div class="care-tips">
+                        <h3>Tank Maintenance Schedule</h3>
+                        <div class="maintenance-schedule">
+                            <div class="maintenance-item">
+                                <h4>Daily</h4>
+                                <ul>
+                                    <li>Visual check for signs of stress or disease</li>
+                                    <li>Check temperature is consistent</li>
+                                    <li>Remove any uneaten food after 2-3 hours</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="maintenance-item">
+                                <h4>Weekly</h4>
+                                <ul>
+                                    <li>Small water changes (10-15%)</li>
+                                    <li>Test ammonia, nitrite, and nitrate</li>
+                                    <li>Clean viewing panels if needed</li>
+                                    <li>Check and clean filter intakes</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="maintenance-item">
+                                <h4>Monthly</h4>
+                                <ul>
+                                    <li>Test GH, KH, pH, and TDS</li>
+                                    <li>Rinse filter media in old tank water (if needed)</li>
+                                    <li>Trim plants and remove excess algae</li>
+                                    <li>Replace evaporated water with RO/DI water</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="maintenance-item">
+                                <h4>As Needed</h4>
+                                <ul>
+                                    <li>Add botanicals as they decompose</li>
+                                    <li>Add mineral supplements for molting</li>
+                                    <li>Vacuum substrate in areas with detritus buildup</li>
+                                    <li>Remove deceased shrimp promptly</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript for tab switching -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabs = document.querySelectorAll('.tab-item');
+        const sections = document.querySelectorAll('.guide-section');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const target = this.getAttribute('data-target');
+                
+                // Remove active class from all tabs and sections
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding section
+                this.classList.add('active');
+                document.getElementById(target).classList.add('active');
+                
+                // Scroll to top of content area
+                document.querySelector('.care-guides-content').scrollIntoView({
+                    behavior: 'smooth', 
+                    block: 'start'
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

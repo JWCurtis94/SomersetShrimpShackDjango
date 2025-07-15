@@ -1,0 +1,385 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - Somerset Shrimp Shack{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'store/css/admin/dashboard_new.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <div class="container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1 class="dashboard-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Admin Dashboard
+                    </h1>
+                    <p class="dashboard-subtitle">Welcome back! Here's what's happening with your store.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-download"></i>
+                        Export Report
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Quick Actions
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card revenue">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon">
+                            <i class="fas fa-pound-sign"></i>
+                        </div>
+                        <div class="stat-card-trend {% if revenue_growth > 0 %}positive{% elif revenue_growth < 0 %}negative{% else %}neutral{% endif %}">
+                            <i class="fas fa-arrow-{% if revenue_growth > 0 %}up{% elif revenue_growth < 0 %}down{% else %}minus{% endif %}"></i>
+                            <span>{% if revenue_growth > 0 %}+{% endif %}{{ revenue_growth }}%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-body">
+                        <h3 class="stat-value">£{{ revenue_this_month|floatformat:2 }}</h3>
+                        <p class="stat-label">Total Revenue</p>
+                        <p class="stat-period">This month</p>
+                    </div>
+                </div>
+
+                <div class="stat-card orders">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-card-trend {% if order_growth > 0 %}positive{% elif order_growth < 0 %}negative{% else %}neutral{% endif %}">
+                            <i class="fas fa-arrow-{% if order_growth > 0 %}up{% elif order_growth < 0 %}down{% else %}minus{% endif %}"></i>
+                            <span>{% if order_growth > 0 %}+{% endif %}{{ order_growth }}%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-body">
+                        <h3 class="stat-value">{{ orders_this_month }}</h3>
+                        <p class="stat-label">Total Orders</p>
+                        <p class="stat-period">This month</p>
+                    </div>
+                </div>
+
+                <div class="stat-card customers">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-card-trend {% if customer_growth > 0 %}positive{% elif customer_growth < 0 %}negative{% else %}neutral{% endif %}">
+                            <i class="fas fa-arrow-{% if customer_growth > 0 %}up{% elif customer_growth < 0 %}down{% else %}minus{% endif %}"></i>
+                            <span>{% if customer_growth > 0 %}+{% endif %}{{ customer_growth }}%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-body">
+                        <h3 class="stat-value">{{ active_customers }}</h3>
+                        <p class="stat-label">Active Customers</p>
+                        <p class="stat-period">This month</p>
+                    </div>
+                </div>
+
+                <div class="stat-card products">
+                    <div class="stat-card-header">
+                        <div class="stat-card-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="stat-card-trend neutral">
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-body">
+                        <h3 class="stat-value">{{ total_products }}</h3>
+                        <p class="stat-label">Total Products</p>
+                        <p class="stat-period">In catalog</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions-section">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="quick-actions-grid">
+                <a href="{% url 'store:add_product' %}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="action-content">
+                        <h4>Add Product</h4>
+                        <p>Add new shrimp or equipment to your catalog</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'store:category_management' %}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="action-content">
+                        <h4>Manage Categories</h4>
+                        <p>Organize your product categories</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'store:order_management' %}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="action-content">
+                        <h4>Process Orders</h4>
+                        <p>View and manage customer orders</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'store:product_management' %}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="action-content">
+                        <h4>Manage Products</h4>
+                        <p>View and manage your product catalog</p>
+                    </div>
+                </a>
+
+                <a href="{% url 'store:stock_management' %}" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <div class="action-content">
+                        <h4>Stock Management</h4>
+                        <p>Monitor and update product stock levels</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <!-- Main Content Grid -->
+        <div class="dashboard-grid">
+            <!-- Recent Orders -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-shopping-bag"></i>
+                        Recent Orders
+                    </h3>
+                    <a href="{% url 'store:order_management' %}" class="view-all-btn">
+                        View All
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if recent_orders %}
+                                    {% for order in recent_orders %}
+                                    <tr>
+                                        <td>
+                                            <div class="order-info">
+                                                <span class="order-id">#{{ order.id }}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="customer-info">
+                                                <span class="customer-name">{{ order.email|default:"Guest User" }}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="order-date">{{ order.created_at|date:"M d, Y" }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="order-total">£{{ order.total_amount|default:"0.00" }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-{{ order.status|lower|default:'pending' }}">
+                                                {{ order.get_status_display|default:"Pending" }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <a href="{% url 'store:order_detail' order.order_reference %}" class="btn-icon" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{% url 'store:order_management' %}" class="btn-icon" title="Manage Orders">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="no-data">
+                                            <div class="no-data-content">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                <p>No recent orders found</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Low Stock Alert -->
+            <div class="content-card alert-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Stock Alerts
+                    </h3>
+                    <a href="{% url 'store:stock_management' %}" class="view-all-btn">
+                        Manage
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="alert-list">
+                        {% if low_stock_products %}
+                            {% for product in low_stock_products %}
+                            <div class="alert-item">
+                                <div class="alert-icon">
+                                    <i class="fas fa-box-open"></i>
+                                </div>
+                                <div class="alert-content">
+                                    <h4>{{ product.name }}</h4>
+                                    <p>Only {{ product.stock }} left in stock</p>
+                                </div>
+                                <div class="alert-action">
+                                    <a href="{% url 'store:update_stock' product.id %}" class="btn btn-sm btn-warning">Restock</a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-alerts">
+                                <i class="fas fa-check-circle"></i>
+                                <p>All products are well stocked!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Overview -->
+        <div class="content-card full-width">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-cube"></i>
+                    Products Overview
+                </h3>
+                <div class="card-actions">
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-filter"></i>
+                        Filter
+                    </button>
+                    <a href="{% url 'store:add_product' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i>
+                        Add Product
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <table class="modern-table products-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if products %}
+                                {% for product in products|slice:":10" %}
+                                <tr>
+                                    <td>
+                                        <div class="product-info">
+                                            <div class="product-image">
+                                                {% if product.image %}
+                                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                                {% else %}
+                                                    <div class="placeholder-image">
+                                                        <i class="fas fa-image"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="product-details">
+                                                <h4>{{ product.name }}</h4>
+                                                <p>{{ product.description|truncatewords:10 }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="category-badge">{{ product.category|default:"Uncategorized" }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="product-price">£{{ product.price }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="stock-info {% if product.stock < 10 %}low-stock{% endif %}">
+                                            {{ product.stock }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge {% if product.available %}status-active{% else %}status-inactive{% endif %}">
+                                            {% if product.available %}Active{% else %}Inactive{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="{% url 'store:product_detail' product.slug %}" class="btn-icon" title="View Product">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{% url 'store:edit_product' product.id %}" class="btn-icon" title="Edit Product">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'store:delete_product' product.id %}" class="btn-icon danger" title="Delete Product" onclick="return confirm('Are you sure you want to delete this product?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6" class="no-data">
+                                        <div class="no-data-content">
+                                            <i class="fas fa-box-open"></i>
+                                            <p>No products found</p>
+                                            <a href="{% url 'store:add_product' %}" class="btn btn-primary">Add Your First Product</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

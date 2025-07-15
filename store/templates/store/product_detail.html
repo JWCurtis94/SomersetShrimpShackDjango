@@ -1,0 +1,784 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Somerset Shrimp Shack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .review-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .star-rating {
+        color: #FFD700;
+    }
+    
+    .star-empty {
+        color: #e0e0e0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+    <div class="container">
+        <!-- Breadcrumb navigation -->
+        <div class="product-breadcrumb">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'store:product_list' %}" class="breadcrumb-link">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'store:product_list' %}?category={{ product.category|slugify }}" class="breadcrumb-link">
+                        {{ product.get_category_display }}
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <span class="breadcrumb-current">{{ product.name }}</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Product Details Main Section -->
+        <div class="product-detail-container">
+            <!-- Product Gallery -->
+            <div class="product-gallery">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-main-image" id="main-product-image">
+                {% else %}
+                <img src="{% static 'store/images/no-image.png' %}" alt="No image available" class="product-main-image">
+                {% endif %}
+                
+                <!-- Product Thumbnails -->
+                <div class="product-thumbnails">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-thumbnail active" onclick="changeMainImage(this)">
+                    {% endif %}
+                    
+                    {% if product.image_2 %}
+                    <img src="{{ product.image_2.url }}" alt="{{ product.name }} - Image 2" class="product-thumbnail" onclick="changeMainImage(this)">
+                    {% endif %}
+                    
+                    {% if product.image_3 %}
+                    <img src="{{ product.image_3.url }}" alt="{{ product.name }} - Image 3" class="product-thumbnail" onclick="changeMainImage(this)">
+                    {% endif %}
+                    
+                    {% if product.image_4 %}
+                    <img src="{{ product.image_4.url }}" alt="{{ product.name }} - Image 4" class="product-thumbnail" onclick="changeMainImage(this)">
+                    {% endif %}
+                    
+                    {% if not product.image %}
+                    <img src="{% static 'store/images/no-image.png' %}" alt="No image available" class="product-thumbnail active">
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Product Information -->
+            <div class="product-info">
+                <h1 class="product-detail-title">{{ product.name }}</h1>
+                
+                <div class="product-detail-meta">
+                    <div class="product-meta-item">
+                        <i class="fas fa-tag"></i>
+                        <span>{{ product.get_category_display }}</span>
+                    </div>
+                    
+                    <div class="product-meta-item">
+                        <i class="fas {% if product.stock > 5 %}fa-check-circle in-stock{% elif product.stock > 0 %}fa-exclamation-circle low-stock{% else %}fa-times-circle out-of-stock{% endif %}"></i>
+                        <span>
+                            {% if product.stock > 5 %}
+                                In Stock
+                            {% elif product.stock > 0 %}
+                                Only {{ product.stock }} left
+                            {% else %}
+                                Out of Stock
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="product-meta-item">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Ships in 1-2 business days</span>
+                    </div>
+                </div>
+                
+                <div class="product-detail-price">
+                    <span class="current-price">£{{ product.price }}</span>
+                    
+                    {% if product.compare_price and product.compare_price > product.price %}
+                    <span class="old-price">£{{ product.compare_price }}</span>
+                    <span class="price-discount">{{ product.discount_percentage }}% off</span>
+                    {% endif %}
+                </div>
+                
+                <div class="product-detail-description">
+                    {{ product.description|linebreaks }}
+                </div>
+                
+                <ul class="product-features">
+                    {% if product.category == 'neocaridina' or product.category == 'caridina' %}
+                    <li class="feature-item">
+                        <i class="fas fa-temperature-low"></i>
+                        <span>Temperature: 70-78°F (21-26°C)</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-water"></i>
+                        <span>pH: {% if product.category == 'neocaridina' %}7.0-7.5{% else %}6.0-6.5{% endif %}</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-ruler-combined"></i>
+                        <span>Size: 1-1.5 inches (2.5-4 cm)</span>
+                    </li>
+                    {% elif 'plants' in product.category %}
+                    <li class="feature-item">
+                        <i class="fas fa-sun"></i>
+                        <span>Light Requirements: {{ product.light_requirements|default:"Medium" }}</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-ruler-vertical"></i>
+                        <span>Growth Rate: {{ product.growth_rate|default:"Moderate" }}</span>
+                    </li>
+                    <li class="feature-item">
+                        <i class="fas fa-seedling"></i>
+                        <span>Planting Difficulty: {{ product.difficulty|default:"Beginner Friendly" }}</span>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- Product Variants -->
+                {% if product.has_variants %}
+                <div class="product-variant-options">
+                    <label for="variant-select" class="variant-label">{{ product.variant_name|default:"Size" }}:</label>
+                    <div class="variant-options">
+                        {% for variant in product.variants %}
+                        <div class="variant-option {% if forloop.first %}active{% endif %}">
+                            {{ variant }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Add to Cart Form -->
+                <form method="post" action="{% url 'store:add_to_cart' product.id %}" class="product-actions">
+                    {% csrf_token %}
+                    <div class="quantity-selector">
+                        <button type="button" class="quantity-btn" id="decrease">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" 
+                               name="quantity" 
+                               id="quantity" 
+                               value="1" 
+                               min="1" 
+                               max="{{ product.stock }}" 
+                               class="quantity-input"
+                               aria-label="Product quantity">
+                        <button type="button" class="quantity-btn" id="increase">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary buy-btn" {% if product.stock <= 0 %}disabled{% endif %}>
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
+                    
+                    <button type="button" class="wishlist-btn" aria-label="Add to wishlist">
+                        <i class="far fa-heart"></i>
+                    </button>
+                </form>
+                
+                <!-- Product Shipping & Returns -->
+                <div class="shipping-returns">
+                    <div class="shipping-item">
+                        <i class="fas fa-truck"></i>
+                        <div class="shipping-info">
+                            <h4>Free Shipping</h4>
+                            <p>On all orders over £50</p>
+                        </div>
+                    </div>
+                    
+                    <div class="shipping-item">
+                        <i class="fas fa-undo"></i>
+                        <div class="shipping-info">
+                            <h4>DOA Guarantee</h4>
+                            <p>Contact us within 2 hours of delivery</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Details Tabs -->
+        <div class="product-details-tabs">
+            <div class="tabs-navigation">
+                <div class="tab-item active" data-tab="care">Care Guide</div>
+                <div class="tab-item" data-tab="specifications">Specifications</div>
+                <div class="tab-item" data-tab="shipping">Shipping & Returns</div>
+                <div class="tab-item" data-tab="reviews">Reviews</div>
+            </div>
+            
+            <div class="tab-content active" id="care-tab">
+                <div class="tab-content-inner">
+                    {% if 'shrimp' in product.category %}
+                    <h3>Caring for Your Shrimp</h3>
+                    <p>Maintaining a healthy environment for your shrimp is essential for their well-being. Here are some key points to ensure your shrimp thrive:</p>
+                    
+                    <h4>Water Parameters</h4>
+                    <ul>
+                        <li>Temperature: 70-78°F (21-26°C)</li>
+                        <li>pH: {% if product.category == 'neocaridina' %}7.0-7.5{% else %}6.0-6.5{% endif %}</li>
+                        <li>GH: {% if product.category == 'neocaridina' %}6-8{% else %}4-6{% endif %}</li>
+                        <li>KH: {% if product.category == 'neocaridina' %}2-4{% else %}0-2{% endif %}</li>
+                        <li>TDS: {% if product.category == 'neocaridina' %}150-250 ppm{% else %}90-150 ppm{% endif %}</li>
+                    </ul>
+                    
+                    <h4>Tank Setup</h4>
+                    <p>Provide plenty of hiding places with plants, driftwood, and caves. A planted tank is ideal as it provides natural food sources and hiding places. Substrate should be inert or specific to shrimp keeping.</p>
+                    
+                    <h4>Diet</h4>
+                    <p>Shrimp are omnivores and will eat algae, biofilm, and decaying plant matter. Supplement with high-quality shrimp foods 2-3 times a week.</p>
+                    
+                    <h4>Acclimation</h4>
+                    <p>Slow drip acclimation is strongly recommended when introducing new shrimp to your tank to prevent shock.</p>
+                    
+                    {% elif 'plants' in product.category %}
+                    <h3>Plant Care Guide</h3>
+                    <p>Proper care will ensure your aquatic plants thrive and enhance your aquarium. Here are the key care instructions:</p>
+                    
+                    <h4>Lighting</h4>
+                    <p>{{ product.name }} requires {{ product.light_requirements|default:"medium" }} lighting for optimal growth. Aim for 8-10 hours of light per day.</p>
+                    
+                    <h4>Substrate</h4>
+                    <p>A nutrient-rich substrate is recommended for best growth. Aquasoil or fine gravel with root tabs works well.</p>
+                    
+                    <h4>CO2 Requirements</h4>
+                    <p>{{ product.co2_requirements|default:"CO2 supplementation is beneficial but not strictly necessary for this plant." }}</p>
+                    
+                    <h4>Fertilization</h4>
+                    <p>Regular dosing with comprehensive liquid fertilizer will promote vibrant growth and coloration.</p>
+                    
+                    <h4>Trimming & Maintenance</h4>
+                    <p>Trim as needed to maintain desired shape and promote bushier growth. Remove any yellowing or decaying leaves promptly.</p>
+                    {% else %}
+                    <h3>Product Care</h3>
+                    <p>Specific care instructions for this product:</p>
+                    <ul>
+                        <li>Store in a cool, dry place</li>
+                        <li>Keep away from direct sunlight</li>
+                        <li>Follow usage instructions on packaging</li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="tab-content" id="specifications-tab">
+                <div class="tab-content-inner">
+                    <h3>Product Specifications</h3>
+                    
+                    <table class="specs-table">
+                        <tbody>
+                            <tr>
+                                <th>Product Name</th>
+                                <td>{{ product.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Category</th>
+                                <td>{{ product.get_category_display }}</td>
+                            </tr>
+                            <tr>
+                                <th>SKU</th>
+                                <td>{{ product.id }}</td>
+                            </tr>
+                            {% if product.weight %}
+                            <tr>
+                                <th>Weight</th>
+                                <td>{{ product.weight }} g</td>
+                            </tr>
+                            {% endif %}
+                            {% if product.dimensions %}
+                            <tr>
+                                <th>Dimensions</th>
+                                <td>{{ product.dimensions }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if 'shrimp' in product.category %}
+                            <tr>
+                                <th>Scientific Name</th>
+                                <td>{% if product.category == 'neocaridina' %}Neocaridina davidi{% else %}Caridina cf. cantonensis{% endif %}</td>
+                            </tr>
+                            <tr>
+                                <th>Adult Size</th>
+                                <td>1-1.5 inches (2.5-4 cm)</td>
+                            </tr>
+                            <tr>
+                                <th>Lifespan</th>
+                                <td>1-2 years</td>
+                            </tr>
+                            {% elif 'plants' in product.category %}
+                            <tr>
+                                <th>Growth Rate</th>
+                                <td>{{ product.growth_rate|default:"Moderate" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Light Requirements</th>
+                                <td>{{ product.light_requirements|default:"Medium" }}</td>
+                            </tr>
+                            <tr>
+                                <th>CO2 Requirements</th>
+                                <td>{{ product.co2_requirements|default:"Beneficial but not required" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Placement</th>
+                                <td>{{ product.placement|default:"Midground to Background" }}</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="shipping-tab">
+                <div class="tab-content-inner">
+                    <h3>Shipping Information</h3>
+                    <p>We take great care in packaging and shipping all our livestock and plants to ensure they arrive in excellent condition.</p>
+                    
+                    <h4>Shipping Methods</h4>
+                    <ul>
+                        <li><strong>Standard Shipping:</strong> 3-5 business days (£4.99)</li>
+                        <li><strong>Express Shipping:</strong> 1-2 business days (£9.99)</li>
+                        <li><strong>Free Shipping:</strong> Orders over £50 qualify for free standard shipping</li>
+                    </ul>
+                    
+                    <h4>Live Arrival Guarantee</h4>
+                    <p>All livestock and plants are covered by our DOA (Dead on Arrival) guarantee. If your shrimp or plants arrive dead, please:</p>
+                    <ol>
+                        <li>Take clear photos of the deceased livestock/plants still in the original packaging</li>
+                        <li>Contact us within 2 hours of delivery</li>
+                        <li>We'll process a replacement or refund promptly</li>
+                    </ol>
+                    
+                    <h4>Returns Policy</h4>
+                    <p>Due to the nature of live aquatic products, we cannot accept returns on:</p>
+                    <ul>
+                        <li>Livestock (shrimp, fish, etc.)</li>
+                        <li>Live plants</li>
+                    </ul>
+                    
+                    <p>For dry goods and equipment, we offer a 30-day return policy. Items must be unused and in original packaging.</p>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="reviews-tab">
+                <div class="tab-content-inner">
+                    <h3>Customer Reviews</h3>
+                    
+                    <div class="review-summary">
+                        <div class="review-average">
+                            <div class="average-rating">4.8</div>
+                            <div class="star-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                            <div class="total-reviews">Based on 12 reviews</div>
+                        </div>
+                        
+                        <div class="review-distribution">
+                            <div class="rating-bar">
+                                <span class="rating-label">5 Stars</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 80%"></div>
+                                </div>
+                                <span class="rating-count">10</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span class="rating-label">4 Stars</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 15%"></div>
+                                </div>
+                                <span class="rating-count">2</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span class="rating-label">3 Stars</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 0%"></div>
+                                </div>
+                                <span class="rating-count">0</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span class="rating-label">2 Stars</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 0%"></div>
+                                </div>
+                                <span class="rating-count">0</span>
+                            </div>
+                            <div class="rating-bar">
+                                <span class="rating-label">1 Star</span>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: 0%"></div>
+                                </div>
+                                <span class="rating-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sample reviews - in a real app, these would come from your database -->
+                    <div class="reviews-list">
+                        <div class="review-item">
+                            <div class="review-header">
+                                <img src="{% static 'store/images/avatar1.jpg' %}" alt="User avatar" class="review-avatar">
+                                <div class="review-author">
+                                    <h4>Emily Johnson</h4>
+                                    <div class="review-meta">
+                                        <span class="star-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                        <span class="review-date">May 12, 2023</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                <p>Absolutely thrilled with my purchase! The {{ product.name }} arrived in perfect condition and is thriving in my tank. Colors are even more vibrant than in the photos. Highly recommend!</p>
+                            </div>
+                        </div>
+                        
+                        <div class="review-item">
+                            <div class="review-header">
+                                <img src="{% static 'store/images/avatar2.jpg' %}" alt="User avatar" class="review-avatar">
+                                <div class="review-author">
+                                    <h4>Michael Richardson</h4>
+                                    <div class="review-meta">
+                                        <span class="star-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </span>
+                                        <span class="review-date">April 3, 2023</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                <p>Great packaging and fast shipping! Everything arrived alive and healthy. This is my second order from Somerset Shrimp Shack and I'm consistently impressed.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="review-item">
+                            <div class="review-header">
+                                <img src="{% static 'store/images/avatar3.jpg' %}" alt="User avatar" class="review-avatar">
+                                <div class="review-author">
+                                    <h4>Sarah Davies</h4>
+                                    <div class="review-meta">
+                                        <span class="star-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                        </span>
+                                        <span class="review-date">March 28, 2023</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-content">
+                                <p>The {{ product.name }} is beautiful, but one was a bit pale upon arrival. After acclimating properly, they're now doing well. Would buy again but giving 4 stars based on initial condition.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="write-review">
+                        <h3>Write a Review</h3>
+                        <form class="review-form">
+                            <div class="form-group">
+                                <label for="rating">Your Rating</label>
+                                <div class="rating-input">
+                                    <i class="far fa-star rating-star" data-value="1"></i>
+                                    <i class="far fa-star rating-star" data-value="2"></i>
+                                    <i class="far fa-star rating-star" data-value="3"></i>
+                                    <i class="far fa-star rating-star" data-value="4"></i>
+                                    <i class="far fa-star rating-star" data-value="5"></i>
+                                    <input type="hidden" name="rating" id="rating" value="">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="review-title">Title</label>
+                                <input type="text" id="review-title" name="title" placeholder="Summarize your review" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="review-content">Review</label>
+                                <textarea id="review-content" name="content" rows="5" placeholder="Write your review here..." required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Products -->
+        <div class="related-products">
+            <div class="section-header">
+                <h2 class="section-title">Related Products</h2>
+                <a href="{% url 'store:product_list' %}?category={{ product.category|slugify }}" class="view-all-link">
+                    View All <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="product-grid">
+                <!-- Sample related products - these would come from your backend -->
+                {% for related in related_products|slice:":4" %}
+                <article class="product-card">
+                    <a href="{% url 'store:product_detail' related.id %}" class="product-image-link">
+                        {% if related.image %}
+                        <img src="{{ related.image.url }}" alt="{{ related.name }}" class="product-image">
+                        {% else %}
+                        <img src="{% static 'store/images/no-image.png' %}" alt="No image available" class="product-image">
+                        {% endif %}
+                    </a>
+                    
+                    <div class="product-content">
+                        <span class="product-category">{{ related.get_category_display }}</span>
+                        <h3 class="product-title">
+                            <a href="{% url 'store:product_detail' related.id %}">{{ related.name }}</a>
+                        </h3>
+                        <div class="product-meta">
+                            <div class="product-price-wrapper">
+                                <span class="product-price">£{{ related.price }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quantity increment/decrement
+        const decreaseBtn = document.getElementById('decrease');
+        const increaseBtn = document.getElementById('increase');
+        const quantityInput = document.getElementById('quantity');
+        
+        if (decreaseBtn && increaseBtn && quantityInput) {
+            decreaseBtn.addEventListener('click', function() {
+                const currentValue = parseInt(quantityInput.value);
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+            
+            increaseBtn.addEventListener('click', function() {
+                const currentValue = parseInt(quantityInput.value);
+                const maxValue = parseInt(quantityInput.getAttribute('max'));
+                if (currentValue < maxValue) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+        }
+        
+        // Tabs functionality
+        const tabItems = document.querySelectorAll('.tab-item');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                
+                // Remove active class from all tabs and contents
+                tabItems.forEach(tab => tab.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                this.classList.add('active');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+        
+        // Variant selection
+        const variantOptions = document.querySelectorAll('.variant-option');
+        
+        variantOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove active class from all options
+                variantOptions.forEach(opt => opt.classList.remove('active'));
+                
+                // Add active class to clicked option
+                this.classList.add('active');
+                
+                // You might want to add logic here to update price, SKU, etc. based on variant
+            });
+        });
+        
+        // Rating functionality
+        const ratingStars = document.querySelectorAll('.rating-star');
+        const ratingInput = document.getElementById('rating');
+        
+        ratingStars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                
+                // Fill in stars up to current
+                ratingStars.forEach(s => {
+                    const starValue = parseInt(s.getAttribute('data-value'));
+                    if (starValue <= value) {
+                        s.classList.remove('far');
+                        s.classList.add('fas');
+                    } else {
+                        s.classList.remove('fas');
+                        s.classList.add('far');
+                    }
+                });
+            });
+            
+            star.addEventListener('mouseout', function() {
+                const currentRating = parseInt(ratingInput.value) || 0;
+                
+                // Reset stars to current rating
+                ratingStars.forEach(s => {
+                    const starValue = parseInt(s.getAttribute('data-value'));
+                    if (starValue <= currentRating) {
+                        s.classList.remove('far');
+                        s.classList.add('fas');
+                    } else {
+                        s.classList.remove('fas');
+                        s.classList.add('far');
+                    }
+                });
+            });
+            
+            star.addEventListener('click', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                ratingInput.value = value;
+                
+                // Set the stars
+                ratingStars.forEach(s => {
+                    const starValue = parseInt(s.getAttribute('data-value'));
+                    if (starValue <= value) {
+                        s.classList.remove('far');
+                        s.classList.add('fas');
+                    } else {
+                        s.classList.remove('fas');
+                        s.classList.add('far');
+                    }
+                });
+            });
+        });
+        
+        // Image gallery
+        window.changeMainImage = function(thumbnail) {
+            const mainImage = document.getElementById('main-product-image');
+            mainImage.src = thumbnail.src;
+            
+            // Update active thumbnail
+            document.querySelectorAll('.product-thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            thumbnail.classList.add('active');
+        };
+
+                // Wishlist functionality
+                const wishlistBtn = document.querySelector('.wishlist-btn');
+                if (wishlistBtn) {
+                    wishlistBtn.addEventListener('click', function() {
+                        const icon = this.querySelector('i');
+                        
+                        if (icon.classList.contains('far')) {
+                            // Add to wishlist
+                            icon.classList.remove('far');
+                            icon.classList.add('fas');
+                            showNotification('Product added to wishlist', 'success');
+                        } else {
+                            // Remove from wishlist
+                            icon.classList.remove('fas');
+                            icon.classList.add('far');
+                            showNotification('Product removed from wishlist', 'info');
+                        }
+                        
+                        // Here you would make an AJAX call to update the wishlist in the backend
+                    });
+                }
+                
+                // Simple notification system
+                function showNotification(message, type) {
+                    const notification = document.createElement('div');
+                    notification.classList.add('notification', `notification-${type}`);
+                    
+                    notification.innerHTML = `
+                        <div class="notification-content">
+                            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
+                            <span>${message}</span>
+                        </div>
+                        <button type="button" class="notification-close" aria-label="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    document.body.appendChild(notification);
+                    
+                    // Show notification with animation
+                    setTimeout(() => {
+                        notification.classList.add('show');
+                    }, 10);
+                    
+                    // Auto hide after 3 seconds
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 300);
+                    }, 3000);
+                    
+                    // Close button functionality
+                    const closeBtn = notification.querySelector('.notification-close');
+                    closeBtn.addEventListener('click', () => {
+                        notification.classList.remove('show');
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 300);
+                    });
+                }
+                
+                // Image zoom effect on hover (optional)
+                const mainImage = document.getElementById('main-product-image');
+                if (mainImage) {
+                    const productGallery = document.querySelector('.product-gallery');
+                    
+                    mainImage.addEventListener('mousemove', function(e) {
+                        const { left, top, width, height } = this.getBoundingClientRect();
+                        const x = (e.clientX - left) / width;
+                        const y = (e.clientY - top) / height;
+                        
+                        this.style.transformOrigin = `${x * 100}% ${y * 100}%`;
+                    });
+                    
+                    mainImage.addEventListener('mouseenter', function() {
+                        this.style.transform = 'scale(1.5)';
+                        productGallery.classList.add('zoomed');
+                    });
+                    
+                    mainImage.addEventListener('mouseleave', function() {
+                        this.style.transform = 'scale(1)';
+                        productGallery.classList.remove('zoomed');
+                    });
+                }
+            });
+        </script>
+        {% endblock %}

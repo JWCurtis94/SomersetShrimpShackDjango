@@ -1,0 +1,271 @@
+/* ======= FOOTER ======= */
+.footer {
+  background-color: var(--dark);
+  color: var(--white);
+  padding: 4rem 0 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-waves {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23e6f7ff' fill-opacity='1' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,138.7C960,139,1056,117,1152,112C1248,107,1344,117,1392,122.7L1440,128L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: bottom;
+}
+
+.footer-bubbles {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: 0;
+}
+
+.footer-content {
+  position: relative;
+  z-index: 1;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-logo {
+  height: 80px;
+  width: auto;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.footer-logo:hover {
+  transform: scale(1.05);
+}
+
+.footer-tagline {
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  transition: all var(--transition-fast);
+}
+
+.social-link:hover {
+  background-color: var(--primary);
+  color: var(--white);
+  transform: translateY(-3px);
+}
+
+.footer-heading {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: var(--white) !important;
+  background: transparent !important;
+}
+
+.footer-links {
+  list-style: none;
+}
+
+.footer-link-item {
+  margin-bottom: 0.75rem;
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.8);
+  transition: all var(--transition-fast);
+}
+
+.footer-link:hover {
+  color: var(--white);
+  padding-left: 5px;
+}
+
+.contact-info {
+  list-style: none;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.contact-item span {
+  color: rgba(255, 255, 255, 0.8) !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.contact-item i {
+  margin-right: 0.75rem;
+  margin-top: 0.25rem;
+  color: var(--primary) !important;
+  background: transparent !important;
+}
+
+.footer-bottom {
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.copyright {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .footer-logo {
+    height: 70px;
+  }
+}
+
+@media (max-width: 576px) {
+  .footer-logo {
+    height: 60px;
+  }
+  
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-content {
+    text-align: center;
+  }
+  
+  .footer-links,
+  .contact-info {
+    text-align: center;
+  }
+  
+  .footer-brand {
+    align-items: center;
+  }
+  
+  .social-links {
+    justify-content: center;
+  }
+  
+  .contact-item {
+    justify-content: center;
+  }
+}
+
+/* Fix for contact and opening times display - Remove white boxes */
+.footer .contact-info {
+  list-style: none !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.footer .contact-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  margin-bottom: 1rem !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.footer .contact-item span {
+  color: rgba(255, 255, 255, 0.8) !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+.footer .contact-item i {
+  margin-right: 0.75rem !important;
+  margin-top: 0.25rem !important;
+  color: var(--primary) !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Ensure footer headings are visible */
+.footer .footer-heading {
+  font-size: 1.25rem !important;
+  margin-bottom: 1.5rem !important;
+  color: var(--white) !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Override any potential form/input styling that might create white boxes */
+.footer div:last-child ul,
+.footer div:last-child li,
+.footer div:last-child span,
+.footer div:last-child i,
+.footer div:last-child h3 {
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.footer .contact-info li,
+.footer .contact-info span,
+.footer .contact-info i {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}

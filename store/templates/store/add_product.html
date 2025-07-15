@@ -1,0 +1,584 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Add New Product - Somerset Shrimp Shack{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern Color Palette */
+    :root {
+        /* Primary colors */
+        --primary: #0088a9;
+        --primary-dark: #006d89;
+        --primary-light: #e6f7fc;
+        --accent: #ff9d00;
+        
+        /* Status colors */
+        --success: #28a745;
+        --warning: #ffc107;
+        --danger: #dc3545;
+        
+        /* Neutral colors */
+        --dark: #333333;
+        --text: #4a4a4a;
+        --text-light: #6c757d;
+        --light: #f8f9fa;
+        --light-gray: #e9ecef;
+        --medium-gray: #ced4da;
+        --border-gray: #dee2e6;
+        --white: #ffffff;
+        --shadow: rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Page Layout */
+    .form-page {
+        padding: 3.5rem 1.5rem;
+        background-color: var(--light);
+        min-height: 100vh;
+    }
+    
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .form-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .form-title {
+        color: var(--dark);
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.5px;
+    }
+    
+    .form-subtitle {
+        color: var(--text-light);
+        font-size: 1.1rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .form-container {
+        background-color: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 10px 40px var(--shadow);
+        padding: 2.75rem;
+        margin-bottom: 3rem;
+    }
+    
+    /* Form Sections */
+    .form-section {
+        margin-bottom: 2.75rem;
+        padding-bottom: 2.25rem;
+        border-bottom: 1px solid var(--border-gray);
+    }
+    
+    .form-section:last-of-type {
+        border-bottom: none;
+        margin-bottom: 2rem;
+        padding-bottom: 0;
+    }
+    
+    .form-section-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 1.75rem;
+        position: relative;
+        padding-bottom: 0.75rem;
+    }
+    
+    .form-section-title::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 3px;
+        width: 60px;
+        background-color: var(--primary);
+        border-radius: 3px;
+    }
+    
+    /* Form Elements */
+    .form-group {
+        margin-bottom: 1.75rem;
+    }
+    
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.75rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--dark);
+        font-size: 0.95rem;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: var(--text);
+        background-color: var(--white);
+        background-clip: padding-box;
+        border: 1px solid var(--medium-gray);
+        border-radius: 6px;
+        transition: all 0.2s ease-in-out;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(0, 136, 169, 0.15);
+    }
+    
+    .form-control::placeholder {
+        color: var(--text-light);
+        opacity: 0.7;
+    }
+    
+    /* Select Dropdown Styling - FIX for dropdown text invisibility */
+    select.form-control {
+        color: var(--text);
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px;
+        padding-right: 2.5rem;
+    }
+    
+    select.form-control option {
+        color: var(--text);
+        background-color: var(--white);
+        padding: 10px;
+        font-weight: normal;
+    }
+    
+    /* Ensure text is visible in the dropdown */
+    select.form-control, 
+    select.form-control option {
+        color: var(--text) !important;
+    }
+    
+    /* Textarea */
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    /* Checkbox */
+    .form-check {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 0.5rem 0;
+    }
+    
+    .form-check-input {
+        position: relative;
+        width: 18px;
+        height: 18px;
+        margin-right: 12px;
+        cursor: pointer;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border: 1.5px solid var(--medium-gray);
+        border-radius: 4px;
+        flex-shrink: 0;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--primary);
+        border-color: var(--primary);
+    }
+    
+    .form-check-input:checked::after {
+        content: "✓";
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    
+    .form-check-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 136, 169, 0.15);
+    }
+    
+    .form-check-label {
+        font-size: 0.95rem;
+        color: var(--text);
+        user-select: none;
+    }
+    
+    /* Help Text */
+    .help-text {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--text-light);
+    }
+    
+    /* File Upload */
+    .file-upload {
+        position: relative;
+        width: 100%;
+        cursor: pointer;
+    }
+    
+    .file-upload-input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+    
+    .file-upload-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 1.75rem;
+        border: 2px dashed var(--border-gray);
+        border-radius: 8px;
+        background-color: var(--light-gray);
+        transition: all 0.3s ease;
+        color: var(--text-light);
+    }
+    
+    .file-upload:hover .file-upload-btn {
+        background-color: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    
+    .file-name {
+        margin-top: 0.75rem;
+        font-size: 0.9rem;
+        color: var(--text);
+        word-break: break-all;
+    }
+    
+    /* Image Preview */
+    .image-preview-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+    
+    .image-preview {
+        max-height: 250px;
+        max-width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        display: none;
+        border: 1px solid var(--border-gray);
+        object-fit: contain;
+    }
+    
+    /* Buttons */
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.875rem 1.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.2;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        border: 2px solid transparent;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-1px);
+    }
+    
+    .btn-outline {
+        background-color: transparent;
+        border-color: var(--medium-gray);
+        color: var(--text);
+    }
+    
+    .btn-outline:hover {
+        background-color: var(--light-gray);
+        border-color: var(--text-light);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 1.75rem;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+        }
+    }
+
+    /* Error messages styling */
+    .error-message {
+        color: var(--danger);
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .is-invalid {
+        border-color: var(--danger);
+    }
+
+    .is-invalid:focus {
+        box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+    }
+    
+    /* Sticky form actions on mobile */
+    @media (max-width: 576px) {
+        .form-actions {
+            position: sticky;
+            bottom: 0;
+            background: var(--white);
+            margin: 0 -1.75rem -1.75rem;
+            padding: 1rem 1.75rem;
+            border-top: 1px solid var(--border-gray);
+            z-index: 10;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="form-page">
+    <div class="container">
+        <div class="form-header">
+            <h1 class="form-title">Add New Product</h1>
+            <p class="form-subtitle">Create a new product to add to your Somerset Shrimp Shack inventory</p>
+        </div>
+        
+        <div class="form-container">
+            <form method="post" enctype="multipart/form-data" action="{% url 'store:add_product' %}">
+                {% csrf_token %}
+                
+                <div class="form-section">
+                    <h2 class="form-section-title">Basic Information</h2>
+                    <div class="form-group">
+                        <label for="name" class="form-label">Product Name *</label>
+                        <input type="text" id="name" name="name" class="form-control" required placeholder="Enter product name">
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="category" class="form-label">Category *</label>
+                            <select id="category" name="category" class="form-control" required>
+                                <option value="" selected disabled>Select a category</option>
+                                {% for category_value, category_name in categories %}
+                                    <option value="{{ category_value }}">{{ category_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="price" class="form-label">Price (£) *</label>
+                            <input type="number" id="price" name="price" class="form-control" required step="0.01" min="0" placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description *</label>
+                        <textarea id="description" name="description" class="form-control" required placeholder="Enter product description"></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2 class="form-section-title">Inventory & Details</h2>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="stock" class="form-label">Initial Stock *</label>
+                            <input type="number" id="stock" name="stock" class="form-control" required min="0" placeholder="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="size" class="form-label">Size</label>
+                            <input type="text" id="size" name="size" class="form-control" placeholder="e.g. Small, Medium, Large, or dimensions">
+                            <small class="help-text">Leave blank if not applicable</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" id="featured" name="featured" class="form-check-input">
+                            <label for="featured" class="form-check-label">Feature this product on the homepage</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2 class="form-section-title">Product Image</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Product Image</label>
+                        <div class="file-upload">
+                            <input type="file" id="image" name="image" accept="image/*" class="file-upload-input" onchange="previewImage(this)">
+                            <div class="file-upload-btn">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Choose an image file</span>
+                            </div>
+                        </div>
+                        <div class="file-name" id="file-name"></div>
+                        <small class="help-text">Recommended size: 800x800px. Max file size: 5MB</small>
+                    </div>
+                    
+                    <div class="image-preview-container">
+                        <img id="image-preview" class="image-preview" alt="Image preview">
+                    </div>
+                </div>
+                <!-- Add this just before the form-actions div in add_product.html -->
+                <div class="form-group" style="display:none;">
+                    <div class="form-check">
+                        <input type="checkbox" id="available" name="available" class="form-check-input" checked>
+                        <label for="available" class="form-check-label">Make this product available in the store</label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <a href="{% url 'store:dashboard' %}" class="btn btn-outline">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Create Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Image preview functionality
+    function previewImage(input) {
+        const preview = document.getElementById('image-preview');
+        const fileName = document.getElementById('file-name');
+        
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            fileName.textContent = file.name;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '';
+            preview.style.display = 'none';
+            fileName.textContent = '';
+        }
+    }
+    
+    // Form validation enhancement
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+            
+            // Get all required inputs
+            const requiredInputs = form.querySelectorAll('[required]');
+            
+            // Check each required input
+            requiredInputs.forEach(input => {
+                if (!input.value) {
+                    isValid = false;
+                    input.classList.add('is-invalid');
+                    
+                    // Check if error message already exists
+                    let errorMessage = input.parentElement.querySelector('.error-message');
+                    if (!errorMessage) {
+                        errorMessage = document.createElement('div');
+                        errorMessage.className = 'error-message';
+                        errorMessage.textContent = 'This field is required';
+                        input.parentElement.appendChild(errorMessage);
+                    }
+                } else {
+                    input.classList.remove('is-invalid');
+                    const errorMessage = input.parentElement.querySelector('.error-message');
+                    if (errorMessage) {
+                        errorMessage.remove();
+                    }
+                }
+            });
+            
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+        
+        // Clear validation messages on input
+        form.querySelectorAll('input, select, textarea').forEach(element => {
+            element.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                const errorMessage = this.parentElement.querySelector('.error-message');
+                if (errorMessage) {
+                    errorMessage.remove();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

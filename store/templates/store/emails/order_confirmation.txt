@@ -1,0 +1,40 @@
+Dear {{ order.customer_name|default:"Valued Customer" }},
+
+Thank you for your order with Somerset Shrimp Shack!
+
+ORDER DETAILS:
+Order Number: #{{ order.id }}
+Order Date: {{ order.created_at|date:"F d, Y" }}
+Email: {{ order.email }}
+
+ITEMS ORDERED:
+{% for item in order_items %}
+- {{ item.product.name }}{% if item.size %} ({{ item.size }}){% endif %}
+  Quantity: {{ item.quantity }}
+  Price: £{{ item.price }}
+  Total: £{{ item.get_total_price }}
+{% endfor %}
+
+PRICING SUMMARY:
+Subtotal: £{{ order.get_total_price }}
+Shipping: £{{ shipping_cost }}
+Total: £{{ total }}
+
+{% if order.shipping_name %}
+SHIPPING ADDRESS:
+{{ order.shipping_name }}
+{{ order.shipping_address }}
+{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip }}
+{{ order.shipping_country }}
+{% endif %}
+
+Your order has been received and payment has been confirmed. We will process your order and send you tracking information once it ships.
+
+If you have any questions about your order, please contact us at:
+Email: info@somersetshrimpsack.co.uk
+Phone: [Your Phone Number]
+
+Thank you for choosing Somerset Shrimp Shack!
+
+Best regards,
+The Somerset Shrimp Shack Team

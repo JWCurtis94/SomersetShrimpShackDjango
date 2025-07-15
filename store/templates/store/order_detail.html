@@ -1,0 +1,57 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Order Detail - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Order #{{ order.order_reference }}</h1>
+    
+    <div class="order-detail">
+        <div class="order-info">
+            <h2>Order Information</h2>
+            <p><strong>Status:</strong> {{ order.get_status_display }}</p>
+            <p><strong>Date:</strong> {{ order.created_at|date:"F d, Y g:i A" }}</p>
+            <p><strong>Total:</strong> {{ order.formatted_total }}</p>
+            {% if order.tracking_number %}
+            <p><strong>Tracking Number:</strong> {{ order.tracking_number }}</p>
+            {% endif %}
+        </div>
+        
+        {% if order.shipping_complete %}
+        <div class="shipping-info">
+            <h2>Shipping Address</h2>
+            <p>{{ order.get_shipping_address_display }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="order-items">
+            <h2>Items Ordered</h2>
+            <table class="order-items-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Size</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order_items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.get_size_display|default:"-" }}</td>
+                        <td>£{{ item.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>£{{ item.subtotal }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <a href="{% url 'store:order_history' %}" class="btn btn-secondary">← Back to Order History</a>
+</div>
+{% endblock %}

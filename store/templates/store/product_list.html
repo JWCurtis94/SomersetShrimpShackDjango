@@ -1,0 +1,590 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Premium Aquatic Livestock & Plants - Somerset Shrimp Shack{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'store/css/pages/product_enhanced.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Modern Hero Section with Gradient Background -->
+<section class="hero-section-modern">
+    <div class="hero-gradient-bg"></div>
+    <div class="hero-particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    
+    <div class="container">
+        <div class="hero-content-modern">
+            <div class="hero-text">
+                <h1 class="hero-title-modern">
+                    <span class="gradient-text">Premium Aquatic</span>
+                    <span class="hero-accent">Collection</span>
+                </h1>
+                <p class="hero-subtitle-modern">
+                    Discover our curated selection of exceptional shrimp, aquatic plants, and premium equipment 
+                    designed to create the perfect underwater ecosystem.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ total_products }}+</span>
+                        <span class="stat-label">Products</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">99%</span>
+                        <span class="stat-label">Satisfaction</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">3-5 Business Days</span>
+                        <span class="stat-label">Delivery</span>
+                    </div>
+                </div>
+                <div class="hero-cta">
+                    <a href="#products-showcase" class="btn-modern btn-primary-modern">
+                        <span>Explore Collection</span>
+                        <i class="fas fa-arrow-down"></i>
+                    </a>
+                    <a href="{% url 'store:care_guides' %}" class="btn-modern btn-outline-modern">
+                        <span>Care Guides</span>
+                        <i class="fas fa-book-open"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enhanced Categories Showcase -->
+<section class="categories-showcase">
+    <div class="container">
+        <div class="section-header-modern">
+            <span class="section-label">Categories</span>
+            <h2 class="section-title-modern">Shop by Collection</h2>
+            <p class="section-description">Carefully curated categories for every aquascaping need</p>
+        </div>
+        
+        <div class="categories-grid-modern">
+            {% for category in all_categories %}
+            <a href="{% url 'store:product_list' %}?category={{ category.slug }}" class="category-card-modern">
+                <div class="category-image-wrapper">
+                    {% if category.image %}
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-image-modern">
+                    {% else %}
+                    <img src="{% static 'store/images/categories/default-category.jpg' %}" alt="{{ category.name }}" class="category-image-modern">
+                    {% endif %}
+                    <div class="category-overlay-modern">
+                        <div class="category-content">
+                            <h3 class="category-name-modern">{{ category.name }}</h3>
+                            <div class="category-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Advanced Filter & Products Section -->
+<section class="products-showcase" id="products-showcase">
+    <div class="container">
+        <!-- Modern Filter Panel -->
+        <div class="filter-panel-modern">
+            <div class="filter-header">
+                <h3 class="filter-title">
+                    <i class="fas fa-sliders-h"></i>
+                    Filter Products
+                </h3>
+                <button type="button" id="toggle-filters" class="filter-toggle">
+                    <span>Show Filters</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            
+            <div class="filter-content" id="filter-content">
+                <form action="{% url 'store:product_list' %}" method="GET" class="filter-form">
+                    <div class="filter-group">
+                        <div class="search-container-modern">
+                            <i class="fas fa-search search-icon-modern"></i>
+                            <input type="text" 
+                                   name="q" 
+                                   class="search-input-modern" 
+                                   placeholder="Search premium aquatic products..." 
+                                   value="{{ request.GET.q }}">
+                            <button type="submit" class="search-btn-modern">Search</button>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Sort By</label>
+                        <select name="sort" class="sort-select-modern">
+                            <option value="default" {% if sort == 'default' %}selected{% endif %}>Featured First</option>
+                            <option value="price-asc" {% if sort == 'price-asc' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="price-desc" {% if sort == 'price-desc' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="name-asc" {% if sort == 'name-asc' %}selected{% endif %}>Name: A-Z</option>
+                            <option value="name-desc" {% if sort == 'name-desc' %}selected{% endif %}>Name: Z-A</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Price Range</label>
+                        <div class="price-range-modern">
+                            <input type="range" 
+                                   id="price-range-modern" 
+                                   min="0" 
+                                   max="150" 
+                                   step="5" 
+                                   value="150" 
+                                   class="range-slider">
+                            <div class="range-labels">
+                                <span>£0</span>
+                                <span id="price-display">£150</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn-reset-modern" id="reset-filters-modern">
+                        <i class="fas fa-refresh"></i>
+                        Reset All
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Products Grid Modern -->
+        <div class="products-grid-container">
+            {% if categorized_products %}
+                {% for category, products in categorized_products.items %}
+                    {% if products %}
+                    <div class="category-section-modern">
+                        <div class="category-header-modern">
+                            <h2 class="category-title-modern">{{ category }}</h2>
+                            <div class="category-count">{{ products|length }} item{{ products|length|pluralize }}</div>
+                        </div>
+                        
+                        <div class="products-grid-modern">
+                            {% for product in products %}
+                            <article class="product-card-modern" data-category="{{ product.category|slugify }}" data-price="{{ product.price }}">
+                                <div class="product-image-container-modern">
+                                    <a href="{% url 'store:product_detail' product.id %}" class="product-link-modern">
+                                        {% if product.image %}
+                                        <img src="{{ product.image.url }}" 
+                                             alt="{{ product.name }}"
+                                             class="product-image-modern"
+                                             loading="lazy">
+                                        {% else %}
+                                        <div class="product-placeholder-modern">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if product.featured %}
+                                        <div class="product-badge-modern badge-featured">
+                                            <i class="fas fa-star"></i>
+                                            Featured
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if product.stock <= 5 and product.stock > 0 %}
+                                        <div class="product-badge-modern badge-limited">
+                                            <i class="fas fa-clock"></i>
+                                            Limited
+                                        </div>
+                                        {% elif product.stock == 0 %}
+                                        <div class="product-badge-modern badge-sold-out">
+                                            <i class="fas fa-times"></i>
+                                            Sold Out
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <div class="product-overlay-modern">
+                                            <div class="quick-actions">
+                                                <button class="quick-action-btn" title="Quick View">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="quick-action-btn" title="Add to Wishlist">
+                                                    <i class="fas fa-heart"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                
+                                <div class="product-content-modern">
+                                    <div class="product-category-modern">{{ product.get_category_display }}</div>
+                                    <h3 class="product-title-modern">
+                                        <a href="{% url 'store:product_detail' product.id %}">{{ product.name }}</a>
+                                    </h3>
+                                    <p class="product-description-modern">{{ product.description|truncatewords:12 }}</p>
+                                    
+                                    <div class="product-rating-modern">
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                        <span class="rating-text">4.9 (127 reviews)</span>
+                                    </div>
+                                    
+                                    <div class="product-footer-modern">
+                                        <div class="price-section-modern">
+                                            <span class="price-current-modern">£{{ product.price }}</span>
+                                            {% if product.featured %}
+                                            <span class="price-original-modern">£{{ product.price|floatformat:2|add:"5.00" }}</span>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="stock-indicator-modern {% if product.stock > 5 %}in-stock{% elif product.stock > 0 %}low-stock{% else %}out-of-stock{% endif %}">
+                                            <i class="fas {% if product.stock > 5 %}fa-check-circle{% elif product.stock > 0 %}fa-exclamation-triangle{% else %}fa-times-circle{% endif %}"></i>
+                                            <span>
+                                                {% if product.stock > 5 %}
+                                                In Stock
+                                                {% elif product.stock > 0 %}
+                                                Only {{ product.stock }} left
+                                                {% else %}
+                                                Out of Stock
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        
+                                        <form method="post" action="{% url 'store:add_to_cart' product.id %}" class="add-to-cart-form-modern">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" 
+                                                    class="btn-add-to-cart-modern" 
+                                                    {% if product.stock <= 0 %}disabled{% endif %}>
+                                                <i class="fas fa-shopping-cart"></i>
+                                                <span>{% if product.stock <= 0 %}Sold Out{% else %}Add to Cart{% endif %}</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </article>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- Modern Pagination -->
+                {% if is_paginated %}
+                <div class="pagination-modern-container">
+                    <div class="pagination-modern">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" 
+                               class="pagination-btn-modern pagination-first">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" 
+                               class="pagination-btn-modern pagination-prev">
+                                <i class="fas fa-chevron-left"></i>
+                                Previous
+                            </a>
+                        {% endif %}
+                        
+                        <div class="pagination-numbers">
+                            {% for num in page_obj.paginator.page_range %}
+                                {% if page_obj.number == num %}
+                                    <span class="pagination-current-modern">{{ num }}</span>
+                                {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                    <a class="pagination-number-modern" 
+                                       href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}">
+                                        {{ num }}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" 
+                               class="pagination-btn-modern pagination-next">
+                                Next
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" 
+                               class="pagination-btn-modern pagination-last">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="pagination-info">
+                        Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }} products
+                    </div>
+                </div>
+                {% endif %}
+                
+            {% else %}
+                <div class="no-products-modern">
+                    <div class="no-products-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="no-products-title">No Products Found</h3>
+                    <p class="no-products-text">We couldn't find any products matching your criteria.</p>
+                    <div class="no-products-actions">
+                        <a href="{% url 'store:product_list' %}" class="btn-modern btn-primary-modern">
+                            <span>View All Products</span>
+                        </a>
+                        <button type="button" id="clear-filters" class="btn-modern btn-outline-modern">
+                            <span>Clear Filters</span>
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'store/js/product-enhanced.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Modern Elements
+        const priceRange = document.getElementById('price-range-modern');
+        const priceDisplay = document.getElementById('price-display');
+        const productCards = document.querySelectorAll('.product-card-modern');
+        const resetButton = document.getElementById('reset-filters-modern');
+        const toggleFiltersBtn = document.getElementById('toggle-filters');
+        const filterContent = document.getElementById('filter-content');
+        const sortSelect = document.querySelector('.sort-select-modern');
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        
+        // Toggle filters visibility
+        if (toggleFiltersBtn && filterContent) {
+            let filtersVisible = true;
+            
+            toggleFiltersBtn.addEventListener('click', function() {
+                filtersVisible = !filtersVisible;
+                filterContent.style.display = filtersVisible ? 'block' : 'none';
+                
+                const span = this.querySelector('span');
+                const icon = this.querySelector('i');
+                
+                if (filtersVisible) {
+                    span.textContent = 'Hide Filters';
+                    icon.className = 'fas fa-chevron-up';
+                } else {
+                    span.textContent = 'Show Filters';
+                    icon.className = 'fas fa-chevron-down';
+                }
+            });
+        }
+        
+        // Initialize price filter for modern range slider
+        if (priceRange && priceDisplay) {
+            priceRange.addEventListener('input', function() {
+                const value = this.value;
+                priceDisplay.textContent = `£${value}`;
+                this.setAttribute('aria-valuenow', value);
+                this.setAttribute('aria-valuetext', `£${value}`);
+                
+                filterByPrice(value);
+            });
+        }
+        
+        // Sort select functionality
+        if (sortSelect) {
+            sortSelect.addEventListener('change', function() {
+                const form = this.closest('form');
+                if (form) {
+                    form.submit();
+                }
+            });
+        }
+        
+        // Reset filters functionality
+        if (resetButton) {
+            resetButton.addEventListener('click', function() {
+                // Reset price range
+                if (priceRange && priceDisplay) {
+                    priceRange.value = priceRange.getAttribute('max');
+                    priceDisplay.textContent = `£${priceRange.value}`;
+                }
+                
+                // Show all products
+                productCards.forEach(card => {
+                    card.style.display = 'flex';
+                });
+                
+                // Reset sections visibility
+                updateCategorySections();
+                
+                // Reset URL parameters
+                window.history.replaceState({}, document.title, window.location.pathname);
+            });
+        }
+        
+        // Clear filters button
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', function() {
+                window.location.href = window.location.pathname;
+            });
+        }
+        
+        // Smooth scroll for hero CTA
+        const exploreBtn = document.querySelector('a[href="#products-showcase"]');
+        if (exploreBtn) {
+            exploreBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.getElementById('products-showcase');
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        }
+        
+        // Quick action buttons functionality
+        document.querySelectorAll('.quick-action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const title = this.getAttribute('title');
+                
+                if (title === 'Quick View') {
+                    // Quick view functionality placeholder
+                    console.log('Quick view clicked');
+                    // Here you would implement a modal or quick view functionality
+                } else if (title === 'Add to Wishlist') {
+                    // Wishlist functionality placeholder
+                    console.log('Add to wishlist clicked');
+                    this.classList.toggle('active');
+                    const icon = this.querySelector('i');
+                    icon.classList.toggle('fas');
+                    icon.classList.toggle('far');
+                }
+            });
+        });
+        
+        function filterByPrice(maxPrice) {
+            productCards.forEach(card => {
+                const cardPrice = parseFloat(card.dataset.price);
+                const shouldShow = cardPrice <= maxPrice;
+                
+                card.style.display = shouldShow ? 'flex' : 'none';
+            });
+            
+            updateCategorySections();
+        }
+        
+        function updateCategorySections() {
+            // Find each category section and check if it has any visible products
+            const categorySections = document.querySelectorAll('.category-section-modern');
+            
+            categorySections.forEach(section => {
+                const products = section.querySelectorAll('.product-card-modern');
+                const hasVisibleProducts = Array.from(products).some(product => product.style.display !== 'none');
+                
+                section.style.display = hasVisibleProducts ? 'block' : 'none';
+            });
+            
+            // Show no products message if all categories are hidden
+            const allSectionsHidden = Array.from(categorySections).every(section => section.style.display === 'none');
+            const noProductsElement = document.querySelector('.no-products-modern');
+            
+            if (noProductsElement) {
+                noProductsElement.style.display = allSectionsHidden ? 'flex' : 'none';
+            }
+        }
+        
+        // Add loading animations for images
+        document.querySelectorAll('.product-image-modern').forEach(img => {
+            img.addEventListener('load', function() {
+                this.style.opacity = '1';
+            });
+            
+            // Set initial opacity for smooth loading
+            img.style.opacity = '0';
+            img.style.transition = 'opacity 0.3s ease';
+        });
+        
+        // Intersection Observer for animations on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe product cards for scroll animations
+        productCards.forEach(card => {
+            observer.observe(card);
+        });
+        
+        // Observe category sections
+        document.querySelectorAll('.category-section-modern').forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Initial state setup
+        productCards.forEach(card => {
+            card.dataset.matchesPrice = 'true';
+            card.dataset.matchesCategory = 'true';
+        });
+    });
+</script>
+
+<style>
+/* Additional animation styles for scroll effects */
+.product-card-modern {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.product-card-modern.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.category-section-modern {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.category-section-modern.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Filter toggle animations */
+.filter-content {
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.filter-content.hidden {
+    max-height: 0;
+    padding: 0 var(--space-6);
+}
+
+/* Quick action button active state */
+.quick-action-btn.active {
+    background: rgba(255, 127, 80, 0.3) !important;
+    color: var(--accent) !important;
+}
+</style>
+{% endblock %}

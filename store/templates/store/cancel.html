@@ -1,0 +1,154 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Payment Canceled - Somerset Shrimp Shack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cancel-section {
+        padding: 4rem 0;
+        text-align: center;
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+    }
+    
+    .cancel-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .cancel-icon {
+        font-size: 5rem;
+        color: #e74c3c;
+        margin-bottom: 1.5rem;
+    }
+    
+    .cancel-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--dark);
+    }
+    
+    .cancel-message {
+        font-size: 1.25rem;
+        color: var(--gray-600);
+        margin-bottom: 2rem;
+    }
+    
+    .help-box {
+        background-color: var(--white);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-md);
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+        text-align: left;
+    }
+    
+    .help-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    
+    .help-text {
+        margin-bottom: 1.5rem;
+    }
+    
+    .help-text:last-child {
+        margin-bottom: 0;
+    }
+    
+    .cancel-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .cancel-title {
+            font-size: 2rem;
+        }
+        
+        .cancel-message {
+            font-size: 1rem;
+        }
+        
+        .cancel-actions {
+            flex-direction: column;
+        }
+        
+        .cancel-actions .btn {
+            width: 100%;
+        }
+    }
+    
+    .contact-info {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background-color: var(--light);
+        border-radius: var(--border-radius);
+    }
+    
+    .contact-title {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+    
+    .contact-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .contact-item i {
+        margin-right: 0.5rem;
+        width: 16px;
+        text-align: center;
+        color: var(--primary);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="cancel-section">
+    <div class="container">
+        <div class="cancel-container">
+            <i class="fas fa-times-circle cancel-icon"></i>
+            <h1 class="cancel-title">Payment Canceled</h1>
+            <p class="cancel-message">Your payment was canceled and no charge was made to your account.</p>
+            
+            <div class="help-box">
+                <h2 class="help-title">Need Help?</h2>
+                <p class="help-text">We notice you've canceled your payment. If you experienced any issues during checkout or have questions about our products, we're here to help!</p>
+                <p class="help-text">Your items are still saved in your cart, and you can complete your purchase at any time.</p>
+                
+                <div class="contact-info">
+                    <h3 class="contact-title">Contact Us</h3>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>support@somersetshrimp.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>+44 123 456 7890</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Mon-Fri: 9am-5pm</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cancel-actions">
+                <a href="{% url 'store:cart_view' %}" class="btn btn-primary">
+                    <i class="fas fa-shopping-cart"></i> Return to Cart
+                </a>
+                <a href="{% url 'store:product_list' %}" class="btn btn-outline">
+                    <i class="fas fa-home"></i> Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

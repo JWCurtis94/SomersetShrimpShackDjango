@@ -1,0 +1,360 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Order Management - Somerset Shrimp Shack{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Order Management</h1>
+    
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message message-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="stats">
+        <p><strong>Total Orders:</strong> {{ order_count }}</p>
+        <p><strong>Total Revenue:</strong> £{{ total_revenue }}</p>
+    </div>
+    
+    <!-- Filters -->
+    <div class="filters">
+        <form method="get">
+            <select name="status">
+                <option value="">All Status</option>
+                {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if current_status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Search orders...">
+            <input type="date" name="start_date" value="{{ start_date }}">
+            <input type="date" name="end_date" value="{{ end_date }}">
+            <button type="submit" class="btn btn-secondary">Filter</button>
+        </form>
+    </div>
+    
+    {% if orders %}
+    <table class="orders-table">
+        <thead>
+            <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_reference }}</td>
+                <td>{{ order.email }}</td>
+                <td>{{ order.created_at|date:"M d, Y" }}</td>
+                <td>{{ order.get_status_display }}</td>
+                <td>{{ order.formatted_total }}</td>
+                <td>
+                    <a href="{% url 'store:order_detail' order_reference=order.order_reference %}" class="btn btn-sm btn-primary">View</a>
+                    <form method="post" action="{% url 'store:update_order_status' order_id=order.id %}" style="display: inline-block; margin-left: 8px;" class="status-update-form">
+                        {% csrf_token %}
+                        <select name="status" class="status-dropdown" onchange="confirmStatusChange(this)" data-current-status="{{ order.status }}">
+                            {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!-- Pagination -->
+    {% if orders.has_other_pages %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if orders.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ orders.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ orders.number }} of {{ orders.paginator.num_pages }}
+            </span>
+
+            {% if orders.has_next %}
+                <a href="?page={{ orders.next_page_number }}">next</a>
+                <a href="?page={{ orders.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <p>No orders found.</p>
+    {% endif %}
+</div>
+
+<style>
+/* Order Management Styles */
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.orders-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #333;
+}
+
+.orders-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.status-dropdown {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    min-width: 120px;
+    appearance: menulist;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+}
+
+.status-dropdown:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+.status-dropdown:hover {
+    border-color: #bbb;
+}
+
+.filters {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.filters form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filters select,
+.filters input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.filters button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filters button:hover {
+    background: #0056b3;
+}
+
+.stats {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 30px;
+}
+
+.stats p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.pagination .current {
+    font-weight: bold;
+    margin: 0 10px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.container h1 {
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.messages {
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border-left: 4px solid;
+}
+
+.message-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left-color: #28a745;
+}
+
+.message-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left-color: #dc3545;
+}
+
+.message-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left-color: #ffc107;
+}
+
+.message-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left-color: #17a2b8;
+}
+</style>
+
+<script>
+function confirmStatusChange(selectElement) {
+    const currentStatus = selectElement.dataset.currentStatus;
+    const newStatus = selectElement.value;
+    
+    if (currentStatus !== newStatus) {
+        const statusText = selectElement.options[selectElement.selectedIndex].text;
+        const confirmed = confirm(`Are you sure you want to change the status to "${statusText}"?`);
+        
+        if (confirmed) {
+            // Add loading state
+            selectElement.disabled = true;
+            selectElement.style.opacity = '0.6';
+            
+            // Submit the form
+            selectElement.closest('form').submit();
+        } else {
+            // Reset to original value
+            selectElement.value = currentStatus;
+        }
+    }
+}
+
+// Handle form submission errors and loading states
+document.addEventListener('DOMContentLoaded', function() {
+    const statusForms = document.querySelectorAll('.status-update-form');
+    
+    statusForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const dropdown = this.querySelector('.status-dropdown');
+            
+            // Double-check if user wants to proceed
+            const currentStatus = dropdown.dataset.currentStatus;
+            const newStatus = dropdown.value;
+            
+            if (currentStatus === newStatus) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Add visual feedback
+            dropdown.disabled = true;
+            dropdown.style.opacity = '0.6';
+            
+            // Create a visual indicator
+            const loadingText = document.createElement('span');
+            loadingText.textContent = ' Updating...';
+            loadingText.style.fontSize = '12px';
+            loadingText.style.color = '#666';
+            dropdown.parentNode.appendChild(loadingText);
+            
+            // Reset if submission takes too long (fallback)
+            setTimeout(() => {
+                if (dropdown.disabled) {
+                    dropdown.disabled = false;
+                    dropdown.style.opacity = '1';
+                    if (loadingText.parentNode) {
+                        loadingText.parentNode.removeChild(loadingText);
+                    }
+                }
+            }, 10000); // 10 second timeout
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+NEW ORDER NOTIFICATION - Somerset Shrimp Shack
+
+A new order has been received and payment confirmed.
+
+ORDER DETAILS:
+Order Number: #{{ order.id }}
+Order Date: {{ order.created_at|date:"F d, Y g:i A" }}
+Customer Email: {{ order.email }}
+{% if order.customer_name %}Customer Name: {{ order.customer_name }}{% endif %}
+
+ITEMS ORDERED:
+{% for item in order_items %}
+- {{ item.product.name }}{% if item.size %} ({{ item.size }}){% endif %}
+  Quantity: {{ item.quantity }}
+  Price: £{{ item.price }}
+  Total: £{{ item.get_total_price }}
+{% endfor %}
+
+PRICING SUMMARY:
+Subtotal: £{{ order.get_total_price }}
+Shipping: £{{ shipping_cost }}
+Total: £{{ total }}
+
+{% if order.shipping_name %}
+SHIPPING ADDRESS:
+{{ order.shipping_name }}
+{{ order.shipping_address }}
+{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_zip }}
+{{ order.shipping_country }}
+{% endif %}
+
+PAYMENT STATUS: PAID ✓
+Payment Date: {{ order.payment_date|date:"F d, Y g:i A" }}
+
+Please process this order and update the customer with tracking information once shipped.
+
+---
+Somerset Shrimp Shack Admin System
