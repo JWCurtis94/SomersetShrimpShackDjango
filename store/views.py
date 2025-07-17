@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # Constants
-SHIPPING_COST = Decimal('4.99')
+SHIPPING_COST = Decimal('6')
 
 ###################
 # Helper Functions

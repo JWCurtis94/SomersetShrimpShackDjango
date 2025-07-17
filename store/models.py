@@ -270,12 +270,12 @@ class Product(models.Model):
     @property
     def is_shrimp_product(self):
         """
-        Determine if this product is a shrimp product that requires special shipping (£14.99)
-        Returns True for LIVE shrimp/fish only, False for food and equipment (£4.99)
+        Determine if this product is a shrimp product that requires special shipping (£12)
+        Returns True for LIVE shrimp/fish only, False for food and equipment (£6)
         
         Aquarium Shop Context:
-        - LIVE aquarium shrimp and fish need special shipping (£14.99) - temperature controlled, expedited
-        - Food (frozen/dry), equipment, decorations use standard shipping (£4.99)
+        - LIVE aquarium shrimp and fish need special shipping (£12) - temperature controlled, expedited
+        - Food (frozen/dry), equipment, decorations use standard shipping (£6)
         """
         # Live aquarium animals that need special temperature-controlled shipping
         live_animal_terms = [

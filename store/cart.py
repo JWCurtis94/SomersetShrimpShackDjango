@@ -165,9 +165,9 @@ class Cart:
         Returns Decimal with shipping cost in GBP
         
         Shipping Rules:
-        - Shrimp products: £14.99
-        - All other items: £4.99
-        - Mixed cart (shrimp + non-shrimp): £14.99 (shrimp shipping applies)
+        - Shrimp products: £12
+        - All other items: £6
+        - Mixed cart (shrimp + non-shrimp): £12 (shrimp shipping applies)
         """
         from decimal import Decimal
         
@@ -181,9 +181,9 @@ class Cart:
         
         # Return appropriate shipping cost
         if has_shrimp:
-            return Decimal('14.99')  # Shrimp shipping cost
+            return Decimal('12')  # Shrimp shipping cost
         else:
-            return Decimal('4.99')   # Standard shipping cost
+            return Decimal('6')   # Standard shipping cost
         
     def __iter__(self):
         """
