@@ -1,234 +1,179 @@
-# Somerset Shrimp Shack - Django E-commerce Project
+# 🦐 Somerset Shrimp Shack
 
-A professional e-commerce website for aquarium shrimp, plants, and supplies built with Django.
+**Custom E-Commerce Platform - Client Project**
 
-## 🚀 Features
-
-- **Product Catalog**: Browse shrimp, plants, and aquarium supplies by category
-- **Shopping Cart**: Add/remove items, update quantities
-- **User Authentication**: Registration, login, password reset
-- **Order Management**: Complete checkout process with Stripe integration
-- **Admin Dashboard**: Product management, order tracking, inventory control
-- **Care Guides**: Comprehensive guides for shrimp and plant care
-- **Responsive Design**: Mobile-friendly interface
-- **Search & Filtering**: Find products easily
-
-## 🛠️ Quick Setup
-
-### Prerequisites
-- Python 3.10+
-- pip (Python package manager)
-- PostgreSQL (optional, SQLite used by default)
-
-### Installation
-
-1. **Clone and Navigate**
-   ```bash
-   cd SomersetShrimpShackDjango-main
-   ```
-
-2. **Create Virtual Environment**
-   ```bash
-   python -m venv .venv
-   # Windows
-   .venv\Scripts\activate
-   # Linux/Mac
-   source .venv/bin/activate
-   ```
-
-3. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Environment Configuration**
-   ```bash
-   copy .env.example .env
-   # Edit .env with your settings (optional for development)
-   ```
-
-5. **Database Setup**
-   ```bash
-   python manage.py migrate
-   python manage.py createsuperuser
-   ```
-
-6. **Collect Static Files**
-   ```bash
-   python manage.py collectstatic --noinput
-   ```
-
-7. **Run Development Server**
-   ```bash
-   python manage.py runserver
-   ```
-
-Visit `http://127.0.0.1:8000` to see your application!
-
-## 🔧 Configuration
-
-### Environment Variables
-
-Create a `.env` file (copy from `.env.example`) with:
-
-```env
-DJANGO_SECRET_KEY=your-secret-key-here
-DEBUG=True
-STRIPE_PUBLIC_KEY=pk_test_your_stripe_key
-STRIPE_SECRET_KEY=sk_test_your_stripe_key
-```
-
-### Database Options
-
-**SQLite (Default)**
-- No additional setup required
-- Perfect for development
-
-**PostgreSQL (Production)**
-```env
-DATABASE_URL=postgres://username:password@localhost:5432/dbname
-```
-
-## 📚 Usage
-
-### Admin Access
-1. Create superuser: `python manage.py createsuperuser`
-2. Visit `/admin/` to manage products, categories, and orders
-
-### Adding Products
-1. Access admin panel
-2. Go to "Products" → "Add Product"
-3. Fill in details and upload images
-4. Set category, price, and stock levels
-
-### Managing Orders
-- View orders in admin panel
-- Update order status (pending → paid → shipped → delivered)
-- Track inventory automatically
-
-## 🚀 Deployment
-
-### Production Checklist
-
-1. **Environment Variables**
-   ```env
-   DEBUG=False
-   ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
-   DJANGO_SECRET_KEY=secure-random-key
-   DATABASE_URL=postgres://...
-   ```
-
-2. **Security Settings**
-   ```bash
-   python manage.py check --deploy
-   ```
-
-3. **Static Files**
-   ```bash
-   python manage.py collectstatic --noinput
-   ```
-
-4. **Database Migration**
-   ```bash
-   python manage.py migrate
-   ```
-
-### Deployment Platforms
-
-**Heroku**
-```bash
-git push heroku main
-heroku run python manage.py migrate
-heroku run python manage.py createsuperuser
-```
-
-**Railway/DigitalOcean**
-- Configure environment variables
-- Set up PostgreSQL database
-- Run migrations
-
-## 🏗️ Project Structure
-
-```
-Somerset-Shrimp-Shack/
-├── ecommerce/          # Project settings
-├── store/              # Main application
-│   ├── models.py       # Database models
-│   ├── views.py        # Business logic
-│   ├── urls.py         # URL routing
-│   ├── forms.py        # Django forms
-│   ├── admin.py        # Admin configuration
-│   ├── static/         # CSS, JS, images
-│   └── templates/      # HTML templates
-├── staticfiles/        # Collected static files
-├── media/              # User uploads
-├── requirements.txt    # Python dependencies
-└── manage.py          # Django management
-```
-
-## 🔧 Development
-
-### Running Tests
-```bash
-python manage.py test
-```
-
-### Code Quality
-```bash
-python manage.py check
-python manage.py check --deploy
-```
-
-### Debug Mode
-- Set `DEBUG=True` in `.env`
-- Access debug toolbar at `/__debug__/`
-
-## 📦 Key Dependencies
-
-- **Django 5.0.6**: Web framework
-- **Stripe**: Payment processing
-- **Pillow**: Image handling
-- **WhiteNoise**: Static file serving
-- **django-allauth**: Authentication
-- **psycopg2-binary**: PostgreSQL support
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-**Static files not loading**
-```bash
-python manage.py collectstatic --noinput
-```
-
-**Database errors**
-```bash
-python manage.py migrate
-```
-
-**Permission errors**
-- Check file permissions
-- Ensure media/static directories are writable
-
-### Getting Help
-
-1. Check Django logs in console
-2. Review error messages carefully
-3. Ensure all environment variables are set
-4. Verify database connectivity
-
-## 📜 License
-
-This project is for educational/commercial use. Please check with the original authors for licensing terms.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch
-3. Make changes
-4. Test thoroughly
-5. Submit pull request
+A bespoke Django e-commerce solution developed for Somerset Shrimp Shack, specializing in premium aquarium supplies and live aquatic specimens. This project showcases full-stack development capabilities with secure payment processing, inventory management, and intuitive admin interfaces.
 
 ---
 
-**Somerset Shrimp Shack** - Premium aquarium supplies delivered to your door! 🦐🌱
+## 🎯 Project Overview
+
+Somerset Shrimp Shack needed a professional online presence to sell their specialized aquarium products. This custom-built platform delivers a complete e-commerce experience tailored specifically to their business needs and target audience.
+
+**Live Website:** [somersetshrimpshack.uk](https://somersetshrimpshack.uk)
+
+---
+
+## ✨ Features Delivered
+
+### Customer-Facing Features
+- **Responsive Design** - Seamless experience across all devices
+- **Product Catalog** - Organized categories with detailed product information
+- **Shopping Cart System** - Real-time cart updates and price calculations
+- **Secure Checkout** - Stripe payment integration for safe transactions
+- **User Account Management** - Registration, login, and order history
+
+### Admin Dashboard
+- **Product Management** - Easy-to-use interface for adding and editing products
+- **Order Processing** - Streamlined order management and fulfillment
+- **Inventory Tracking** - Real-time stock level monitoring
+- **Non-Technical Friendly** - Designed for staff without coding knowledge
+
+### Technical Excellence
+- **Security First** - Production-grade security implementations
+- **Performance Optimized** - Fast loading times and efficient resource usage
+- **Scalable Architecture** - Built to handle business growth
+- **Payment Integration** - Full Stripe implementation with webhook support
+
+---
+
+## 🛠️ Technical Implementation
+
+**Backend Development**
+- Django 4.x framework with custom models and views
+- PostgreSQL database design and optimization
+- RESTful API patterns for frontend integration
+- Secure user authentication and authorization
+
+**Frontend Development**
+- Responsive HTML5/CSS3 with Tailwind CSS
+- JavaScript for dynamic user interactions
+- Mobile-first design approach
+- Cross-browser compatibility testing
+
+**Payment & Security**
+- Stripe API integration for secure payments
+- PCI compliance considerations
+- Environment-based configuration management
+- HTTPS enforcement and security headers
+
+**Deployment & Infrastructure**
+- Heroku cloud deployment
+- Static file optimization with WhiteNoise
+- Database backup and recovery procedures
+- Production monitoring and error tracking
+
+---
+
+## 🔧 Development Process
+
+### Planning & Analysis
+- Client requirements gathering and analysis
+- Technical architecture planning
+- Database schema design
+- UI/UX wireframing and mockups
+
+### Development Workflow
+- **Environment:** VS Code on Windows 11
+- **Version Control:** Git with GitHub repository
+- **Testing:** Manual QA across all user flows
+- **Deployment:** Heroku with continuous integration
+
+### Quality Assurance
+- Comprehensive testing of cart and checkout flows
+- Admin interface validation for non-technical users
+- Payment processing verification with Stripe test mode
+- Mobile responsiveness and cross-device compatibility
+- Security auditing and deployment readiness checks
+
+---
+
+## 📊 Business Impact
+
+**For Somerset Shrimp Shack:**
+- Professional online presence in the aquarium supply market
+- 24/7 automated sales capability
+- Streamlined inventory and order management
+- Secure payment processing building customer trust
+- Mobile-optimized experience reaching more customers
+
+**Technical Achievements:**
+- Zero-downtime deployment pipeline
+- Scalable architecture supporting business growth
+- Admin-friendly interface reducing training requirements
+- Secure payment handling meeting industry standards
+
+---
+
+## 🎨 Design Philosophy
+
+The platform was designed with three core principles:
+
+1. **User-Centric Experience** - Intuitive navigation and clear product presentation
+2. **Business Efficiency** - Streamlined admin processes for daily operations
+3. **Technical Excellence** - Clean code, security best practices, and scalable architecture
+
+---
+
+## 🔮 Future Considerations
+
+Potential enhancements discussed with the client:
+
+- **Customer Review System** - User-generated product reviews and ratings
+- **Advanced Search & Filtering** - Enhanced product discovery capabilities
+- **Shipping Integration** - Real-time shipping calculations and tracking
+- **Analytics Dashboard** - Business intelligence and sales reporting
+- **Email Marketing Integration** - Automated customer communications
+
+---
+
+## 🏆 Project Success Metrics
+
+- **Development Timeline** - Delivered on schedule within agreed timeframe
+- **Client Satisfaction** - Easy-to-use admin interface requiring minimal training
+- **Technical Performance** - Fast loading times and reliable uptime
+- **Business Results** - Successful launch with immediate online sales capability
+
+---
+
+## 💼 Skills Demonstrated
+
+This project showcases expertise in:
+
+- **Full-Stack Web Development** - Django, HTML/CSS, JavaScript
+- **E-Commerce Solutions** - Shopping carts, payments, inventory management
+- **Database Design** - PostgreSQL schema optimization
+- **API Integration** - Stripe payment processing
+- **Cloud Deployment** - Heroku production deployment
+- **Security Implementation** - Payment security and data protection
+- **Client Communication** - Requirements gathering and project delivery
+
+---
+
+## 🤝 Client Testimonial
+
+*"James delivered exactly what we needed - a professional, easy-to-manage online store that perfectly represents our business. The admin system is so simple that anyone on our team can add products and manage orders."*
+
+---
+
+## 📞 About the Developer
+
+**James Curtis** - Full-Stack Web Developer
+
+Specializing in custom web applications and e-commerce solutions for small to medium businesses.
+
+🖥️ **Portfolio:** [curtiscreativecode.co.uk](https://curtiscreativecode.co.uk)  
+🐙 **GitHub:** [@JWCurtis94](https://github.com/JWCurtis94)  
+📧 **Email:** [james@curtiscreativecode.co.uk](mailto:james@curtiscreativecode.co.uk)
+
+---
+
+## 🌐 View the Project
+
+**Live Website:** [somersetshrimpshack.uk](https://somersetshrimpshack.uk)
+
+*This is a proprietary client project developed specifically for Somerset Shrimp Shack.*
+
+---
+
+> *"Delivering professional web solutions that drive business growth and customer satisfaction."*
