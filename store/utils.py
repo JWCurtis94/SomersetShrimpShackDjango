@@ -7,24 +7,31 @@ logger = logging.getLogger(__name__)
 
 def send_order_confirmation_email(order):
     """
-    Send order confirmation email to customer
+    Send a detailed order confirmation email to the customer.
     """
     try:
-        # Prepare email context
+        order_items = order.items.all()
+
         context = {
             'order': order,
-            'order_items': order.items.all(),
+            'order_items': order_items,
             'total': order.total_price,
             'shipping_cost': order.shipping_cost,
             'site_name': 'Somerset Shrimp Shack',
+            'customer_name': getattr(order, 'shipping_name', ''),
+            'shipping_info': {
+                'address': getattr(order, 'shipping_address', ''),
+                'city': getattr(order, 'shipping_city', ''),
+                'state': getattr(order, 'shipping_state', ''),
+                'zip': getattr(order, 'shipping_zip', ''),
+                'country': getattr(order, 'shipping_country', ''),
+            }
         }
-        
-        # Render email content
-        subject = f'Order Confirmation - #{order.id}'
+
+        subject = f'Order Confirmation - #{order.order_reference}'
         html_message = render_to_string('store/emails/order_confirmation.html', context)
         plain_message = render_to_string('store/emails/order_confirmation.txt', context)
-        
-        # Send email to customer
+
         send_mail(
             subject=subject,
             message=plain_message,
@@ -33,37 +40,44 @@ def send_order_confirmation_email(order):
             html_message=html_message,
             fail_silently=False,
         )
-        
-        logger.info(f"Order confirmation email sent to {order.email} for order #{order.id}")
+
+        logger.info(f"Confirmation email sent to customer {order.email} for order #{order.id}")
         return True
-        
+
     except Exception as e:
-        logger.error(f"Failed to send order confirmation email for order #{order.id}: {str(e)}")
+        logger.error(f"Failed to send confirmation email for order #{order.id}: {str(e)}")
         return False
+
 
 def send_order_notification_email(order):
     """
-    Send order notification email to site owner/admin
+    Send a detailed order notification email to the site owner/admin.
     """
     try:
-        # Prepare email context
+        order_items = order.items.all()
+
         context = {
             'order': order,
-            'order_items': order.items.all(),
+            'order_items': order_items,
             'total': order.total_price,
             'shipping_cost': order.shipping_cost,
             'site_name': 'Somerset Shrimp Shack',
+            'customer_name': getattr(order, 'shipping_name', ''),
+            'shipping_info': {
+                'address': getattr(order, 'shipping_address', ''),
+                'city': getattr(order, 'shipping_city', ''),
+                'state': getattr(order, 'shipping_state', ''),
+                'zip': getattr(order, 'shipping_zip', ''),
+                'country': getattr(order, 'shipping_country', ''),
+            }
         }
-        
-        # Render email content
-        subject = f'New Order Received - #{order.id}'
+
+        subject = f'New Order Received - #{order.order_reference}'
         html_message = render_to_string('store/emails/order_notification.html', context)
         plain_message = render_to_string('store/emails/order_notification.txt', context)
-        
-        # Get admin email from settings or use default
+
         admin_email = getattr(settings, 'ADMIN_EMAIL', 'admin@somersetshrimp.com')
-        
-        # Send email to admin
+
         send_mail(
             subject=subject,
             message=plain_message,
@@ -72,10 +86,10 @@ def send_order_notification_email(order):
             html_message=html_message,
             fail_silently=False,
         )
-        
-        logger.info(f"Order notification email sent to {admin_email} for order #{order.id}")
+
+        logger.info(f"Order notification email sent to admin {admin_email} for order #{order.id}")
         return True
-        
+
     except Exception as e:
         logger.error(f"Failed to send order notification email for order #{order.id}: {str(e)}")
         return False

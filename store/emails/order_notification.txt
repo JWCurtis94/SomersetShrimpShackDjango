@@ -1,0 +1,20 @@
+New Order Received!
+
+Order Reference: {{ order.order_reference }}
+Customer Name: {{ customer_name }}
+Customer Email: {{ order.email }}
+
+Shipping Information:
+{{ shipping_info.address }}
+{{ shipping_info.city }}, {{ shipping_info.state }} {{ shipping_info.zip }}
+{{ shipping_info.country }}
+
+Ordered Items:
+{% for item in order_items %}
+- {{ item.quantity }} x {{ item.product.name }}{% if item.size %} ({{ item.size }}){% endif %} - £{{ item.price|floatformat:2 }}
+{% endfor %}
+
+Shipping Cost: £{{ shipping_cost|floatformat:2 }}
+Total Amount: £{{ total|floatformat:2 }}
+
+Manage this order in the admin panel.

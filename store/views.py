@@ -1,3 +1,14 @@
+# GPT-4.1 Prompt:
+# You're reviewing a Django project for a small e-commerce site called Somerset Shrimp Shack.
+# The goal is to find where orders are being processed and add logic to send email confirmations.
+# The email should be sent to both the customer and the shop owner.
+# The emails must include all order details: customer name, email, shipping info, ordered products, quantities, and total cost.
+# If email logic is missing, generate it using Django's send_mail or EmailMessage functions.
+# Also, check if settings.py is correctly configured for email.
+# If necessary, recommend model updates or signal handling for more scalable email notifications.
+# Focus on clean, maintainable Django code.
+
+
 """
 Somerset Shrimp Shack - Store Views
 This file contains all view functions for the store application.

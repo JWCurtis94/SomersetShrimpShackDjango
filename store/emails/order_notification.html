@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: sans-serif; color: #222; line-height: 1.5; }
+    .summary { margin-top: 20px; }
+    .item { margin-bottom: 8px; }
+    .heading { font-size: 18px; font-weight: bold; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <h2>🦐 New Order Received!</h2>
+
+  <p><strong>Order Reference:</strong> {{ order.order_reference }}</p>
+  <p><strong>Customer Name:</strong> {{ customer_name }}</p>
+  <p><strong>Customer Email:</strong> <a href="mailto:{{ order.email }}">{{ order.email }}</a></p>
+
+  <div class="heading">Shipping Information</div>
+  <p>
+    {{ shipping_info.address }}<br>
+    {{ shipping_info.city }}, {{ shipping_info.state }} {{ shipping_info.zip }}<br>
+    {{ shipping_info.country }}
+  </p>
+
+  <div class="heading">Ordered Items</div>
+  <div class="summary">
+    {% for item in order_items %}
+      <div class="item">
+        {{ item.quantity }} x {{ item.product.name }}{% if item.size %} ({{ item.size }}){% endif %} - £{{ item.price|floatformat:2 }}
+      </div>
+    {% endfor %}
+  </div>
+
+  <p><strong>Shipping Cost:</strong> £{{ shipping_cost|floatformat:2 }}</p>
+  <p><strong>Total Amount:</strong> £{{ total|floatformat:2 }}</p>
+
+  <p>Check the admin panel for full order management.</p>
+</body>
+</html>

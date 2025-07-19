@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: sans-serif; color: #333; }
+    .order-summary { margin-top: 20px; }
+    .item { margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Thank you for your order, {{ customer_name }}!</h2>
+  <p>Your order reference is <strong>{{ order.order_reference }}</strong>.</p>
+
+  <h3>Shipping Information</h3>
+  <p>
+    {{ shipping_info.address }}<br>
+    {{ shipping_info.city }}, {{ shipping_info.state }} {{ shipping_info.zip }}<br>
+    {{ shipping_info.country }}
+  </p>
+
+  <h3>Items Ordered</h3>
+  <div class="order-summary">
+    {% for item in order_items %}
+      <div class="item">
+        {{ item.quantity }} x {{ item.product.name }}{% if item.size %} ({{ item.size }}){% endif %} - £{{ item.price|floatformat:2 }}
+      </div>
+    {% endfor %}
+  </div>
+
+  <p><strong>Shipping Cost:</strong> £{{ shipping_cost|floatformat:2 }}</p>
+  <p><strong>Total:</strong> £{{ total|floatformat:2 }}</p>
+
+  <p>If you have any questions, just reply to this email.</p>
+  <p>— Somerset Shrimp Shack</p>
+</body>
+</html>
