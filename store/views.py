@@ -1,14 +1,3 @@
-# GPT-4.1 Prompt:
-# You're reviewing a Django project for a small e-commerce site called Somerset Shrimp Shack.
-# The goal is to find where orders are being processed and add logic to send email confirmations.
-# The email should be sent to both the customer and the shop owner.
-# The emails must include all order details: customer name, email, shipping info, ordered products, quantities, and total cost.
-# If email logic is missing, generate it using Django's send_mail or EmailMessage functions.
-# Also, check if settings.py is correctly configured for email.
-# If necessary, recommend model updates or signal handling for more scalable email notifications.
-# Focus on clean, maintainable Django code.
-
-
 """
 Somerset Shrimp Shack - Store Views
 This file contains all view functions for the store application.
@@ -49,8 +38,8 @@ logger = logging.getLogger(__name__)
 # Set up Stripe API key
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-# Constants
-SHIPPING_COST = Decimal('6')
+# Constants - Deprecated: Use cart.get_shipping_cost() instead
+# SHIPPING_COST = Decimal('6')  # Removed - use dynamic shipping calculation
 
 ###################
 # Helper Functions
@@ -810,10 +799,21 @@ def payment_cancel(request):
 def stripe_webhook(request):
     """
     Handle Stripe webhook events (esp. for payment confirmations)
+    Security: Always validates webhook signature in production
     """
     payload = request.body
     sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
     webhook_secret = settings.STRIPE_WEBHOOK_SECRET
+    
+    # Security Enhancement: Require webhook signature validation in production
+    if not settings.DEBUG and not webhook_secret:
+        logger.error("Webhook secret not configured in production environment")
+        return HttpResponse(status=400)
+    
+    # Security Enhancement: Always require signature header
+    if not sig_header:
+        logger.error("Missing Stripe signature header")
+        return HttpResponse(status=400)
     
     try:
         # Verify webhook signature and extract event
@@ -822,7 +822,10 @@ def stripe_webhook(request):
                 payload, sig_header, webhook_secret
             )
         else:
-            # Without webhook signing, just parse the payload
+            # Only allow unsigned webhooks in DEBUG mode
+            if not settings.DEBUG:
+                logger.error("Webhook signature validation required in production")
+                return HttpResponse(status=400)
             data = json.loads(payload)
             event = stripe.Event.construct_from(data, stripe.api_key)
     except ValueError as e:
@@ -900,8 +903,9 @@ def stripe_webhook(request):
 def order_history(request):
     """
     Display order history for the logged-in user
+    Performance: Optimized with prefetch_related to reduce database queries
     """
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    orders = Order.objects.filter(user=request.user).select_related('user').prefetch_related('items__product').order_by('-created_at')
     
     # Paginate the results
     page_obj = paginate_queryset(request, orders, per_page=10)
@@ -926,8 +930,8 @@ def order_detail(request, order_reference):
         # Should not happen with @login_required, but just in case
         return redirect(f"{settings.LOGIN_URL}?next={request.path}")
     
-    # Get all items for this order
-    order_items = order.items.all()
+    # Get all items for this order with product details (Performance optimization)
+    order_items = order.items.select_related('product', 'product__category').all()
     
     return render(request, 'store/order_detail.html', {
         'order': order,
@@ -1117,16 +1121,17 @@ def dashboard(request):
 def stock_management(request):
     """
     View for managing product stock levels
+    Performance: Optimized with select_related for category data
     """
     # Extract filters from request
     category_id = request.GET.get('category')
     stock_status = request.GET.get('stock_status')
     search = request.GET.get('search', '')
     
-    # Start with all products
-    products = Product.objects.all()
+    # Start with all products and optimize query
+    products = Product.objects.select_related('category')
     
-    # Apply filters if provided - FIX: use category_id for filtering
+    # Apply filters if provided - Fixed category filtering
     if category_id:
         try:
             category_id = int(category_id)
@@ -1141,6 +1146,8 @@ def stock_management(request):
             products = products.filter(stock=0)
         elif stock_status == 'unavailable':
             products = products.filter(available=False)
+        elif stock_status == 'available':
+            products = products.filter(available=True)
     
     if search:
         products = products.filter(
@@ -1154,14 +1161,14 @@ def stock_management(request):
     # Setup pagination
     page_obj = paginate_queryset(request, products, per_page=20)
     
-    # Get categories for filter dropdown
-    categories = {cat.id: cat.name for cat in Category.objects.all()}
+    # Get categories for filter dropdown - Fixed: ensure all categories are shown
+    categories = Category.objects.all().order_by('name')
     
     return render(request, 'store/stock_management.html', {
         'title': 'Stock Management',
         'products': page_obj,
         'categories': categories,
-        'current_category': category_id,
+        'current_category': int(category_id) if category_id and category_id.isdigit() else None,
         'current_stock_status': stock_status,
         'search_query': search,
     })

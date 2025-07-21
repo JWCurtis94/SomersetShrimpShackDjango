@@ -28,6 +28,12 @@ ALLOWED_HOSTS = ['*', 'testserver']
 # Disable security features for testing
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
+
+# Use simple static files storage for testing
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+# Disable static files collection in testing
+STATIC_ROOT = None
 CSRF_COOKIE_SECURE = False
 
 # Use local storage for tests

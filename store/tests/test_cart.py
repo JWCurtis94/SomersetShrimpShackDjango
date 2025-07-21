@@ -125,15 +125,18 @@ class TestCart(TestCase):
         self.assertEqual(self.cart.discount, Decimal("0.00"))
 
     def test_get_shipping_cost(self):
-        """Test shipping cost calculation"""
+        """Test shipping cost calculation for aquarium store"""
+        # Empty cart should have no shipping
         self.assertEqual(self.cart.get_shipping_cost(), Decimal("0.00"))
+        
+        # Add a live animal (should be £12)
         self.cart.add(self.product, quantity=1)
         self.assertEqual(self.cart.get_shipping_cost(), Decimal("12.00"))
 
     def test_final_total(self):
         """Test final total calculation including shipping"""
         self.cart.add(self.product, quantity=1)
-        expected = Decimal("5.00") + Decimal("12.00")
+        expected = Decimal("5.00") + Decimal("12.00")  # Product + live animal shipping
         self.assertEqual(self.cart.final_total, expected)
 
     def test_clear(self):

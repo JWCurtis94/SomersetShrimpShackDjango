@@ -18,7 +18,7 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 # Allow all App Engine URLs and local development
 if DEBUG:
-    ALLOWED_HOSTS = ['*']  # Allow all hosts for development
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]']  # Restrict to known development hosts
 else:
     # In production, restrict to specific hosts
     ALLOWED_HOSTS = [

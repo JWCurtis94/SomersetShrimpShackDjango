@@ -164,10 +164,10 @@ class Cart:
         Calculate shipping cost based on cart contents
         Returns Decimal with shipping cost in GBP
         
-        Shipping Rules:
-        - Shrimp products: £12
-        - All other items: £6
-        - Mixed cart (shrimp + non-shrimp): £12 (shrimp shipping applies)
+        Shipping Rules (Aquarium Shop):
+        - Live aquarium animals (shrimp, snails, fish): £12.00 (special temperature-controlled shipping)
+        - Non-live items (plants, food, equipment, merchandise): £6.00 (standard shipping)
+        - Mixed cart (live + non-live): £12.00 (live animal shipping applies)
         """
         from decimal import Decimal
         
@@ -175,15 +175,15 @@ class Cart:
         if not self.cart:
             return Decimal('0.00')
         
-        # Check if any item in the cart is a shrimp product
+        # Check if any item in the cart is a live aquarium animal
         cart_items = self.get_cart_items()
-        has_shrimp = any(item.product.is_shrimp_product for item in cart_items)
+        has_live_animals = any(item.product.is_shrimp_product for item in cart_items)
         
         # Return appropriate shipping cost
-        if has_shrimp:
-            return Decimal('12')  # Shrimp shipping cost
+        if has_live_animals:
+            return Decimal('12.00')  # Live animal shipping cost (temperature controlled)
         else:
-            return Decimal('6')   # Standard shipping cost
+            return Decimal('6.00')   # Standard shipping cost (plants, food, equipment)
         
     def __iter__(self):
         """

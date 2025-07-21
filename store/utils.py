@@ -1,6 +1,7 @@
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
+from decimal import Decimal
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,8 +16,8 @@ def send_order_confirmation_email(order):
         context = {
             'order': order,
             'order_items': order_items,
-            'total': order.total_price,
-            'shipping_cost': order.shipping_cost,
+            'total': order.total_amount,
+            'shipping_cost': Decimal('0.00'),  # No separate shipping cost in current model
             'site_name': 'Somerset Shrimp Shack',
             'customer_name': getattr(order, 'shipping_name', ''),
             'shipping_info': {
@@ -59,8 +60,8 @@ def send_order_notification_email(order):
         context = {
             'order': order,
             'order_items': order_items,
-            'total': order.total_price,
-            'shipping_cost': order.shipping_cost,
+            'total': order.total_amount,
+            'shipping_cost': Decimal('0.00'),  # No separate shipping cost in current model
             'site_name': 'Somerset Shrimp Shack',
             'customer_name': getattr(order, 'shipping_name', ''),
             'shipping_info': {
